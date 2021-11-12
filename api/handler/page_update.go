@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func pageUpdate(p page) error {
@@ -20,7 +21,7 @@ func pageUpdate(p page) error {
 	`
 	_, err := db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
 	if err != nil {
-		logger.Errorf("error setting page attributes: %v", err)
+		util.GetLogger().Errorf("error setting page attributes: %v", err)
 		return errorInternal
 	}
 

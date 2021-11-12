@@ -3,6 +3,7 @@ package notification
 import (
 	"bytes"
 	"os"
+	"simple-commenting/util"
 )
 
 type domainExportPlugs struct {
@@ -17,7 +18,7 @@ func smtpDomainExport(to string, toName string, domain string, exportHex string)
 
 	err := smtpSendMail(to, toName, "", "Commento Data Export", body.String())
 	if err != nil {
-		logger.Errorf("cannot send data export email: %v", err)
+		util.GetLogger().Errorf("cannot send data export email: %v", err)
 		return errorCannotSendEmail
 	}
 

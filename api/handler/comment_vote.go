@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 )
 
@@ -19,7 +20,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 
 	var authorHex string
 	if err := row.Scan(&authorHex); err != nil {
-		logger.Errorf("error selecting authorHex for vote")
+		util.GetLogger().Errorf("error selecting authorHex for vote")
 		return errorInternal
 	}
 
@@ -36,7 +37,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 	`
 	_, err := db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("error inserting/updating votes: %v", err)
+		util.GetLogger().Errorf("error inserting/updating votes: %v", err)
 		return errorInternal
 	}
 

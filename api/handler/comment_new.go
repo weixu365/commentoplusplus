@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"strings"
 	"time"
 )
@@ -16,7 +17,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 
 	p, err := pageGet(domain, path)
 	if err != nil {
-		logger.Errorf("cannot get page attributes: %v", err)
+		util.GetLogger().Errorf("cannot get page attributes: %v", err)
 		return "", errorInternal
 	}
 
@@ -42,7 +43,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 	`
 	_, err = db.Exec(statement, commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
 	if err != nil {
-		logger.Errorf("cannot insert comment: %v", err)
+		util.GetLogger().Errorf("cannot insert comment: %v", err)
 		return "", errorInternal
 	}
 

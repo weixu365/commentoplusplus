@@ -3,6 +3,7 @@ package notification
 import (
 	"fmt"
 	"os"
+	"simple-commenting/util"
 	"text/template"
 )
 
@@ -27,7 +28,7 @@ Subject: {{.Subject}}
 
 `)
 	if err != nil {
-		logger.Errorf("cannot parse header template: %v", err)
+		util.GetLogger().Errorf("cannot parse header template: %v", err)
 		return errorMalformedTemplate
 	}
 
@@ -40,13 +41,13 @@ Subject: {{.Subject}}
 
 	templates = make(map[string]*template.Template)
 
-	logger.Infof("loading templates: %v", names)
+	util.GetLogger().Infof("loading templates: %v", names)
 	for _, name := range names {
 		var err error
 		templates[name] = template.New(name)
 		templates[name], err = template.ParseFiles(fmt.Sprintf("%s/templates/%s.txt", os.Getenv("STATIC"), name))
 		if err != nil {
-			logger.Errorf("cannot parse %s/templates/%s.txt: %v", os.Getenv("STATIC"), name, err)
+			util.GetLogger().Errorf("cannot parse %s/templates/%s.txt: %v", os.Getenv("STATIC"), name, err)
 			return errorMalformedTemplate
 		}
 	}

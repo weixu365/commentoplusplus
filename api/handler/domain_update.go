@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainUpdate(d domain) error {
@@ -48,7 +49,7 @@ func domainUpdate(d domain) error {
 		d.SsoUrl,
 		d.DefaultSortPolicy)
 	if err != nil {
-		logger.Errorf("cannot update non-moderators: %v", err)
+		util.GetLogger().Errorf("cannot update non-moderators: %v", err)
 		return errorInternal
 	}
 

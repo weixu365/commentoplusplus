@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -32,7 +33,7 @@ func commenterLogin(email string, password string) (string, error) {
 
 	commenterToken, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("cannot create commenterToken: %v", err)
+		util.GetLogger().Errorf("cannot create commenterToken: %v", err)
 		return "", errorInternal
 	}
 
@@ -43,7 +44,7 @@ func commenterLogin(email string, password string) (string, error) {
 	`
 	_, err = db.Exec(statement, commenterToken, commenterHex, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert commenterToken token: %v\n", err)
+		util.GetLogger().Errorf("cannot insert commenterToken token: %v\n", err)
 		return "", errorInternal
 	}
 

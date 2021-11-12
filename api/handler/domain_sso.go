@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainSsoSecretNew(domain string) (string, error) {
@@ -11,7 +12,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 
 	ssoSecret, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("error generating SSO secret hex: %v", err)
+		util.GetLogger().Errorf("error generating SSO secret hex: %v", err)
 		return "", errorInternal
 	}
 
@@ -22,7 +23,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 	`
 	_, err = db.Exec(statement, domain, ssoSecret)
 	if err != nil {
-		logger.Errorf("cannot update ssoSecret: %v", err)
+		util.GetLogger().Errorf("cannot update ssoSecret: %v", err)
 		return "", errorInternal
 	}
 

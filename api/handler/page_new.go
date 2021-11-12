@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func pageNew(domain string, path string) error {
 	// path can be empty
 	if domain == "" {
@@ -14,7 +16,7 @@ func pageNew(domain string, path string) error {
 	`
 	_, err := db.Exec(statement, domain, path)
 	if err != nil {
-		logger.Errorf("error inserting new page: %v", err)
+		util.GetLogger().Errorf("error inserting new page: %v", err)
 		return errorInternal
 	}
 

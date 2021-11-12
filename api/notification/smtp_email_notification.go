@@ -5,6 +5,7 @@ import (
 	"fmt"
 	ht "html/template"
 	"os"
+	"simple-commenting/util"
 )
 
 type emailNotificationPlugs struct {
@@ -22,7 +23,7 @@ type emailNotificationPlugs struct {
 func smtpEmailNotification(to string, toName string, kind string, domain string, path string, commentHex string, commenterName string, title string, html string, unsubscribeSecretHex string) error {
 	t, err := ht.ParseFiles(fmt.Sprintf("%s/templates/email-notification.txt", os.Getenv("STATIC")))
 	if err != nil {
-		logger.Errorf("cannot parse %s/templates/email-notification.txt: %v", os.Getenv("STATIC"), err)
+		util.GetLogger().Errorf("cannot parse %s/templates/email-notification.txt: %v", os.Getenv("STATIC"), err)
 		return errorMalformedTemplate
 	}
 
@@ -39,13 +40,13 @@ func smtpEmailNotification(to string, toName string, kind string, domain string,
 		UnsubscribeSecretHex: unsubscribeSecretHex,
 	})
 	if err != nil {
-		logger.Errorf("error generating templated HTML for email notification: %v", err)
+		util.GetLogger().Errorf("error generating templated HTML for email notification: %v", err)
 		return err
 	}
 
 	err = smtpSendMail(to, toName, "text/html; charset=UTF-8", "[Commento] "+title, body.String())
 	if err != nil {
-		logger.Errorf("cannot send email notification email: %v", err)
+		util.GetLogger().Errorf("cannot send email notification email: %v", err)
 		return errorCannotSendEmail
 	}
 

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"simple-commenting/util"
 )
 
 func pageGet(domain string, path string) (page, error) {
@@ -28,7 +29,7 @@ func pageGet(domain string, path string) (page, error) {
 			p.StickyCommentHex = "none"
 			p.Title = ""
 		} else {
-			logger.Errorf("error scanning page: %v", err)
+			util.GetLogger().Errorf("error scanning page: %v", err)
 			return page{}, errorInternal
 		}
 	}

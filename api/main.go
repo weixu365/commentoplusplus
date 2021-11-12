@@ -1,7 +1,9 @@
 package main
 
+import "simple-commenting/util"
+
 func main() {
-	exitIfError(loggerCreate())
+	exitIfError(util.GetLogger())
 	exitIfError(versionPrint())
 	exitIfError(configParse())
 	exitIfError(dbConnect(5))

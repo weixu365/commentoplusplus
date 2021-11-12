@@ -1,5 +1,7 @@
 package repository
 
+import "simple-commenting/util"
+
 func migrateEmails() error {
 	statement := `
 		SELECT commenters.email
@@ -13,7 +15,7 @@ func migrateEmails() error {
 	`
 	rows, err := db.Query(statement)
 	if err != nil {
-		logger.Errorf("cannot get comments: %v", err)
+		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return errorDatabaseMigration
 	}
 	defer rows.Close()
@@ -21,12 +23,12 @@ func migrateEmails() error {
 	for rows.Next() {
 		var email string
 		if err = rows.Scan(&email); err != nil {
-			logger.Errorf("cannot get email from tables during migration: %v", err)
+			util.GetLogger().Errorf("cannot get email from tables during migration: %v", err)
 			return errorDatabaseMigration
 		}
 
 		if err = emailNew(email); err != nil {
-			logger.Errorf("cannot insert email during migration: %v", err)
+			util.GetLogger().Errorf("cannot insert email during migration: %v", err)
 			return errorDatabaseMigration
 		}
 	}

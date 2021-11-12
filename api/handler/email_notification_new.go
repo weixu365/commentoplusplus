@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func emailNotificationModerator(d domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
 	if d.EmailNotificationPolicy == "none" {
 		return
@@ -16,7 +18,7 @@ func emailNotificationModerator(d domain, path string, title string, commenterHe
 	} else {
 		c, err := commenterGetByHex(commenterHex)
 		if err != nil {
-			logger.Errorf("cannot get commenter to send email notification: %v", err)
+			util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 			return
 		}
 
@@ -59,7 +61,7 @@ func emailNotificationModerator(d domain, path string, title string, commenterHe
 		}
 
 		if err := smtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, e.UnsubscribeSecretHex); err != nil {
-			logger.Errorf("error sending email to %s: %v", m.Email, err)
+			util.GetLogger().Errorf("error sending email to %s: %v", m.Email, err)
 			continue
 		}
 	}
@@ -86,7 +88,7 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 	var parentCommenterHex string
 	err := row.Scan(&parentCommenterHex)
 	if err != nil {
-		logger.Errorf("cannot scan commenterHex and parentCommenterHex: %v", err)
+		util.GetLogger().Errorf("cannot scan commenterHex and parentCommenterHex: %v", err)
 		return
 	}
 
@@ -102,7 +104,7 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 
 	pc, err := commenterGetByHex(parentCommenterHex)
 	if err != nil {
-		logger.Errorf("cannot get commenter to send email notification: %v", err)
+		util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 		return
 	}
 
@@ -112,7 +114,7 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 	} else {
 		c, err := commenterGetByHex(commenterHex)
 		if err != nil {
-			logger.Errorf("cannot get commenter to send email notification: %v", err)
+			util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 			return
 		}
 		commenterName = c.Name
@@ -134,7 +136,7 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 func emailNotificationNew(d domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
 	p, err := pageGet(d.Domain, path)
 	if err != nil {
-		logger.Errorf("cannot get page to send email notification: %v", err)
+		util.GetLogger().Errorf("cannot get page to send email notification: %v", err)
 		return
 	}
 

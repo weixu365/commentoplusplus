@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/gitlab"
@@ -16,16 +17,16 @@ func gitlabOauthConfigure() error {
 	}
 
 	if os.Getenv("GITLAB_KEY") == "" {
-		logger.Errorf("COMMENTO_GITLAB_KEY not configured, but COMMENTO_GITLAB_SECRET is set")
+		util.GetLogger().Errorf("COMMENTO_GITLAB_KEY not configured, but COMMENTO_GITLAB_SECRET is set")
 		return errorOauthMisconfigured
 	}
 
 	if os.Getenv("GITLAB_SECRET") == "" {
-		logger.Errorf("COMMENTO_GITLAB_SECRET not configured, but COMMENTO_GITLAB_KEY is set")
+		util.GetLogger().Errorf("COMMENTO_GITLAB_SECRET not configured, but COMMENTO_GITLAB_KEY is set")
 		return errorOauthMisconfigured
 	}
 
-	logger.Infof("loading gitlab OAuth config")
+	util.GetLogger().Infof("loading gitlab OAuth config")
 
 	gitlabConfig = &oauth2.Config{
 		RedirectURL:  os.Getenv("ORIGIN") + "/api/oauth/gitlab/callback",

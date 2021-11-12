@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/util"
 	"sync"
 
 	"github.com/gomodule/oauth1/oauth"
@@ -23,16 +24,16 @@ func twitterOauthConfigure() error {
 	}
 
 	if os.Getenv("TWITTER_KEY") == "" {
-		logger.Errorf("COMMENTO_TWITTER_KEY not configured, but COMMENTO_TWITTER_SECRET is set")
+		util.GetLogger().Errorf("COMMENTO_TWITTER_KEY not configured, but COMMENTO_TWITTER_SECRET is set")
 		return errorOauthMisconfigured
 	}
 
 	if os.Getenv("TWITTER_SECRET") == "" {
-		logger.Errorf("COMMENTO_TWITTER_SECRET not configured, but COMMENTO_TWITTER_KEY is set")
+		util.GetLogger().Errorf("COMMENTO_TWITTER_SECRET not configured, but COMMENTO_TWITTER_KEY is set")
 		return errorOauthMisconfigured
 	}
 
-	logger.Infof("loading twitter OAuth config")
+	util.GetLogger().Infof("loading twitter OAuth config")
 
 	twitterClient = &oauth.Client{
 		TemporaryCredentialRequestURI: "https://api.twitter.com/oauth/request_token",

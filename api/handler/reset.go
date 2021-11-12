@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,7 +28,7 @@ func reset(resetHex string, password string) (string, error) {
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		logger.Errorf("cannot generate hash from password: %v\n", err)
+		util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
 		return "", errorInternal
 	}
 
@@ -45,7 +46,7 @@ func reset(resetHex string, password string) (string, error) {
 
 	_, err = db.Exec(statement, string(passwordHash), hex)
 	if err != nil {
-		logger.Errorf("cannot change %s's password: %v\n", entity, err)
+		util.GetLogger().Errorf("cannot change %s's password: %v\n", entity, err)
 		return "", errorInternal
 	}
 
@@ -55,7 +56,7 @@ func reset(resetHex string, password string) (string, error) {
 	`
 	_, err = db.Exec(statement, resetHex)
 	if err != nil {
-		logger.Warningf("cannot remove resetHex: %v\n", err)
+		util.GetLogger().Warningf("cannot remove resetHex: %v\n", err)
 	}
 
 	return entity, nil

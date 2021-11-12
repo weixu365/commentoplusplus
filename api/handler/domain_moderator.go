@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/util"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func domainModeratorList(domain string) ([]moderator, error) {
 	`
 	rows, err := db.Query(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot get moderators: %v", err)
+		util.GetLogger().Errorf("cannot get moderators: %v", err)
 		return nil, errorInternal
 	}
 	defer rows.Close()
@@ -27,7 +28,7 @@ func domainModeratorList(domain string) ([]moderator, error) {
 	for rows.Next() {
 		m := moderator{}
 		if err = rows.Scan(&m.Email, &m.AddDate); err != nil {
-			logger.Errorf("cannot Scan moderator: %v", err)
+			util.GetLogger().Errorf("cannot Scan moderator: %v", err)
 			return nil, errorInternal
 		}
 
@@ -49,7 +50,7 @@ func isDomainModerator(domain string, email string) (bool, error) {
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
-		logger.Errorf("cannot query if moderator: %v", err)
+		util.GetLogger().Errorf("cannot query if moderator: %v", err)
 		return false, errorInternal
 	}
 

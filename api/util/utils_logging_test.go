@@ -5,15 +5,10 @@ import (
 )
 
 func TestLoggerCreateBasics(t *testing.T) {
-	logger = nil
-
-	if err := loggerCreate(); err != nil {
-		t.Errorf("unexpected error creating logger: %v", err)
-		return
-	}
+	logger = GetLogger()
 
 	if logger == nil {
-		t.Errorf("logger null after loggerCreate()")
+		t.Errorf("logger null after GetLogger()")
 		return
 	}
 

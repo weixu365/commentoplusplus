@@ -3,6 +3,7 @@ package app
 import (
 	"bufio"
 	"os"
+	"simple-commenting/util"
 	"strings"
 )
 
@@ -30,7 +31,7 @@ func configFileLoad(filepath string) error {
 
 		i := strings.Index(line, "=")
 		if i == -1 {
-			logger.Errorf("%s: line %d: neither a comment nor a valid setting", filepath, num)
+			util.GetLogger().Errorf("%s: line %d: neither a comment nor a valid setting", filepath, num)
 			return errorInvalidConfigFile
 		}
 

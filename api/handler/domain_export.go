@@ -3,13 +3,14 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"simple-commenting/util"
 	"time"
 )
 
 func domainExportBeginError(email string, toName string, domain string, err error) {
 	// we're not using err at the moment because it's all errorInternal
 	if err2 := smtpDomainExportError(email, toName, domain); err2 != nil {
-		logger.Errorf("cannot send domain export error email for %s: %v", domain, err2)
+		util.GetLogger().Errorf("cannot send domain export error email for %s: %v", domain, err2)
 		return
 	}
 }
@@ -24,7 +25,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	`
 	rows1, err := db.Query(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot select comments while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("cannot select comments while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
@@ -33,7 +34,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	for rows1.Next() {
 		c := comment{}
 		if err = rows1.Scan(&c.CommentHex, &c.Domain, &c.Path, &c.CommenterHex, &c.Markdown, &c.ParentHex, &c.Score, &c.State, &c.CreationDate); err != nil {
-			logger.Errorf("cannot scan comment while exporting %s: %v", domain, err)
+			util.GetLogger().Errorf("cannot scan comment while exporting %s: %v", domain, err)
 			domainExportBeginError(email, toName, domain, errorInternal)
 			return
 		}
@@ -48,7 +49,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	`
 	rows2, err := db.Query(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot select commenters while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("cannot select commenters while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
@@ -57,7 +58,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	for rows2.Next() {
 		c := commenter{}
 		if err := rows2.Scan(&c.CommenterHex, &c.Email, &c.Name, &c.Link, &c.Photo, &c.Provider, &c.JoinDate); err != nil {
-			logger.Errorf("cannot scan commenter while exporting %s: %v", domain, err)
+			util.GetLogger().Errorf("cannot scan commenter while exporting %s: %v", domain, err)
 			domainExportBeginError(email, toName, domain, errorInternal)
 			return
 		}
@@ -67,21 +68,21 @@ func domainExportBegin(email string, toName string, domain string) {
 
 	je, err := json.Marshal(e)
 	if err != nil {
-		logger.Errorf("cannot marshall JSON while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("cannot marshall JSON while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
 
 	gje, err := gzipStatic(je)
 	if err != nil {
-		logger.Errorf("cannot gzip JSON while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("cannot gzip JSON while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
 
 	exportHex, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("cannot generate exportHex while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("cannot generate exportHex while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
@@ -93,14 +94,14 @@ func domainExportBegin(email string, toName string, domain string) {
 	`
 	_, err = db.Exec(statement, exportHex, gje, domain, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("error inserting expiry binary data while exporting %s: %v", domain, err)
+		util.GetLogger().Errorf("error inserting expiry binary data while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
 		return
 	}
 
 	err = smtpDomainExport(email, toName, domain, exportHex)
 	if err != nil {
-		logger.Errorf("error sending data export email for %s: %v", domain, err)
+		util.GetLogger().Errorf("error sending data export email for %s: %v", domain, err)
 		return
 	}
 }

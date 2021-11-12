@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func commenterSessionUpdate(commenterToken string, commenterHex string) error {
 	if commenterToken == "" || commenterHex == "" {
 		return errorMissingField
@@ -12,7 +14,7 @@ func commenterSessionUpdate(commenterToken string, commenterHex string) error {
 	`
 	_, err := db.Exec(statement, commenterToken, commenterHex)
 	if err != nil {
-		logger.Errorf("error updating commenterHex: %v", err)
+		util.GetLogger().Errorf("error updating commenterHex: %v", err)
 		return errorInternal
 	}
 

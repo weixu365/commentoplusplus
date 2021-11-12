@@ -2,13 +2,14 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 )
 
 func commenterTokenNew() (string, error) {
 	commenterToken, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("cannot create commenterToken: %v", err)
+		util.GetLogger().Errorf("cannot create commenterToken: %v", err)
 		return "", errorInternal
 	}
 
@@ -19,7 +20,7 @@ func commenterTokenNew() (string, error) {
 	`
 	_, err = db.Exec(statement, commenterToken, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert new commenterToken: %v", err)
+		util.GetLogger().Errorf("cannot insert new commenterToken: %v", err)
 		return "", errorInternal
 	}
 

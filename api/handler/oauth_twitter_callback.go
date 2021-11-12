@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"simple-commenting/util"
 )
 
 func twitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +85,7 @@ func twitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err = commenterUpdate(c.CommenterHex, email, name, link, photo, "twitter"); err != nil {
-			logger.Warningf("cannot update commenter: %s", err)
+			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
 

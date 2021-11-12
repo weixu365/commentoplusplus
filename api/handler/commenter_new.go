@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -42,7 +43,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 	if password != "" {
 		passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			logger.Errorf("cannot generate hash from password: %v\n", err)
+			util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
 			return "", errorInternal
 		}
 	}
@@ -57,7 +58,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 	`
 	_, err = db.Exec(statement, commenterHex, email, name, link, photo, provider, string(passwordHash), time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert commenter: %v", err)
+		util.GetLogger().Errorf("cannot insert commenter: %v", err)
 		return "", errorInternal
 	}
 

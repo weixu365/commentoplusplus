@@ -6,11 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"simple-commenting/util"
 	"time"
 )
 
 func versionPrint() error {
-	logger.Infof("starting Commento %s", version)
+	util.GetLogger().Infof("starting Commento %s", version)
 	return nil
 }
 
@@ -33,7 +34,7 @@ func versionCheckStart() error {
 				// print the error only once; we don't want to spam the logs with this
 				// every five minutes
 				if !printedError && errorCount > 5 {
-					logger.Errorf("error checking version: %v", err)
+					util.GetLogger().Errorf("error checking version: %v", err)
 					printedError = true
 				}
 				continue
@@ -44,7 +45,7 @@ func versionCheckStart() error {
 			if err != nil {
 				errorCount++
 				if !printedError && errorCount > 5 {
-					logger.Errorf("error reading body: %s", err)
+					util.GetLogger().Errorf("error reading body: %s", err)
 					printedError = true
 				}
 				continue
@@ -62,14 +63,14 @@ func versionCheckStart() error {
 			if r.Success == false {
 				errorCount++
 				if !printedError && errorCount > 5 {
-					logger.Errorf("error checking version: %s", r.Message)
+					util.GetLogger().Errorf("error checking version: %s", r.Message)
 					printedError = true
 				}
 				continue
 			}
 
 			if r.NewUpdate && r.Latest != latestSeen {
-				logger.Infof("New update available! Latest version: %s", r.Latest)
+				util.GetLogger().Infof("New update available! Latest version: %s", r.Latest)
 				latestSeen = r.Latest
 			}
 

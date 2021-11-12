@@ -3,6 +3,7 @@ package app
 import (
 	"os"
 	"path/filepath"
+	"simple-commenting/util"
 	"strconv"
 	"strings"
 )
@@ -10,7 +11,7 @@ import (
 func configParse() error {
 	binPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
-		logger.Errorf("cannot load binary path: %v", err)
+		util.GetLogger().Errorf("cannot load binary path: %v", err)
 		return err
 	}
 
@@ -84,7 +85,7 @@ func configParse() error {
 	// Mandatory config parameters
 	for _, env := range []string{"POSTGRES", "PORT", "ORIGIN", "FORBID_NEW_OWNERS", "MAX_IDLE_PG_CONNECTIONS"} {
 		if os.Getenv(env) == "" {
-			logger.Errorf("missing COMMENTO_%s environment variable", env)
+			util.GetLogger().Errorf("missing COMMENTO_%s environment variable", env)
 			return errorMissingConfig
 		}
 	}
@@ -100,7 +101,7 @@ func configParse() error {
 	os.Setenv("CDN_PREFIX", addHttpIfAbsent(os.Getenv("CDN_PREFIX")))
 
 	if os.Getenv("FORBID_NEW_OWNERS") != "true" && os.Getenv("FORBID_NEW_OWNERS") != "false" {
-		logger.Errorf("COMMENTO_FORBID_NEW_OWNERS neither 'true' nor 'false'")
+		util.GetLogger().Errorf("COMMENTO_FORBID_NEW_OWNERS neither 'true' nor 'false'")
 		return errorInvalidConfigValue
 	}
 
@@ -111,22 +112,22 @@ func configParse() error {
 
 	file, err := os.Stat(static)
 	if err != nil {
-		logger.Errorf("cannot load %s: %v", static, err)
+		util.GetLogger().Errorf("cannot load %s: %v", static, err)
 		return err
 	}
 
 	if !file.IsDir() {
-		logger.Errorf("COMMENTO_STATIC=%s is not a directory", static)
+		util.GetLogger().Errorf("COMMENTO_STATIC=%s is not a directory", static)
 		return errorNotADirectory
 	}
 
 	os.Setenv("STATIC", static)
 
 	if num, err := strconv.Atoi(os.Getenv("MAX_IDLE_PG_CONNECTIONS")); err != nil {
-		logger.Errorf("invalid COMMENTO_MAX_IDLE_PG_CONNECTIONS: %v", err)
+		util.GetLogger().Errorf("invalid COMMENTO_MAX_IDLE_PG_CONNECTIONS: %v", err)
 		return errorInvalidConfigValue
 	} else if num <= 0 {
-		logger.Errorf("COMMENTO_MAX_IDLE_PG_CONNECTIONS should be a positive integer")
+		util.GetLogger().Errorf("COMMENTO_MAX_IDLE_PG_CONNECTIONS should be a positive integer")
 		return errorInvalidConfigValue
 	}
 

@@ -3,11 +3,12 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"simple-commenting/util"
 )
 
 func googleRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if googleConfig == nil {
-		logger.Errorf("google oauth access attempt without configuration")
+		util.GetLogger().Errorf("google oauth access attempt without configuration")
 		fmt.Fprintf(w, "error: this website has not configured Google OAuth")
 		return
 	}

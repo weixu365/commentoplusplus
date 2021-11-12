@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 var ownersRowColumns string = `
 	owners.ownerHex,
 	owners.email,
@@ -56,7 +58,7 @@ func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
-		logger.Errorf("cannot scan owner: %v\n", err)
+		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
 		return owner{}, errorInternal
 	}
 
@@ -77,7 +79,7 @@ func ownerGetByOwnerHex(ownerHex string) (owner, error) {
 
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
-		logger.Errorf("cannot scan owner: %v\n", err)
+		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
 		return owner{}, errorInternal
 	}
 

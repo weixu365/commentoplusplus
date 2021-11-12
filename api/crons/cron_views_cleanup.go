@@ -1,6 +1,7 @@
 package crons
 
 import (
+	"simple-commenting/util"
 	"time"
 )
 
@@ -13,7 +14,7 @@ func viewsCleanupBegin() error {
 			`
 			_, err := db.Exec(statement, time.Now().UTC().AddDate(0, 0, -45))
 			if err != nil {
-				logger.Errorf("error cleaning up views: %v", err)
+				util.GetLogger().Errorf("error cleaning up views: %v", err)
 				return
 			}
 

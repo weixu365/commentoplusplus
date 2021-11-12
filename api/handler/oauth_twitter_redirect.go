@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"simple-commenting/util"
 )
 
 func twitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if twitterClient == nil {
-		logger.Errorf("twitter oauth access attempt without configuration")
+		util.GetLogger().Errorf("twitter oauth access attempt without configuration")
 		fmt.Fprintf(w, "error: this website has not configured twitter OAuth")
 		return
 	}
@@ -23,7 +24,7 @@ func twitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	cred, err := twitterClient.RequestTemporaryCredentials(nil, os.Getenv("ORIGIN")+"/api/oauth/twitter/callback", nil)
 	if err != nil {
-		logger.Errorf("cannot get temporary twitter credentials: %v", err)
+		util.GetLogger().Errorf("cannot get temporary twitter credentials: %v", err)
 		fmt.Fprintf(w, "error: %v", errorInternal.Error())
 		return
 	}

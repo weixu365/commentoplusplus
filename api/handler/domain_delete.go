@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainDelete(domain string) error {
@@ -24,7 +25,7 @@ func domainDelete(domain string) error {
 	`
 	_, err = db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot delete domain from views: %v", err)
+		util.GetLogger().Errorf("cannot delete domain from views: %v", err)
 		return errorInternal
 	}
 
@@ -34,7 +35,7 @@ func domainDelete(domain string) error {
 	`
 	_, err = db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot delete domain from moderators: %v", err)
+		util.GetLogger().Errorf("cannot delete domain from moderators: %v", err)
 		return errorInternal
 	}
 
@@ -44,13 +45,13 @@ func domainDelete(domain string) error {
 	`
 	_, err = db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot delete domain from ssotokens: %v", err)
+		util.GetLogger().Errorf("cannot delete domain from ssotokens: %v", err)
 		return errorInternal
 	}
 
 	// comments, votes, and pages are handled by domainClear
 	if err = domainClear(domain); err != nil {
-		logger.Errorf("cannot clear domain: %v", err)
+		util.GetLogger().Errorf("cannot clear domain: %v", err)
 		return errorInternal
 	}
 

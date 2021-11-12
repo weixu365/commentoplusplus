@@ -3,6 +3,7 @@ package repository
 import (
 	"io/ioutil"
 	"os"
+	"simple-commenting/util"
 	"strings"
 )
 
@@ -17,7 +18,7 @@ func migrate() error {
 func migrateFromDir(dir string) error {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		logger.Errorf("cannot read directory for migrations: %v", err)
+		util.GetLogger().Errorf("cannot read directory for migrations: %v", err)
 		return err
 	}
 
@@ -27,7 +28,7 @@ func migrateFromDir(dir string) error {
 	`
 	rows, err := db.Query(statement)
 	if err != nil {
-		logger.Errorf("cannot query migrations: %v", err)
+		util.GetLogger().Errorf("cannot query migrations: %v", err)
 		return err
 	}
 
@@ -37,15 +38,15 @@ func migrateFromDir(dir string) error {
 	for rows.Next() {
 		var filename string
 		if err = rows.Scan(&filename); err != nil {
-			logger.Errorf("cannot scan filename: %v", err)
+			util.GetLogger().Errorf("cannot scan filename: %v", err)
 			return err
 		}
 
 		filenames[filename] = true
-		logger.Infof("Found applied db script: %s", filename)
+		util.GetLogger().Infof("Found applied db script: %s", filename)
 	}
 
-	logger.Infof("%d migrations already installed, looking for more", len(filenames))
+	util.GetLogger().Infof("%d migrations already installed, looking for more", len(filenames))
 
 	completed := 0
 	for _, file := range files {
@@ -54,12 +55,12 @@ func migrateFromDir(dir string) error {
 				f := dir + string(os.PathSeparator) + file.Name()
 				contents, err := ioutil.ReadFile(f)
 				if err != nil {
-					logger.Errorf("cannot read file %s: %v", file.Name(), err)
+					util.GetLogger().Errorf("cannot read file %s: %v", file.Name(), err)
 					return err
 				}
 
 				if _, err = db.Exec(string(contents)); err != nil {
-					logger.Errorf("cannot execute the SQL in %s: %v", f, err)
+					util.GetLogger().Errorf("cannot execute the SQL in %s: %v", f, err)
 					return err
 				}
 
@@ -70,13 +71,13 @@ func migrateFromDir(dir string) error {
 				`
 				_, err = db.Exec(statement, file.Name())
 				if err != nil {
-					logger.Errorf("cannot insert filename into the migrations table: %v", err)
+					util.GetLogger().Errorf("cannot insert filename into the migrations table: %v", err)
 					return err
 				}
 
 				if fn, ok := goMigrations[file.Name()]; ok {
 					if err = fn(); err != nil {
-						logger.Errorf("cannot execute Go migration associated with SQL %s: %v", f, err)
+						util.GetLogger().Errorf("cannot execute Go migration associated with SQL %s: %v", f, err)
 						return err
 					}
 				}
@@ -87,9 +88,9 @@ func migrateFromDir(dir string) error {
 	}
 
 	if completed > 0 {
-		logger.Infof("%d new migrations completed (%d total)", completed, len(filenames)+completed)
+		util.GetLogger().Infof("%d new migrations completed (%d total)", completed, len(filenames)+completed)
 	} else {
-		logger.Infof("none found")
+		util.GetLogger().Infof("none found")
 	}
 
 	return nil

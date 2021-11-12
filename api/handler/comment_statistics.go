@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func commentStatistics(domain string) ([]int64, error) {
 	statement := `
 		SELECT COUNT(comments.creationDate)
@@ -14,7 +16,7 @@ func commentStatistics(domain string) ([]int64, error) {
 	`
 	rows, err := db.Query(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot get daily views: %v", err)
+		util.GetLogger().Errorf("cannot get daily views: %v", err)
 		return []int64{}, errorInternal
 	}
 
@@ -24,7 +26,7 @@ func commentStatistics(domain string) ([]int64, error) {
 	for rows.Next() {
 		var count int64
 		if err = rows.Scan(&count); err != nil {
-			logger.Errorf("cannot get daily comments for the last month: %v", err)
+			util.GetLogger().Errorf("cannot get daily comments for the last month: %v", err)
 			return make([]int64, 0), errorInternal
 		}
 		last30Days = append(last30Days, count)

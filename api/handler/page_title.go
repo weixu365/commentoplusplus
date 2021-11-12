@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/util"
 )
 
 func pageTitleUpdate(domain string, path string) (string, error) {
@@ -18,7 +19,7 @@ func pageTitleUpdate(domain string, path string) (string, error) {
 		// as the user's URL 404 or something, so let's not pollute the error log
 		// with messages. Just use a sane title. Maybe we'll have the ability to
 		// retry later.
-		logger.Errorf("%v", err)
+		util.GetLogger().Errorf("%v", err)
 		title = domain
 	}
 
@@ -29,7 +30,7 @@ func pageTitleUpdate(domain string, path string) (string, error) {
 	`
 	_, err = db.Exec(statement, domain, path, title)
 	if err != nil {
-		logger.Errorf("cannot update pages table with title: %v", err)
+		util.GetLogger().Errorf("cannot update pages table with title: %v", err)
 		return "", err
 	}
 

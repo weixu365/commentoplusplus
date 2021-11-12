@@ -3,6 +3,7 @@ package notification
 import (
 	"net/smtp"
 	"os"
+	"simple-commenting/util"
 )
 
 var smtpConfigured bool
@@ -14,20 +15,20 @@ func smtpConfigure() error {
 	host := os.Getenv("SMTP_HOST")
 	port := os.Getenv("SMTP_PORT")
 	if host == "" || port == "" {
-		logger.Warningf("smtp not configured, no emails will be sent")
+		util.GetLogger().Warningf("smtp not configured, no emails will be sent")
 		smtpConfigured = false
 		return nil
 	}
 
 	if os.Getenv("SMTP_FROM_ADDRESS") == "" {
-		logger.Errorf("COMMENTO_SMTP_FROM_ADDRESS not set")
+		util.GetLogger().Errorf("COMMENTO_SMTP_FROM_ADDRESS not set")
 		smtpConfigured = false
 		return errorMissingSmtpAddress
 	}
 
-	logger.Infof("configuring smtp: %s", host)
+	util.GetLogger().Infof("configuring smtp: %s", host)
 	if username == "" || password == "" {
-		logger.Warningf("no SMTP username/password set, Commento will assume they aren't required")
+		util.GetLogger().Warningf("no SMTP username/password set, Commento will assume they aren't required")
 	} else {
 		smtpAuth = smtp.PlainAuth("", username, password, host)
 	}

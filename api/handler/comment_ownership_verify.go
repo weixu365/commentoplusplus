@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error) {
 	if commenterHex == "" || commentHex == "" {
 		return false, errorMissingField
@@ -16,7 +18,7 @@ func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
-		logger.Errorf("cannot query if comment owner: %v", err)
+		util.GetLogger().Errorf("cannot query if comment owner: %v", err)
 		return false, errorInternal
 	}
 

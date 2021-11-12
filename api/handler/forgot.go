@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func forgot(email string, entity string) error {
 				time.Sleep(1 * time.Second)
 				return nil
 			} else {
-				logger.Errorf("cannot get owner by email: %v", err)
+				util.GetLogger().Errorf("cannot get owner by email: %v", err)
 				return errorInternal
 			}
 		}
@@ -42,7 +43,7 @@ func forgot(email string, entity string) error {
 				time.Sleep(1 * time.Second)
 				return nil
 			} else {
-				logger.Errorf("cannot get commenter by email: %v", err)
+				util.GetLogger().Errorf("cannot get commenter by email: %v", err)
 				return errorInternal
 			}
 		}
@@ -64,7 +65,7 @@ func forgot(email string, entity string) error {
 	`
 	_, err = db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert resetHex: %v", err)
+		util.GetLogger().Errorf("cannot insert resetHex: %v", err)
 		return errorInternal
 	}
 

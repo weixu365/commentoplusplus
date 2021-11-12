@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func commenterDelete(commenterHex string) error {
@@ -16,7 +17,7 @@ func commenterDelete(commenterHex string) error {
 	`
 	_, err := db.Exec(statement, commenterHex)
 	if err != nil {
-		logger.Errorf("cannot delete commenter: %v", err)
+		util.GetLogger().Errorf("cannot delete commenter: %v", err)
 		return errorInternal
 	}
 

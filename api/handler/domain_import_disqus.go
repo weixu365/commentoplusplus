@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"net/http"
+	"simple-commenting/util"
 	"strings"
 	"time"
 
@@ -66,7 +67,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 	// TODO: make sure this is from disqus.com
 	resp, err := http.Get(url)
 	if err != nil {
-		logger.Errorf("cannot get url: %v", err)
+		util.GetLogger().Errorf("cannot get url: %v", err)
 		return 0, errorCannotDownloadDisqus
 	}
 
@@ -74,20 +75,20 @@ func domainImportDisqus(domain string, url string) (int, error) {
 
 	zr, err := gzip.NewReader(resp.Body)
 	if err != nil {
-		logger.Errorf("cannot create gzip reader: %v", err)
+		util.GetLogger().Errorf("cannot create gzip reader: %v", err)
 		return 0, errorInternal
 	}
 
 	contents, err := ioutil.ReadAll(zr)
 	if err != nil {
-		logger.Errorf("cannot read gzip contents uncompressed: %v", err)
+		util.GetLogger().Errorf("cannot read gzip contents uncompressed: %v", err)
 		return 0, errorInternal
 	}
 
 	x := disqusXML{}
 	err = xml.Unmarshal(contents, &x)
 	if err != nil {
-		logger.Errorf("cannot unmarshal XML: %v", err)
+		util.GetLogger().Errorf("cannot unmarshal XML: %v", err)
 		return 0, errorInternal
 	}
 
@@ -117,7 +118,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 
 		c, err := commenterGetByEmail("commento", email)
 		if err != nil && err != errorNoSuchCommenter {
-			logger.Errorf("cannot get commenter by email: %v", err)
+			util.GetLogger().Errorf("cannot get commenter by email: %v", err)
 			return 0, errorInternal
 		}
 
@@ -128,7 +129,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 
 		randomPassword, err := randomHex(32)
 		if err != nil {
-			logger.Errorf("cannot generate random password for new commenter: %v", err)
+			util.GetLogger().Errorf("cannot generate random password for new commenter: %v", err)
 			return 0, errorInternal
 		}
 

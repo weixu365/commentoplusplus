@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 )
@@ -75,7 +76,7 @@ func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err = commenterUpdate(c.CommenterHex, email, name, link, photo, "google"); err != nil {
-			logger.Warningf("cannot update commenter: %s", err)
+			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
 

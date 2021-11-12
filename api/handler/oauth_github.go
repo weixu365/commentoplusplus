@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
@@ -16,16 +17,16 @@ func githubOauthConfigure() error {
 	}
 
 	if os.Getenv("GITHUB_KEY") == "" {
-		logger.Errorf("COMMENTO_GITHUB_KEY not configured, but COMMENTO_GITHUB_SECRET is set")
+		util.GetLogger().Errorf("COMMENTO_GITHUB_KEY not configured, but COMMENTO_GITHUB_SECRET is set")
 		return errorOauthMisconfigured
 	}
 
 	if os.Getenv("GITHUB_SECRET") == "" {
-		logger.Errorf("COMMENTO_GITHUB_SECRET not configured, but COMMENTO_GITHUB_KEY is set")
+		util.GetLogger().Errorf("COMMENTO_GITHUB_SECRET not configured, but COMMENTO_GITHUB_KEY is set")
 		return errorOauthMisconfigured
 	}
 
-	logger.Infof("loading github OAuth config")
+	util.GetLogger().Infof("loading github OAuth config")
 
 	githubConfig = &oauth2.Config{
 		RedirectURL:  os.Getenv("ORIGIN") + "/api/oauth/github/callback",

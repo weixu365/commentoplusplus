@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"simple-commenting/util"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -42,18 +43,18 @@ func routesServe() error {
 		key := os.Getenv("SSL_KEY")
 		if cert == "" || key == "" {
 			myerr := fmt.Errorf("missing cert %s or key %s file", cert, key)
-			logger.Errorf("cannot start server: %v", myerr)
+			util.GetLogger().Errorf("cannot start server: %v", myerr)
 			return myerr
 		}
-		logger.Infof("starting SSL server on %s\n", addrPort)
+		util.GetLogger().Infof("starting SSL server on %s\n", addrPort)
 		if err := http.ListenAndServeTLS(addrPort, cert, key, handlers.CORS(origins, headers, methods)(router)); err != nil {
-			logger.Errorf("cannot start SSL server: %v", err)
+			util.GetLogger().Errorf("cannot start SSL server: %v", err)
 			return err
 		}
 	} else { // Non-SSL
-		logger.Infof("starting server on %s\n", addrPort)
+		util.GetLogger().Infof("starting server on %s\n", addrPort)
 		if err := http.ListenAndServe(addrPort, handlers.CORS(origins, headers, methods)(router)); err != nil {
-			logger.Errorf("cannot start server: %v", err)
+			util.GetLogger().Errorf("cannot start server: %v", err)
 			return err
 		}
 	}

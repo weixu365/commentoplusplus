@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -37,7 +38,7 @@ func ownerLogin(email string, password string) (string, error) {
 
 	ownerToken, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("cannot create ownerToken: %v", err)
+		util.GetLogger().Errorf("cannot create ownerToken: %v", err)
 		return "", errorInternal
 	}
 
@@ -48,7 +49,7 @@ func ownerLogin(email string, password string) (string, error) {
 	`
 	_, err = db.Exec(statement, ownerToken, ownerHex, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert ownerSession: %v\n", err)
+		util.GetLogger().Errorf("cannot insert ownerSession: %v\n", err)
 		return "", errorInternal
 	}
 

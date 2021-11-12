@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func commenterUpdate(commenterHex string, email string, name string, link string, photo string, provider string) error {
@@ -36,7 +37,7 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 	`
 	_, err := db.Exec(statement, commenterHex, provider, email, name, link, photo)
 	if err != nil {
-		logger.Errorf("cannot update commenter: %v", err)
+		util.GetLogger().Errorf("cannot update commenter: %v", err)
 		return errorInternal
 	}
 

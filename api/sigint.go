@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/signal"
+	"simple-commenting/util"
 	"syscall"
 )
 
@@ -10,7 +11,7 @@ func sigintCleanup() int {
 	if db != nil {
 		err := db.Close()
 		if err == nil {
-			logger.Errorf("cannot close database connection: %v", err)
+			util.GetLogger().Errorf("cannot close database connection: %v", err)
 			return 1
 		}
 	}
@@ -19,7 +20,7 @@ func sigintCleanup() int {
 }
 
 func sigintCleanupSetup() error {
-	logger.Infof("setting up SIGINT cleanup")
+	util.GetLogger().Infof("setting up SIGINT cleanup")
 
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGINT)

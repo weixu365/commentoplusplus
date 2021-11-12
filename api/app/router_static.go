@@ -1,13 +1,15 @@
 package app
 
 import (
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"mime"
 	"net/http"
 	"os"
 	"path"
+	"simple-commenting/util"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func redirectLogin(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +30,7 @@ var compress bool
 func fileDetemplate(f string) ([]byte, error) {
 	contents, err := ioutil.ReadFile(f)
 	if err != nil {
-		logger.Errorf("cannot read file %s: %v", f, err)
+		util.GetLogger().Errorf("cannot read file %s: %v", f, err)
 		return []byte{}, err
 	}
 
@@ -44,7 +46,7 @@ func fileDetemplate(f string) ([]byte, error) {
 func footerInit() error {
 	contents, err := fileDetemplate(os.Getenv("STATIC") + "/footer.html")
 	if err != nil {
-		logger.Errorf("cannot init footer: %v", err)
+		util.GetLogger().Errorf("cannot init footer: %v", err)
 		return err
 	}
 
@@ -55,7 +57,7 @@ func footerInit() error {
 func fileLoad(f string) ([]byte, error) {
 	b, err := fileDetemplate(f)
 	if err != nil {
-		logger.Errorf("cannot load file %s: %v", f, err)
+		util.GetLogger().Errorf("cannot load file %s: %v", f, err)
 		return []byte{}, err
 	}
 
@@ -72,14 +74,14 @@ func staticRouterInit(router *mux.Router) error {
 	subdir := pathStrip(os.Getenv("ORIGIN"))
 
 	if err = footerInit(); err != nil {
-		logger.Errorf("error initialising static router: %v", err)
+		util.GetLogger().Errorf("error initialising static router: %v", err)
 		return err
 	}
 
 	for _, dir := range []string{"/js", "/css", "/images", "/fonts", "/i18n"} {
 		files, err := ioutil.ReadDir(os.Getenv("STATIC") + dir)
 		if err != nil {
-			logger.Errorf("cannot read directory %s%s: %v", os.Getenv("STATIC"), dir, err)
+			util.GetLogger().Errorf("cannot read directory %s%s: %v", os.Getenv("STATIC"), dir, err)
 			return err
 		}
 
@@ -87,7 +89,7 @@ func staticRouterInit(router *mux.Router) error {
 			f := dir + "/" + file.Name()
 			asset[f], err = fileLoad(os.Getenv("STATIC") + f)
 			if err != nil {
-				logger.Errorf("cannot detemplate %s%s: %v", os.Getenv("STATIC"), f, err)
+				util.GetLogger().Errorf("cannot detemplate %s%s: %v", os.Getenv("STATIC"), f, err)
 				return err
 			}
 		}
@@ -110,7 +112,7 @@ func staticRouterInit(router *mux.Router) error {
 		f := page + ".html"
 		asset[page], err = fileLoad(os.Getenv("STATIC") + f)
 		if err != nil {
-			logger.Errorf("cannot detemplate %s%s: %v", os.Getenv("STATIC"), f, err)
+			util.GetLogger().Errorf("cannot detemplate %s%s: %v", os.Getenv("STATIC"), f, err)
 			return err
 		}
 	}

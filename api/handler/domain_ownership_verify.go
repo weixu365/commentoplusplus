@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/util"
+
 func domainOwnershipVerify(ownerHex string, domain string) (bool, error) {
 	if ownerHex == "" || domain == "" {
 		return false, errorMissingField
@@ -16,7 +18,7 @@ func domainOwnershipVerify(ownerHex string, domain string) (bool, error) {
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
-		logger.Errorf("cannot query if domain owner: %v", err)
+		util.GetLogger().Errorf("cannot query if domain owner: %v", err)
 		return false, errorInternal
 	}
 

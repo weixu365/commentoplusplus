@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"simple-commenting/util"
 )
 
 func ownerConfirmHex(confirmHex string) error {
@@ -21,13 +22,13 @@ func ownerConfirmHex(confirmHex string) error {
 	`
 	res, err := db.Exec(statement, confirmHex)
 	if err != nil {
-		logger.Errorf("cannot mark user's confirmedEmail as true: %v\n", err)
+		util.GetLogger().Errorf("cannot mark user's confirmedEmail as true: %v\n", err)
 		return errorInternal
 	}
 
 	count, err := res.RowsAffected()
 	if err != nil {
-		logger.Errorf("cannot count rows affected: %v\n", err)
+		util.GetLogger().Errorf("cannot count rows affected: %v\n", err)
 		return errorInternal
 	}
 
@@ -41,7 +42,7 @@ func ownerConfirmHex(confirmHex string) error {
 	`
 	_, err = db.Exec(statement, confirmHex)
 	if err != nil {
-		logger.Warningf("cannot remove confirmation token: %v\n", err)
+		util.GetLogger().Warningf("cannot remove confirmation token: %v\n", err)
 		// Don't return an error because this is not critical.
 	}
 

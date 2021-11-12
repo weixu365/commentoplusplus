@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainStatistics(domain string) ([]int64, error) {
@@ -18,7 +19,7 @@ func domainStatistics(domain string) ([]int64, error) {
 	`
 	rows, err := db.Query(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot get daily views: %v", err)
+		util.GetLogger().Errorf("cannot get daily views: %v", err)
 		return []int64{}, errorInternal
 	}
 
@@ -28,7 +29,7 @@ func domainStatistics(domain string) ([]int64, error) {
 	for rows.Next() {
 		var count int64
 		if err = rows.Scan(&count); err != nil {
-			logger.Errorf("cannot get daily views for the last month: %v", err)
+			util.GetLogger().Errorf("cannot get daily views for the last month: %v", err)
 			return []int64{}, errorInternal
 		}
 		last30Days = append(last30Days, count)

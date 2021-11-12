@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"simple-commenting/util"
 )
 
 func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +49,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	key, err := hex.DecodeString(d.SsoSecret)
 	if err != nil {
-		logger.Errorf("cannot decode SSO secret as hex: %v", err)
+		util.GetLogger().Errorf("cannot decode SSO secret as hex: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
@@ -61,7 +62,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	tokenBytes, err := hex.DecodeString(token)
 	if err != nil {
-		logger.Errorf("cannot decode hex token: %v", err)
+		util.GetLogger().Errorf("cannot decode hex token: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
 		return
 	}
@@ -74,7 +75,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// this should really not be happening; we're checking if the
 		// passed URL is valid at domain update
-		logger.Errorf("cannot parse URL: %v", err)
+		util.GetLogger().Errorf("cannot parse URL: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
 		return
 	}

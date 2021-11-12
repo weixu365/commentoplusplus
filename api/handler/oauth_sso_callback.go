@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"simple-commenting/util"
 )
 
 func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +57,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		if err == errorNoSuchDomain {
 			fmt.Fprintf(w, "Error: %s\n", err.Error())
 		} else {
-			logger.Errorf("cannot get domain for SSO: %v", err)
+			util.GetLogger().Errorf("cannot get domain for SSO: %v", err)
 			fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
 		}
 		return
@@ -69,7 +70,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	key, err := hex.DecodeString(d.SsoSecret)
 	if err != nil {
-		logger.Errorf("cannot decode SSO secret as hex: %v", err)
+		util.GetLogger().Errorf("cannot decode SSO secret as hex: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
@@ -104,7 +105,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err = commenterUpdate(c.CommenterHex, payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domain); err != nil {
-			logger.Warningf("cannot update commenter: %s", err)
+			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
 

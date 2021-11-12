@@ -1,15 +1,26 @@
 package util
 
 import (
-	"github.com/op/go-logging"
+	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
-var logger *logging.Logger
+var logger *logrus.Logger
 
-func loggerCreate() error {
-	format := logging.MustStringFormatter("[%{level}] %{shortfile} %{shortfunc}(): %{message}")
-	logging.SetFormatter(format)
-	logger = logging.MustGetLogger("commento")
+func CreateLogger() *logrus.Logger {
+	var logger = logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+	logger.Out = os.Stdout
 
-	return nil
+	return logger
+}
+
+func GetLogger() *logrus.Logger {
+	if logger == nil {
+		logger = CreateLogger()
+	}
+
+	return logger
 }

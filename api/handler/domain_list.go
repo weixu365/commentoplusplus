@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainList(ownerHex string) ([]domain, error) {
@@ -16,7 +17,7 @@ func domainList(ownerHex string) ([]domain, error) {
 	`
 	rows, err := db.Query(statement, ownerHex)
 	if err != nil {
-		logger.Errorf("cannot query domains: %v", err)
+		util.GetLogger().Errorf("cannot query domains: %v", err)
 		return nil, errorInternal
 	}
 	defer rows.Close()
@@ -25,7 +26,7 @@ func domainList(ownerHex string) ([]domain, error) {
 	for rows.Next() {
 		var d domain
 		if err = domainsRowScan(rows, &d); err != nil {
-			logger.Errorf("cannot Scan domain: %v", err)
+			util.GetLogger().Errorf("cannot Scan domain: %v", err)
 			return nil, errorInternal
 		}
 

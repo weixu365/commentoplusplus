@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 
 	"github.com/lib/pq"
 )
@@ -24,7 +25,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 	`
 	rows, err := db.Query(statement, domain, pq.Array(paths))
 	if err != nil {
-		logger.Errorf("cannot get comments: %v", err)
+		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return nil, errorInternal
 	}
 	defer rows.Close()
@@ -33,7 +34,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 		var path string
 		var commentCount int
 		if err = rows.Scan(&path, &commentCount); err != nil {
-			logger.Errorf("cannot scan path and commentCount: %v", err)
+			util.GetLogger().Errorf("cannot scan path and commentCount: %v", err)
 			return nil, errorInternal
 		}
 

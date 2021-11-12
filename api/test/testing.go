@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"os"
+	"simple-commenting/util"
 	"testing"
 
 	"github.com/op/go-logging"
@@ -107,9 +108,7 @@ func setupTestEnv() error {
 	if !setupComplete {
 		setupComplete = true
 
-		if err := loggerCreate(); err != nil {
-			return err
-		}
+		util.GetLogger()
 
 		// Print messages to console only if verbose. Sounds like a good idea to
 		// keep the console clean on `go test`.

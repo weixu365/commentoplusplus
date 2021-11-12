@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func emailUpdate(e email) error {
@@ -12,7 +13,7 @@ func emailUpdate(e email) error {
 	`
 	_, err := db.Exec(statement, e.Email, e.UnsubscribeSecretHex, e.SendReplyNotifications, e.SendModeratorNotifications)
 	if err != nil {
-		logger.Errorf("error updating email: %v", err)
+		util.GetLogger().Errorf("error updating email: %v", err)
 		return errorInternal
 	}
 

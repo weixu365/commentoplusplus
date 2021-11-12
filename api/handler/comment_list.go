@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"net/http"
+	"simple-commenting/util"
 )
 
 func commentList(commenterHex string, domain string, path string, includeUnapproved bool) ([]comment, map[string]commenter, error) {
@@ -48,7 +49,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 	}
 
 	if err != nil {
-		logger.Errorf("cannot get comments: %v", err)
+		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return nil, nil, errorInternal
 	}
 	defer rows.Close()
@@ -99,7 +100,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 		if _, ok := commenters[c.CommenterHex]; !ok {
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
-				logger.Errorf("cannot retrieve commenter: %v", err)
+				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
 				return nil, nil, errorInternal
 			}
 		}
@@ -233,7 +234,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 	rows, err = db.Query(statement, domain)
 
 	if err != nil {
-		logger.Errorf("cannot get comments: %v", err)
+		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return nil, nil, errorInternal
 	}
 	defer rows.Close()
@@ -263,7 +264,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 		if _, ok := commenters[c.CommenterHex]; !ok {
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
-				logger.Errorf("cannot retrieve commenter: %v", err)
+				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
 				return nil, nil, errorInternal
 			}
 		}
@@ -352,7 +353,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 	rows, err = db.Query(statement, domain)
 
 	if err != nil {
-		logger.Errorf("cannot get comments: %v", err)
+		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return nil, nil, errorInternal
 	}
 	defer rows.Close()
@@ -382,7 +383,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 		if _, ok := commenters[c.CommenterHex]; !ok {
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
-				logger.Errorf("cannot retrieve commenter: %v", err)
+				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
 				return nil, nil, errorInternal
 			}
 		}

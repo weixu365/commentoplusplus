@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -16,16 +17,16 @@ func googleOauthConfigure() error {
 	}
 
 	if os.Getenv("GOOGLE_KEY") == "" {
-		logger.Errorf("COMMENTO_GOOGLE_KEY not configured, but COMMENTO_GOOGLE_SECRET is set")
+		util.GetLogger().Errorf("COMMENTO_GOOGLE_KEY not configured, but COMMENTO_GOOGLE_SECRET is set")
 		return errorOauthMisconfigured
 	}
 
 	if os.Getenv("GOOGLE_SECRET") == "" {
-		logger.Errorf("COMMENTO_GOOGLE_SECRET not configured, but COMMENTO_GOOGLE_KEY is set")
+		util.GetLogger().Errorf("COMMENTO_GOOGLE_SECRET not configured, but COMMENTO_GOOGLE_KEY is set")
 		return errorOauthMisconfigured
 	}
 
-	logger.Infof("loading Google OAuth config")
+	util.GetLogger().Infof("loading Google OAuth config")
 
 	googleConfig = &oauth2.Config{
 		RedirectURL:  os.Getenv("ORIGIN") + "/api/oauth/google/callback",

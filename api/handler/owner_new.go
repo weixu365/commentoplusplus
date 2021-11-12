@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"os"
+	"simple-commenting/util"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -27,13 +28,13 @@ func ownerNew(email string, name string, password string) (string, error) {
 
 	ownerHex, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("cannot generate ownerHex: %v", err)
+		util.GetLogger().Errorf("cannot generate ownerHex: %v", err)
 		return "", errorInternal
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		logger.Errorf("cannot generate hash from password: %v\n", err)
+		util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
 		return "", errorInternal
 	}
 
@@ -52,7 +53,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 	if smtpConfigured {
 		confirmHex, err := randomHex(32)
 		if err != nil {
-			logger.Errorf("cannot generate confirmHex: %v", err)
+			util.GetLogger().Errorf("cannot generate confirmHex: %v", err)
 			return "", errorInternal
 		}
 
@@ -63,7 +64,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 		`
 		_, err = db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
 		if err != nil {
-			logger.Errorf("cannot insert confirmHex: %v\n", err)
+			util.GetLogger().Errorf("cannot insert confirmHex: %v\n", err)
 			return "", errorInternal
 		}
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/util"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func emailNew(email string) error {
 	`
 	_, err = db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert email into emails: %v", err)
+		util.GetLogger().Errorf("cannot insert email into emails: %v", err)
 		return errorInternal
 	}
 

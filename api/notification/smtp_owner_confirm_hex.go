@@ -3,6 +3,7 @@ package notification
 import (
 	"bytes"
 	"os"
+	"simple-commenting/util"
 )
 
 type ownerConfirmHexPlugs struct {
@@ -16,7 +17,7 @@ func smtpOwnerConfirmHex(to string, toName string, confirmHex string) error {
 
 	err := smtpSendMail(to, toName, "", "Please confirm your email address", body.String())
 	if err != nil {
-		logger.Errorf("cannot send confirmation email: %v", err)
+		util.GetLogger().Errorf("cannot send confirmation email: %v", err)
 		return errorCannotSendEmail
 	}
 

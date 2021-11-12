@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 	"time"
 )
 
@@ -11,7 +12,7 @@ func domainModeratorNew(domain string, email string) error {
 	}
 
 	if err := emailNew(email); err != nil {
-		logger.Errorf("cannot create email when creating moderator: %v", err)
+		util.GetLogger().Errorf("cannot create email when creating moderator: %v", err)
 		return errorInternal
 	}
 
@@ -22,7 +23,7 @@ func domainModeratorNew(domain string, email string) error {
 	`
 	_, err := db.Exec(statement, domain, email, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("cannot insert new moderator: %v", err)
+		util.GetLogger().Errorf("cannot insert new moderator: %v", err)
 		return errorInternal
 	}
 

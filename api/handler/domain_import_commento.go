@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"simple-commenting/util"
 )
 
 type commentoExportV1 struct {
@@ -21,37 +22,37 @@ func domainImportCommento(domain string, url string) (int, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		logger.Errorf("cannot get url: %v", err)
+		util.GetLogger().Errorf("cannot get url: %v", err)
 		return 0, errorCannotDownloadCommento
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Errorf("cannot read body: %v", err)
+		util.GetLogger().Errorf("cannot read body: %v", err)
 		return 0, errorCannotDownloadCommento
 	}
 
 	zr, err := gzip.NewReader(bytes.NewBuffer(body))
 	if err != nil {
-		logger.Errorf("cannot create gzip reader: %v", err)
+		util.GetLogger().Errorf("cannot create gzip reader: %v", err)
 		return 0, errorInternal
 	}
 
 	contents, err := ioutil.ReadAll(zr)
 	if err != nil {
-		logger.Errorf("cannot read gzip contents uncompressed: %v", err)
+		util.GetLogger().Errorf("cannot read gzip contents uncompressed: %v", err)
 		return 0, errorInternal
 	}
 
 	var data commentoExportV1
 	if err := json.Unmarshal(contents, &data); err != nil {
-		logger.Errorf("cannot unmarshal JSON at %s: %v", url, err)
+		util.GetLogger().Errorf("cannot unmarshal JSON at %s: %v", url, err)
 		return 0, errorInternal
 	}
 
 	if data.Version != 1 {
-		logger.Errorf("invalid data version (got %d, want 1): %v", data.Version, err)
+		util.GetLogger().Errorf("invalid data version (got %d, want 1): %v", data.Version, err)
 		return 0, errorUnsupportedCommentoImportVersion
 	}
 
@@ -61,7 +62,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 	for _, commenter := range data.Commenters {
 		c, err := commenterGetByEmail("commento", commenter.Email)
 		if err != nil && err != errorNoSuchCommenter {
-			logger.Errorf("cannot get commenter by email: %v", err)
+			util.GetLogger().Errorf("cannot get commenter by email: %v", err)
 			return 0, errorInternal
 		}
 
@@ -72,7 +73,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 
 		randomPassword, err := randomHex(32)
 		if err != nil {
-			logger.Errorf("cannot generate random password for new commenter: %v", err)
+			util.GetLogger().Errorf("cannot generate random password for new commenter: %v", err)
 			return 0, errorInternal
 		}
 
@@ -98,12 +99,12 @@ func domainImportCommento(domain string, url string) (int, error) {
 		for _, comment := range comments[keys[i]] {
 			cHex, ok := commenterHex[comment.CommenterHex]
 			if !ok {
-				logger.Errorf("cannot get commenter: %v", err)
+				util.GetLogger().Errorf("cannot get commenter: %v", err)
 				return numImported, errorInternal
 			}
 			parentHex, ok := commentHex[comment.ParentHex]
 			if !ok {
-				logger.Errorf("cannot get parent comment: %v", err)
+				util.GetLogger().Errorf("cannot get parent comment: %v", err)
 				return numImported, errorInternal
 			}
 

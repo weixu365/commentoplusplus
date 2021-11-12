@@ -1,4 +1,4 @@
-module gitlab.com/commento/commento/api
+module simple-commenting
 
 go 1.12
 
@@ -15,6 +15,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.4
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/russross/blackfriday v1.6.0
+	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb // indirect
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110

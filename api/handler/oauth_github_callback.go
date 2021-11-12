@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 )
@@ -23,7 +24,7 @@ func githubGetPrimaryEmail(accessToken string) (string, error) {
 
 	user := []map[string]interface{}{}
 	if err := json.Unmarshal(contents, &user); err != nil {
-		logger.Errorf("error unmarshaling github user: %v", err)
+		util.GetLogger().Errorf("error unmarshaling github user: %v", err)
 		return "", errorInternal
 	}
 
@@ -122,7 +123,7 @@ func githubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err = commenterUpdate(c.CommenterHex, email, name, link, photo, "github"); err != nil {
-			logger.Warningf("cannot update commenter: %s", err)
+			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
 

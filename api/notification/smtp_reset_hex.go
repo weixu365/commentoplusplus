@@ -3,6 +3,7 @@ package notification
 import (
 	"bytes"
 	"os"
+	"simple-commenting/util"
 )
 
 type resetHexPlugs struct {
@@ -16,7 +17,7 @@ func smtpResetHex(to string, toName string, resetHex string) error {
 
 	err := smtpSendMail(to, toName, "", "Reset your password", body.String())
 	if err != nil {
-		logger.Errorf("cannot send reset email: %v", err)
+		util.GetLogger().Errorf("cannot send reset email: %v", err)
 		return errorCannotSendEmail
 	}
 

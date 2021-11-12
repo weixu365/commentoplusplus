@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/util"
 	"time"
 )
 
@@ -16,7 +17,7 @@ type ssoPayload struct {
 func ssoTokenNew(domain string, commenterToken string) (string, error) {
 	token, err := randomHex(32)
 	if err != nil {
-		logger.Errorf("error generating SSO token hex: %v", err)
+		util.GetLogger().Errorf("error generating SSO token hex: %v", err)
 		return "", errorInternal
 	}
 
@@ -27,7 +28,7 @@ func ssoTokenNew(domain string, commenterToken string) (string, error) {
 	`
 	_, err = db.Exec(statement, token, domain, commenterToken, time.Now().UTC())
 	if err != nil {
-		logger.Errorf("error inserting SSO token: %v", err)
+		util.GetLogger().Errorf("error inserting SSO token: %v", err)
 		return "", errorInternal
 	}
 
@@ -53,7 +54,7 @@ func ssoTokenExtract(token string) (string, string, error) {
 		WHERE token = $1;
 	`
 	if _, err := db.Exec(statement, token); err != nil {
-		logger.Errorf("cannot delete SSO token after usage: %v", err)
+		util.GetLogger().Errorf("cannot delete SSO token after usage: %v", err)
 		return "", "", errorInternal
 	}
 

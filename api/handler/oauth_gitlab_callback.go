@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
 )
@@ -31,7 +32,7 @@ func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
-	logger.Infof("%v", resp.StatusCode)
+	util.GetLogger().Infof("%v", resp.StatusCode)
 	defer resp.Body.Close()
 
 	contents, err := ioutil.ReadAll(resp.Body)
@@ -86,7 +87,7 @@ func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if err = commenterUpdate(c.CommenterHex, email, name, link, photo, "gitlab"); err != nil {
-			logger.Warningf("cannot update commenter: %s", err)
+			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
 

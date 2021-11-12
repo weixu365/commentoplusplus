@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/util"
 )
 
 func domainClear(domain string) error {
@@ -16,7 +17,7 @@ func domainClear(domain string) error {
 	`
 	_, err := db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf("cannot delete votes: %v", err)
+		util.GetLogger().Errorf("cannot delete votes: %v", err)
 		return errorInternal
 	}
 
@@ -26,7 +27,7 @@ func domainClear(domain string) error {
 	`
 	_, err = db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf(statement, domain)
+		util.GetLogger().Errorf(statement, domain)
 		return errorInternal
 	}
 
@@ -36,7 +37,7 @@ func domainClear(domain string) error {
 	`
 	_, err = db.Exec(statement, domain)
 	if err != nil {
-		logger.Errorf(statement, domain)
+		util.GetLogger().Errorf(statement, domain)
 		return errorInternal
 	}
 
