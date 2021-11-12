@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -17,7 +18,7 @@ func domainStatistics(domain string) ([]int64, error) {
 		GROUP BY gen.date
 		ORDER BY gen.date;
 	`
-	rows, err := db.Query(statement, domain)
+	rows, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get daily views: %v", err)
 		return []int64{}, errorInternal

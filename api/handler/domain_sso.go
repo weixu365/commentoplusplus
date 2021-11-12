@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -21,7 +22,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 		SET ssoSecret = $2
 		WHERE domain = $1;
 	`
-	_, err = db.Exec(statement, domain, ssoSecret)
+	_, err = repository.Db.Exec(statement, domain, ssoSecret)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update ssoSecret: %v", err)
 		return "", errorInternal

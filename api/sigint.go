@@ -3,13 +3,14 @@ package main
 import (
 	"os"
 	"os/signal"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"syscall"
 )
 
 func sigintCleanup() int {
 	if db != nil {
-		err := db.Close()
+		err := repository.Db.Close()
 		if err == nil {
 			util.GetLogger().Errorf("cannot close database connection: %v", err)
 			return 1

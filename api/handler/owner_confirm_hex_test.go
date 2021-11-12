@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/test"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ func TestOwnerConfirmHexBasics(t *testing.T) {
 		UPDATE owners
 		SET confirmedEmail=false;
 	`
-	_, err := db.Exec(statement)
+	_, err := repository.Db.Exec(statement)
 	if err != nil {
 		t.Errorf("unexpected error when setting confirmedEmail=false: %v", err)
 		return
@@ -28,7 +29,7 @@ func TestOwnerConfirmHexBasics(t *testing.T) {
 		ownerConfirmHexes (confirmHex, ownerHex, sendDate)
 		VALUES            ($1,         $2,       $3      );
 	`
-	_, err = db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
 	if err != nil {
 		t.Errorf("unexpected error creating inserting confirmHex: %v\n", err)
 		return
@@ -44,7 +45,7 @@ func TestOwnerConfirmHexBasics(t *testing.T) {
 		FROM owners
 		WHERE ownerHex=$1;
 	`
-	row := db.QueryRow(statement, ownerHex)
+	row := repository.Db.QueryRow(statement, ownerHex)
 
 	var confirmedHex bool
 	if err = row.Scan(&confirmedHex); err != nil {

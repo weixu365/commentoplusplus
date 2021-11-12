@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -17,7 +18,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 		FROM comments
 		WHERE commentHex = $1;
 	`
-	row := db.QueryRow(statement, commentHex)
+	row := repository.Db.QueryRow(statement, commentHex)
 
 	var authorHex string
 	if err := row.Scan(&authorHex); err != nil {
@@ -36,7 +37,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 		ON CONFLICT (commentHex, commenterHex) DO
 		UPDATE SET direction = $3;
 	`
-	_, err := db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
+	_, err := repository.Db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("error inserting/updating votes: %v", err)
 		return errorInternal

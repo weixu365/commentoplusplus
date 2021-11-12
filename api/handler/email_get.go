@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 )
 
 var emailsRowColumns = `
@@ -28,7 +29,7 @@ func emailGet(em string) (email, error) {
 		FROM emails
 		WHERE email = $1;
 	`
-	row := db.QueryRow(statement, em)
+	row := repository.Db.QueryRow(statement, em)
 
 	var e email
 	if err := emailsRowScan(row, &e); err != nil {
@@ -45,7 +46,7 @@ func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (email, error) 
 		FROM emails
 		WHERE unsubscribeSecretHex = $1;
 	`
-	row := db.QueryRow(statement, unsubscribeSecretHex)
+	row := repository.Db.QueryRow(statement, unsubscribeSecretHex)
 
 	e := email{}
 	if err := emailsRowScan(row, &e); err != nil {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 
@@ -56,7 +57,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 		commenters (commenterHex, email, name, link, photo, provider, passwordHash, joinDate)
 		VALUES     ($1,           $2,    $3,   $4,   $5,    $6,       $7,           $8      );
 	`
-	_, err = db.Exec(statement, commenterHex, email, name, link, photo, provider, string(passwordHash), time.Now().UTC())
+	_, err = repository.Db.Exec(statement, commenterHex, email, name, link, photo, provider, string(passwordHash), time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert commenter: %v", err)
 		return "", errorInternal

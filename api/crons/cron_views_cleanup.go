@@ -1,6 +1,7 @@
 package crons
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -12,7 +13,7 @@ func viewsCleanupBegin() error {
 				DELETE FROM views
 				WHERE viewDate < $1;
 			`
-			_, err := db.Exec(statement, time.Now().UTC().AddDate(0, 0, -45))
+			_, err := repository.Db.Exec(statement, time.Now().UTC().AddDate(0, 0, -45))
 			if err != nil {
 				util.GetLogger().Errorf("error cleaning up views: %v", err)
 				return

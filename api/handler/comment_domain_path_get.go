@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/repository"
+
 func commentDomainPathGet(commentHex string) (string, string, error) {
 	if commentHex == "" {
 		return "", "", errorMissingField
@@ -10,7 +12,7 @@ func commentDomainPathGet(commentHex string) (string, string, error) {
 		FROM comments
 		WHERE commentHex = $1;
 	`
-	row := db.QueryRow(statement, commentHex)
+	row := repository.Db.QueryRow(statement, commentHex)
 
 	var domain string
 	var path string

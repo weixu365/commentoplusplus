@@ -26,7 +26,7 @@ func MigrateFromDir(dir string) error {
 		SELECT filename
 		FROM migrations;
 	`
-	rows, err := db.Query(statement)
+	rows, err := repository.Db.Query(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot query migrations: %v", err)
 		return err
@@ -59,7 +59,7 @@ func MigrateFromDir(dir string) error {
 					return err
 				}
 
-				if _, err = db.Exec(string(contents)); err != nil {
+				if _, err = repository.Db.Exec(string(contents)); err != nil {
 					util.GetLogger().Errorf("cannot execute the SQL in %s: %v", f, err)
 					return err
 				}
@@ -69,7 +69,7 @@ func MigrateFromDir(dir string) error {
 					migrations (filename)
 					VALUES     ($1      );
 				`
-				_, err = db.Exec(statement, file.Name())
+				_, err = repository.Db.Exec(statement, file.Name())
 				if err != nil {
 					util.GetLogger().Errorf("cannot insert filename into the migrations table: %v", err)
 					return err

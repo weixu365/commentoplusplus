@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/util"
+import (
+	"simple-commenting/repository"
+	"simple-commenting/util"
+)
 
 func emailNotificationModerator(d domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
 	if d.EmailNotificationPolicy == "none" {
@@ -52,7 +55,7 @@ func emailNotificationModerator(d domain, path string, title string, commenterHe
 			FROM commenters
 			WHERE email = $1;
 		`
-		row := db.QueryRow(statement, m.Email)
+		row := repository.Db.QueryRow(statement, m.Email)
 		var name string
 		if err := row.Scan(&name); err != nil {
 			// The moderator has probably not created a commenter account.
@@ -83,7 +86,7 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 		FROM comments
 		WHERE commentHex = $1;
 	`
-	row := db.QueryRow(statement, parentHex)
+	row := repository.Db.QueryRow(statement, parentHex)
 
 	var parentCommenterHex string
 	err := row.Scan(&parentCommenterHex)

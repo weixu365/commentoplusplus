@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -17,7 +18,7 @@ func commentApprove(commentHex string, url string) error {
 		WHERE commentHex = $1;
 	`
 
-	_, err := db.Exec(statement, commentHex)
+	_, err := repository.Db.Exec(statement, commentHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot approve comment: %v", err)
 		return errorInternal

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/test"
 	"testing"
 )
@@ -20,7 +21,7 @@ func TestCommenterSessionUpdateBasics(t *testing.T) {
 		FROM commenterSessions
 		WHERE commenterToken = $1;
 	`
-	row := db.QueryRow(statement, commenterToken)
+	row := repository.Db.QueryRow(statement, commenterToken)
 
 	var commenterHex string
 	if err := row.Scan(&commenterHex); err != nil {

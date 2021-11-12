@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/repository"
+
 var commentsRowColumns = `
 	comments.commentHex,
 	comments.commenterHex,
@@ -36,7 +38,7 @@ func commentGetByCommentHex(commentHex string) (comment, error) {
 		FROM comments
 		WHERE comments.commentHex = $1;
 	`
-	row := db.QueryRow(statement, commentHex)
+	row := repository.Db.QueryRow(statement, commentHex)
 
 	var c comment
 	if err := commentsRowScan(row, &c); err != nil {

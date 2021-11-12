@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -43,9 +44,9 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 	var err error
 
 	if !includeUnapproved && commenterHex != "anonymous" {
-		rows, err = db.Query(statement, domain, path, commenterHex)
+		rows, err = repository.Db.Query(statement, domain, path, commenterHex)
 	} else {
-		rows, err = db.Query(statement, domain, path)
+		rows, err = repository.Db.Query(statement, domain, path)
 	}
 
 	if err != nil {
@@ -79,7 +80,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 				FROM votes
 				WHERE commentHex=$1 AND commenterHex=$2;
 			`
-			row := db.QueryRow(statement, c.CommentHex, commenterHex)
+			row := repository.Db.QueryRow(statement, c.CommentHex, commenterHex)
 
 			if err = row.Scan(&c.Direction); err != nil {
 				// TODO: is the only error here that there is no such entry?
@@ -231,7 +232,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 	var rows *sql.Rows
 	var err error
 
-	rows, err = db.Query(statement, domain)
+	rows, err = repository.Db.Query(statement, domain)
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
@@ -350,7 +351,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 	var rows *sql.Rows
 	var err error
 
-	rows, err = db.Query(statement, domain)
+	rows, err = repository.Db.Query(statement, domain)
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)

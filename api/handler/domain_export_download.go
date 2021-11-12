@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"simple-commenting/repository"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func domainExportDownloadHandler(w http.ResponseWriter, r *http.Request) {
 		FROM exports
 		WHERE exportHex = $1;
 	`
-	row := db.QueryRow(statement, exportHex)
+	row := repository.Db.QueryRow(statement, exportHex)
 
 	var domain string
 	var binData []byte

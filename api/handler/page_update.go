@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -19,7 +20,7 @@ func pageUpdate(p page) error {
 		ON CONFLICT (domain, path) DO
 			UPDATE SET isLocked = $3, stickyCommentHex = $4;
 	`
-	_, err := db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
+	_, err := repository.Db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
 	if err != nil {
 		util.GetLogger().Errorf("error setting page attributes: %v", err)
 		return errorInternal

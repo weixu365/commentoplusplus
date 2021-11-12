@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -17,7 +18,7 @@ func emailNew(email string) error {
 		VALUES ($1,    $2,                   $3                       )
 		ON CONFLICT DO NOTHING;
 	`
-	_, err = db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert email into emails: %v", err)
 		return errorInternal

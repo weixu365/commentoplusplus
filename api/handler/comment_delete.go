@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"time"
 )
 
@@ -22,7 +23,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 			deletionDate = $3
 		WHERE commentHex = $1;
 	`
-	_, err := db.Exec(statement, commentHex, deleterHex, time.Now().UTC())
+	_, err := repository.Db.Exec(statement, commentHex, deleterHex, time.Now().UTC())
 
 	if err != nil {
 		// TODO: make sure this is the error is actually non-existant commentHex
@@ -35,7 +36,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 		SET commentCount = commentCount - 1
 		WHERE canon($1) LIKE canon(domain) AND path = $2;
 	`
-	_, err = db.Exec(statement, domain, path)
+	_, err = repository.Db.Exec(statement, domain, path)
 
 	if err != nil {
 		return errorNoSuchComment

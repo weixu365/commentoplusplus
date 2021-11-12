@@ -1,6 +1,7 @@
 package crons
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -12,7 +13,7 @@ func domainExportCleanupBegin() error {
 				DELETE FROM exports
 				WHERE creationDate < $1;
 			`
-			_, err := db.Exec(statement, time.Now().UTC().AddDate(0, 0, -7))
+			_, err := repository.Db.Exec(statement, time.Now().UTC().AddDate(0, 0, -7))
 			if err != nil {
 				util.GetLogger().Errorf("error cleaning up export rows: %v", err)
 				return

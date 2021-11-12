@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -14,7 +15,7 @@ func domainModeratorDelete(domain string, email string) error {
 		DELETE FROM moderators
 		WHERE domain=$1 AND email=$2;
 	`
-	_, err := db.Exec(statement, domain, email)
+	_, err := repository.Db.Exec(statement, domain, email)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete moderator: %v", err)
 		return errorInternal

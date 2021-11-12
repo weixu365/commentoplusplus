@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -31,7 +32,7 @@ func domainUpdate(d domain) error {
 		WHERE domain=$1;
 	`
 
-	_, err := db.Exec(statement,
+	_, err := repository.Db.Exec(statement,
 		d.Domain,
 		d.Name,
 		d.State,

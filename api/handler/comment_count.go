@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 
 	"github.com/lib/pq"
@@ -23,7 +24,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 		FROM pages
 		WHERE canon($1) LIKE canon(domain) AND path = ANY($2);
 	`
-	rows, err := db.Query(statement, domain, pq.Array(paths))
+	rows, err := repository.Db.Query(statement, domain, pq.Array(paths))
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return nil, errorInternal

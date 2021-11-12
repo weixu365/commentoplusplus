@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -23,7 +24,7 @@ func domainExportBegin(email string, toName string, domain string) {
 		FROM comments
 		WHERE domain = $1;
 	`
-	rows1, err := db.Query(statement, domain)
+	rows1, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot select comments while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
@@ -47,7 +48,7 @@ func domainExportBegin(email string, toName string, domain string) {
 		FROM commenters, comments
 		WHERE comments.domain = $1 AND commenters.commenterHex = comments.commenterHex;
 	`
-	rows2, err := db.Query(statement, domain)
+	rows2, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot select commenters while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)
@@ -92,7 +93,7 @@ func domainExportBegin(email string, toName string, domain string) {
 		exports (exportHex, binData, domain, creationDate)
 		VALUES  ($1,        $2,      $3    , $4          );
 	`
-	_, err = db.Exec(statement, exportHex, gje, domain, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, exportHex, gje, domain, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("error inserting expiry binary data while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, errorInternal)

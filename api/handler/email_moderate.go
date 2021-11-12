@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -20,7 +21,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 		FROM comments
 		WHERE commentHex = $1;
 	`
-	row := db.QueryRow(statement, commentHex)
+	row := repository.Db.QueryRow(statement, commentHex)
 
 	var domain, path string
 	var deleted bool
@@ -62,7 +63,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 		FROM commenters
 		WHERE email = $1;
 	`
-	row = db.QueryRow(statement, e.Email)
+	row = repository.Db.QueryRow(statement, e.Email)
 
 	var commenterHex string
 	if err = row.Scan(&commenterHex); err != nil {

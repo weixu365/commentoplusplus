@@ -13,7 +13,7 @@ func MigrateEmails() error {
 		SELECT moderators.email
 		FROM moderators;
 	`
-	rows, err := db.Query(statement)
+	rows, err := repository.Db.Query(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return errorDatabaseMigration

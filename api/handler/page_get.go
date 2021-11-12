@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -16,7 +17,7 @@ func pageGet(domain string, path string) (page, error) {
 		FROM pages
 		WHERE canon($1) LIKE canon(domain) AND path=$2;
 	`
-	row := db.QueryRow(statement, domain, path)
+	row := repository.Db.QueryRow(statement, domain, path)
 
 	p := page{Domain: domain, Path: path}
 	if err := row.Scan(&p.IsLocked, &p.CommentCount, &p.StickyCommentHex, &p.Title); err != nil {

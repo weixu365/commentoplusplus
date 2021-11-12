@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -26,7 +27,7 @@ func ssoTokenNew(domain string, commenterToken string) (string, error) {
 		ssoTokens (token, domain, commenterToken, creationDate)
 		VALUES    ($1,    $2,     $3,             $4          );
 	`
-	_, err = db.Exec(statement, token, domain, commenterToken, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, token, domain, commenterToken, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("error inserting SSO token: %v", err)
 		return "", errorInternal
@@ -41,7 +42,7 @@ func ssoTokenExtract(token string) (string, string, error) {
 		FROM ssoTokens
 		WHERE token = $1;
 	`
-	row := db.QueryRow(statement, token)
+	row := repository.Db.QueryRow(statement, token)
 
 	var domain string
 	var commenterToken string
@@ -53,7 +54,7 @@ func ssoTokenExtract(token string) (string, string, error) {
 		DELETE FROM ssoTokens
 		WHERE token = $1;
 	`
-	if _, err := db.Exec(statement, token); err != nil {
+	if _, err := repository.Db.Exec(statement, token); err != nil {
 		util.GetLogger().Errorf("cannot delete SSO token after usage: %v", err)
 		return "", "", errorInternal
 	}

@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"strings"
 	"time"
@@ -42,7 +43,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 		comments (commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
 		VALUES   ($1,         $2,     $3,   $4,           $5,        $6,       $7,   $8,           $9   );
 	`
-	_, err = db.Exec(statement, commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
+	_, err = repository.Db.Exec(statement, commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert comment: %v", err)
 		return "", errorInternal

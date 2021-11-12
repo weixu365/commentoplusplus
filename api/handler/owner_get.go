@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/util"
+import (
+	"simple-commenting/repository"
+	"simple-commenting/util"
+)
 
 var ownersRowColumns string = `
 	owners.ownerHex,
@@ -30,7 +33,7 @@ func ownerGetByEmail(email string) (owner, error) {
 		FROM owners
 		WHERE email=$1;
 	`
-	row := db.QueryRow(statement, email)
+	row := repository.Db.QueryRow(statement, email)
 
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
@@ -54,7 +57,7 @@ func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 			WHERE ownerSessions.ownerToken = $1
 		);
 	`
-	row := db.QueryRow(statement, ownerToken)
+	row := repository.Db.QueryRow(statement, ownerToken)
 
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
@@ -75,7 +78,7 @@ func ownerGetByOwnerHex(ownerHex string) (owner, error) {
 		FROM owners
 		WHERE ownerHex = $1;
 	`
-	row := db.QueryRow(statement, ownerHex)
+	row := repository.Db.QueryRow(statement, ownerHex)
 
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {

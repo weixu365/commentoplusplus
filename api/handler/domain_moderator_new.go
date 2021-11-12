@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -21,7 +22,7 @@ func domainModeratorNew(domain string, email string) error {
 		moderators (domain, email, addDate)
 		VALUES     ($1,     $2,    $3     );
 	`
-	_, err := db.Exec(statement, domain, email, time.Now().UTC())
+	_, err := repository.Db.Exec(statement, domain, email, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert new moderator: %v", err)
 		return errorInternal

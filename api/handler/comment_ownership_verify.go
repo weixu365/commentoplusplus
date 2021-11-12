@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/util"
+import (
+	"simple-commenting/repository"
+	"simple-commenting/util"
+)
 
 func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error) {
 	if commenterHex == "" || commentHex == "" {
@@ -14,7 +17,7 @@ func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error
 			WHERE commenterHex=$1 AND commentHex=$2
 		);
 	`
-	row := db.QueryRow(statement, commenterHex, commentHex)
+	row := repository.Db.QueryRow(statement, commenterHex, commentHex)
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {

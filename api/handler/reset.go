@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +18,7 @@ func reset(resetHex string, password string) (string, error) {
 		FROM resetHexes
 		WHERE resetHex = $1;
 	`
-	row := db.QueryRow(statement, resetHex)
+	row := repository.Db.QueryRow(statement, resetHex)
 
 	var hex string
 	var entity string
@@ -44,7 +45,7 @@ func reset(resetHex string, password string) (string, error) {
 		`
 	}
 
-	_, err = db.Exec(statement, string(passwordHash), hex)
+	_, err = repository.Db.Exec(statement, string(passwordHash), hex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot change %s's password: %v\n", entity, err)
 		return "", errorInternal
@@ -54,7 +55,7 @@ func reset(resetHex string, password string) (string, error) {
 		DELETE FROM resetHexes
 		WHERE resetHex = $1;
 	`
-	_, err = db.Exec(statement, resetHex)
+	_, err = repository.Db.Exec(statement, resetHex)
 	if err != nil {
 		util.GetLogger().Warningf("cannot remove resetHex: %v\n", err)
 	}

@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"os"
+	"simple-commenting/repository"
 	"strings"
 	"time"
 )
@@ -29,7 +30,7 @@ func domainNew(ownerHex string, name string, domain string) error {
 		domains WHERE
 		canon(regexp_replace($1, '[%]', '')) LIKE canon(domain) OR canon(domain) LIKE canon($1);
 	`
-	row := db.QueryRow(statement, domain)
+	row := repository.Db.QueryRow(statement, domain)
 	var err error
 	var count int
 
@@ -46,7 +47,7 @@ func domainNew(ownerHex string, name string, domain string) error {
 		domains (ownerHex, name, domain, creationDate)
 		VALUES  ($1,       $2,   $3,     $4          );
 	`
-	_, err = db.Exec(statement, ownerHex, name, domain, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, ownerHex, name, domain, time.Now().UTC())
 	if err != nil {
 		// TODO: This should not happen given the above check, so this is likely not the error. Be more informative?
 		return errorDomainAlreadyExists

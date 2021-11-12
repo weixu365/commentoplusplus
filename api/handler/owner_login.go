@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 
@@ -18,7 +19,7 @@ func ownerLogin(email string, password string) (string, error) {
 		FROM owners
 		WHERE email=$1;
 	`
-	row := db.QueryRow(statement, email)
+	row := repository.Db.QueryRow(statement, email)
 
 	var ownerHex string
 	var confirmedEmail bool
@@ -47,7 +48,7 @@ func ownerLogin(email string, password string) (string, error) {
 		ownerSessions (ownerToken, ownerHex, loginDate)
 		VALUES        ($1,         $2,       $3       );
 	`
-	_, err = db.Exec(statement, ownerToken, ownerHex, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, ownerToken, ownerHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert ownerSession: %v\n", err)
 		return "", errorInternal

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -15,7 +16,7 @@ func commenterDelete(commenterHex string) error {
 		SET deleted=true
 		WHERE commenterHex = $1;
 	`
-	_, err := db.Exec(statement, commenterHex)
+	_, err := repository.Db.Exec(statement, commenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete commenter: %v", err)
 		return errorInternal

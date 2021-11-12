@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -20,7 +21,7 @@ func ownerConfirmHex(confirmHex string) error {
 			WHERE confirmHex=$1
 		);
 	`
-	res, err := db.Exec(statement, confirmHex)
+	res, err := repository.Db.Exec(statement, confirmHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot mark user's confirmedEmail as true: %v\n", err)
 		return errorInternal
@@ -40,7 +41,7 @@ func ownerConfirmHex(confirmHex string) error {
 		DELETE FROM ownerConfirmHexes
 		WHERE confirmHex=$1;
 	`
-	_, err = db.Exec(statement, confirmHex)
+	_, err = repository.Db.Exec(statement, confirmHex)
 	if err != nil {
 		util.GetLogger().Warningf("cannot remove confirmation token: %v\n", err)
 		// Don't return an error because this is not critical.

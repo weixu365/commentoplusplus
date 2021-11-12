@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/util"
+import (
+	"simple-commenting/repository"
+	"simple-commenting/util"
+)
 
 func domainOwnershipVerify(ownerHex string, domain string) (bool, error) {
 	if ownerHex == "" || domain == "" {
@@ -14,7 +17,7 @@ func domainOwnershipVerify(ownerHex string, domain string) (bool, error) {
 			WHERE ownerHex=$1 AND domain=$2
 		);
 	`
-	row := db.QueryRow(statement, ownerHex, domain)
+	row := repository.Db.QueryRow(statement, ownerHex, domain)
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {

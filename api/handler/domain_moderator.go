@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -17,7 +18,7 @@ func domainModeratorList(domain string) ([]moderator, error) {
 		FROM moderators
 		WHERE domain=$1;
 	`
-	rows, err := db.Query(statement, domain)
+	rows, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get moderators: %v", err)
 		return nil, errorInternal
@@ -46,7 +47,7 @@ func isDomainModerator(domain string, email string) (bool, error) {
 			WHERE domain=$1 AND email=$2
 		);
 	`
-	row := db.QueryRow(statement, domain, email)
+	row := repository.Db.QueryRow(statement, domain, email)
 
 	var exists bool
 	if err := row.Scan(&exists); err != nil {

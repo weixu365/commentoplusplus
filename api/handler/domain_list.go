@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -15,7 +16,7 @@ func domainList(ownerHex string) ([]domain, error) {
 		FROM domains
 		WHERE ownerHex=$1;
 	`
-	rows, err := db.Query(statement, ownerHex)
+	rows, err := repository.Db.Query(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot query domains: %v", err)
 		return nil, errorInternal

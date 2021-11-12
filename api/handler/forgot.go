@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -63,7 +64,7 @@ func forgot(email string, entity string) error {
 		resetHexes (resetHex, hex, entity, sendDate)
 		VALUES     ($1,       $2,  $3,     $4      );
 	`
-	_, err = db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert resetHex: %v", err)
 		return errorInternal

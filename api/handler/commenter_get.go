@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/repository"
+
 var commentersRowColumns string = `
 	commenters.commenterHex,
 	commenters.email,
@@ -34,7 +36,7 @@ func commenterGetByHex(commenterHex string) (commenter, error) {
 		FROM commenters
 		WHERE commenterHex = $1;
 	`
-	row := db.QueryRow(statement, commenterHex)
+	row := repository.Db.QueryRow(statement, commenterHex)
 
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {
@@ -62,7 +64,7 @@ func commenterGetByEmail(provider string, email string) (commenter, error) {
 		FROM commenters
 		WHERE email = $1 AND provider = $2;
 	`
-	row := db.QueryRow(statement, email, provider)
+	row := repository.Db.QueryRow(statement, email, provider)
 
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {
@@ -91,7 +93,7 @@ func commenterGetByCommenterToken(commenterToken string) (commenter, error) {
 		JOIN commenters ON commenterSessions.commenterHex = commenters.commenterHex
 		WHERE commenterToken = $1;
 	`
-	row := db.QueryRow(statement, commenterToken)
+	row := repository.Db.QueryRow(statement, commenterToken)
 
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {

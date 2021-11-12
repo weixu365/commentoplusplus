@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -26,7 +27,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 		DELETE FROM owners
 		WHERE ownerHex = $1;
 	`
-	_, err = db.Exec(statement, ownerHex)
+	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
 		return errorNoSuchOwner
 	}
@@ -35,7 +36,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 		DELETE FROM ownersessions
 		WHERE ownerHex = $1;
 	`
-	_, err = db.Exec(statement, ownerHex)
+	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete from ownersessions: %v", err)
 		return errorInternal
@@ -45,7 +46,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 		DELETE FROM resethexes
 		WHERE hex = $1;
 	`
-	_, err = db.Exec(statement, ownerHex)
+	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete from resethexes: %v", err)
 		return errorInternal

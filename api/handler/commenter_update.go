@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -35,7 +36,7 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 		SET email = $3, name = $4, link = $5, photo = $6
 		WHERE commenterHex = $1 and provider = $2;
 	`
-	_, err := db.Exec(statement, commenterHex, provider, email, name, link, photo)
+	_, err := repository.Db.Exec(statement, commenterHex, provider, email, name, link, photo)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update commenter: %v", err)
 		return errorInternal

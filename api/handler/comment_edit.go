@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 )
 
 func commentEdit(commentHex string, markdown string, url string) (string, error) {
@@ -17,7 +18,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 		SET markdown = $2, html = $3
 		WHERE commentHex=$1;
 	`
-	_, err := db.Exec(statement, commentHex, markdown, html)
+	_, err := repository.Db.Exec(statement, commentHex, markdown, html)
 
 	if err != nil {
 		// TODO: make sure this is the error is actually non-existant commentHex

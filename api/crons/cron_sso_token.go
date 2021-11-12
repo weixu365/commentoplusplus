@@ -1,6 +1,7 @@
 package crons
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 )
@@ -12,7 +13,7 @@ func ssoTokenCleanupBegin() error {
 				DELETE FROM ssoTokens
 				WHERE creationDate < $1;
 			`
-			_, err := db.Exec(statement, time.Now().UTC().Add(time.Duration(-10)*time.Minute))
+			_, err := repository.Db.Exec(statement, time.Now().UTC().Add(time.Duration(-10)*time.Minute))
 			if err != nil {
 				util.GetLogger().Errorf("error cleaning up export rows: %v", err)
 				return

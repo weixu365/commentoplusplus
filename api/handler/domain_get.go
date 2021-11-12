@@ -1,5 +1,7 @@
 package handler
 
+import "simple-commenting/repository"
+
 var domainsRowColumns = `
 	domains.domain,
 	domains.ownerHex,
@@ -58,7 +60,7 @@ func domainGet(dmn string) (domain, error) {
 		FROM domains
 		WHERE canon($1) LIKE canon(domain);
 	`
-	row := db.QueryRow(statement, dmn)
+	row := repository.Db.QueryRow(statement, dmn)
 
 	var err error
 	d := domain{}

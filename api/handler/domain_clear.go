@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -15,7 +16,7 @@ func domainClear(domain string) error {
 		USING comments
 		WHERE comments.commentHex = votes.commentHex AND canon($1) LIKE canon(comments.domain);
 	`
-	_, err := db.Exec(statement, domain)
+	_, err := repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete votes: %v", err)
 		return errorInternal
@@ -25,7 +26,7 @@ func domainClear(domain string) error {
 		DELETE FROM comments
 		WHERE comments.domain = $1;
 	`
-	_, err = db.Exec(statement, domain)
+	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf(statement, domain)
 		return errorInternal
@@ -35,7 +36,7 @@ func domainClear(domain string) error {
 		DELETE FROM pages
 		WHERE pages.domain = $1;
 	`
-	_, err = db.Exec(statement, domain)
+	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf(statement, domain)
 		return errorInternal

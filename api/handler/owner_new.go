@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"os"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 
@@ -43,7 +44,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 		owners (ownerHex, email, name, passwordHash, joinDate, confirmedEmail)
 		VALUES ($1,       $2,    $3,   $4,           $5,       $6            );
 	`
-	_, err = db.Exec(statement, ownerHex, email, name, string(passwordHash), time.Now().UTC(), !smtpConfigured)
+	_, err = repository.Db.Exec(statement, ownerHex, email, name, string(passwordHash), time.Now().UTC(), !smtpConfigured)
 	if err != nil {
 		// TODO: Make sure `err` is actually about conflicting UNIQUE, and not some
 		// other error. If it is something else, we should probably return `errorInternal`.
@@ -62,7 +63,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 			ownerConfirmHexes (confirmHex, ownerHex, sendDate)
 			VALUES            ($1,         $2,       $3      );
 		`
-		_, err = db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
+		_, err = repository.Db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
 		if err != nil {
 			util.GetLogger().Errorf("cannot insert confirmHex: %v\n", err)
 			return "", errorInternal

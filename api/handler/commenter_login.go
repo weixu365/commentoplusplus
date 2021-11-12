@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
 
@@ -18,7 +19,7 @@ func commenterLogin(email string, password string) (string, error) {
 		FROM commenters
 		WHERE email = $1 AND provider = 'commento' AND deleted=false;
 	`
-	row := db.QueryRow(statement, email)
+	row := repository.Db.QueryRow(statement, email)
 
 	var commenterHex string
 	var passwordHash string
@@ -42,7 +43,7 @@ func commenterLogin(email string, password string) (string, error) {
 		commenterSessions (commenterToken, commenterHex, creationDate)
 		VALUES            ($1,             $2,           $3          );
 	`
-	_, err = db.Exec(statement, commenterToken, commenterHex, time.Now().UTC())
+	_, err = repository.Db.Exec(statement, commenterToken, commenterHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert commenterToken token: %v\n", err)
 		return "", errorInternal
