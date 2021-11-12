@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -25,7 +26,7 @@ func ownersRowScan(s sqlScanner, o *owner) error {
 
 func ownerGetByEmail(email string) (owner, error) {
 	if email == "" {
-		return owner{}, errorMissingField
+		return owner{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -38,7 +39,7 @@ func ownerGetByEmail(email string) (owner, error) {
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
 		// TODO: Make sure this is actually no such email.
-		return owner{}, errorNoSuchEmail
+		return owner{}, app.ErrorNoSuchEmail
 	}
 
 	return o, nil
@@ -46,7 +47,7 @@ func ownerGetByEmail(email string) (owner, error) {
 
 func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 	if ownerToken == "" {
-		return owner{}, errorMissingField
+		return owner{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -62,7 +63,7 @@ func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
 		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
-		return owner{}, errorInternal
+		return owner{}, app.ErrorInternal
 	}
 
 	return o, nil
@@ -70,7 +71,7 @@ func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 
 func ownerGetByOwnerHex(ownerHex string) (owner, error) {
 	if ownerHex == "" {
-		return owner{}, errorMissingField
+		return owner{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -83,7 +84,7 @@ func ownerGetByOwnerHex(ownerHex string) (owner, error) {
 	var o owner
 	if err := ownersRowScan(row, &o); err != nil {
 		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
-		return owner{}, errorInternal
+		return owner{}, app.ErrorInternal
 	}
 
 	return o, nil

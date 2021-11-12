@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -11,7 +12,7 @@ import (
 
 func ownerLogin(email string, password string) (string, error) {
 	if email == "" || password == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	statement := `
@@ -25,22 +26,22 @@ func ownerLogin(email string, password string) (string, error) {
 	var confirmedEmail bool
 	var passwordHash string
 	if err := row.Scan(&ownerHex, &confirmedEmail, &passwordHash); err != nil {
-		return "", errorInvalidEmailPassword
+		return "", app.ErrorInvalidEmailPassword
 	}
 
 	if !confirmedEmail {
-		return "", errorUnconfirmedEmail
+		return "", app.ErrorUnconfirmedEmail
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
 		// TODO: is this the only possible error?
-		return "", errorInvalidEmailPassword
+		return "", app.ErrorInvalidEmailPassword
 	}
 
 	ownerToken, err := randomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create ownerToken: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	statement = `
@@ -51,7 +52,7 @@ func ownerLogin(email string, password string) (string, error) {
 	_, err = repository.Db.Exec(statement, ownerToken, ownerHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert ownerSession: %v\n", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	return ownerToken, nil

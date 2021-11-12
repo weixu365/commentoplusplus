@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -20,7 +21,7 @@ func commentStatistics(domain string) ([]int64, error) {
 	rows, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get daily views: %v", err)
-		return []int64{}, errorInternal
+		return []int64{}, app.ErrorInternal
 	}
 
 	defer rows.Close()
@@ -30,7 +31,7 @@ func commentStatistics(domain string) ([]int64, error) {
 		var count int64
 		if err = rows.Scan(&count); err != nil {
 			util.GetLogger().Errorf("cannot get daily comments for the last month: %v", err)
-			return make([]int64, 0), errorInternal
+			return make([]int64, 0), app.ErrorInternal
 		}
 		last30Days = append(last30Days, count)
 	}

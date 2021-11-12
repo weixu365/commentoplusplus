@@ -10,7 +10,7 @@ import (
 
 func commentVote(commenterHex string, commentHex string, direction int, url string) error {
 	if commentHex == "" || commenterHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -23,11 +23,11 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 	var authorHex string
 	if err := row.Scan(&authorHex); err != nil {
 		util.GetLogger().Errorf("error selecting authorHex for vote")
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	if authorHex == commenterHex {
-		return errorSelfVote
+		return app.ErrorSelfVote
 	}
 
 	statement = `
@@ -40,7 +40,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 	_, err := repository.Db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("error inserting/updating votes: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	app.NotificationHub.Broadcast <- []byte(url)

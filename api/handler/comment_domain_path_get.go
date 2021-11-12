@@ -1,10 +1,13 @@
 package handler
 
-import "simple-commenting/repository"
+import (
+	"simple-commenting/app"
+	"simple-commenting/repository"
+)
 
 func commentDomainPathGet(commentHex string) (string, string, error) {
 	if commentHex == "" {
-		return "", "", errorMissingField
+		return "", "", app.ErrorMissingField
 	}
 
 	statement := `
@@ -18,7 +21,7 @@ func commentDomainPathGet(commentHex string) (string, string, error) {
 	var path string
 	var err error
 	if err = row.Scan(&domain, &path); err != nil {
-		return "", "", errorNoSuchDomain
+		return "", "", app.ErrorNoSuchDomain
 	}
 
 	return domain, path, nil

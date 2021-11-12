@@ -14,7 +14,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 
 	if len(domains) > 0 {
 		if !deleteDomains {
-			return errorCannotDeleteOwnerWithActiveDomains
+			return app.ErrorCannotDeleteOwnerWithActiveDomains
 		}
 		for _, d := range domains {
 			if err := domainDelete(d.Domain); err != nil {
@@ -29,7 +29,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 	`
 	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
-		return errorNoSuchOwner
+		return app.ErrorNoSuchOwner
 	}
 
 	statement = `
@@ -39,7 +39,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete from ownersessions: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement = `
@@ -49,7 +49,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 	_, err = repository.Db.Exec(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete from resethexes: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

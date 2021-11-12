@@ -2,13 +2,14 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
 func domainList(ownerHex string) ([]domain, error) {
 	if ownerHex == "" {
-		return []domain{}, errorMissingField
+		return []domain{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -19,7 +20,7 @@ func domainList(ownerHex string) ([]domain, error) {
 	rows, err := repository.Db.Query(statement, ownerHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot query domains: %v", err)
-		return nil, errorInternal
+		return nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -28,7 +29,7 @@ func domainList(ownerHex string) ([]domain, error) {
 		var d domain
 		if err = domainsRowScan(rows, &d); err != nil {
 			util.GetLogger().Errorf("cannot Scan domain: %v", err)
-			return nil, errorInternal
+			return nil, app.ErrorInternal
 		}
 
 		d.Moderators, err = domainModeratorList(d.Domain)

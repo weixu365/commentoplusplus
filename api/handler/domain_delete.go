@@ -8,7 +8,7 @@ import (
 
 func domainDelete(domain string) error {
 	if domain == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -17,7 +17,7 @@ func domainDelete(domain string) error {
 	`
 	_, err := repository.Db.Exec(statement, domain)
 	if err != nil {
-		return errorNoSuchDomain
+		return app.ErrorNoSuchDomain
 	}
 
 	statement = `
@@ -27,7 +27,7 @@ func domainDelete(domain string) error {
 	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete domain from views: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement = `
@@ -37,7 +37,7 @@ func domainDelete(domain string) error {
 	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete domain from moderators: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement = `
@@ -47,13 +47,13 @@ func domainDelete(domain string) error {
 	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete domain from ssotokens: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	// comments, votes, and pages are handled by domainClear
 	if err = domainClear(domain); err != nil {
 		util.GetLogger().Errorf("cannot clear domain: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

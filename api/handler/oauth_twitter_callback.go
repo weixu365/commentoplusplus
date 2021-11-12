@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -26,7 +25,7 @@ func twitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := commenterGetByCommenterToken(commenterToken)
-	if err != nil && err != errorNoSuchToken {
+	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
@@ -70,14 +69,14 @@ func twitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	photo := res.getImageURL()
 
 	c, err := commenterGetByEmail("twitter", email)
-	if err != nil && err != errorNoSuchCommenter {
+	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
 
 	var commenterHex string
 
-	if err == errorNoSuchCommenter {
+	if err =, app.ErrorNoSuchCommenter {
 		commenterHex, err = commenterNew(email, name, link, photo, "twitter", "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())
@@ -113,10 +112,10 @@ type twitterOAuthReponse struct {
 
 func (r twitterOAuthReponse) validate() error {
 	if r.Email == "" {
-		return errors.New("no email address returned by Twitter")
+		return app.Errors.New("no email address returned by Twitter")
 	}
 	if r.Name == "" {
-		return errors.New("no name returned by Twitter")
+		return app.Errors.New("no name returned by Twitter")
 	}
 	return nil
 }

@@ -8,7 +8,7 @@ import (
 
 func domainClear(domain string) error {
 	if domain == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -19,7 +19,7 @@ func domainClear(domain string) error {
 	_, err := repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete votes: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement = `
@@ -29,7 +29,7 @@ func domainClear(domain string) error {
 	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf(statement, domain)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement = `
@@ -39,7 +39,7 @@ func domainClear(domain string) error {
 	_, err = repository.Db.Exec(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf(statement, domain)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

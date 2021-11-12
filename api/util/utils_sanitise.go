@@ -46,7 +46,7 @@ func isHttpsUrl(in string) bool {
 	return len(httpsUrl.FindAllString(in, -1)) != 0
 }
 
-func addHttpIfAbsent(in string) string {
+func AddHttpIfAbsent(in string) string {
 	if !strings.HasPrefix(in, "http://") && !strings.HasPrefix(in, "https://") {
 		ssl := os.Getenv("SSL")
 		if ssl == "true" {

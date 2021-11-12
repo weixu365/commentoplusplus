@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -11,7 +12,7 @@ import (
 
 func commenterLogin(email string, password string) (string, error) {
 	if email == "" || password == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	statement := `
@@ -24,18 +25,18 @@ func commenterLogin(email string, password string) (string, error) {
 	var commenterHex string
 	var passwordHash string
 	if err := row.Scan(&commenterHex, &passwordHash); err != nil {
-		return "", errorInvalidEmailPassword
+		return "", app.ErrorInvalidEmailPassword
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
 		// TODO: is this the only possible error?
-		return "", errorInvalidEmailPassword
+		return "", app.ErrorInvalidEmailPassword
 	}
 
 	commenterToken, err := randomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create commenterToken: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	statement = `
@@ -46,7 +47,7 @@ func commenterLogin(email string, password string) (string, error) {
 	_, err = repository.Db.Exec(statement, commenterToken, commenterHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert commenterToken token: %v\n", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	return commenterToken, nil

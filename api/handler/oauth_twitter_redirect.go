@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 
@@ -17,7 +18,7 @@ func twitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("commenterToken")
 
 	_, err := commenterGetByCommenterToken(commenterToken)
-	if err != nil && err != errorNoSuchToken {
+	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "error: %s\n", err.Error())
 		return
 	}
@@ -25,7 +26,7 @@ func twitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	cred, err := twitterClient.RequestTemporaryCredentials(nil, os.Getenv("ORIGIN")+"/api/oauth/twitter/callback", nil)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get temporary twitter credentials: %v", err)
-		fmt.Fprintf(w, "error: %v", errorInternal.Error())
+		fmt.Fprintf(w, "error: %v", app.ErrorInternal.Error())
 		return
 	}
 

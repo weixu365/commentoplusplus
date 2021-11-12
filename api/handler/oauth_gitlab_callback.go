@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
@@ -16,7 +17,7 @@ func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.FormValue("code")
 
 	_, err := commenterGetByCommenterToken(commenterToken)
-	if err != nil && err != errorNoSuchToken {
+	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
@@ -37,13 +38,13 @@ func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	contents, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Fprintf(w, "Error: %s", errorCannotReadResponse.Error())
+		fmt.Fprintf(w, "Error: %s", app.ErrorCannotReadResponse.Error())
 		return
 	}
 
 	user := make(map[string]interface{})
 	if err := json.Unmarshal(contents, &user); err != nil {
-		fmt.Fprintf(w, "Error: %s", errorInternal.Error())
+		fmt.Fprintf(w, "Error: %s", app.ErrorInternal.Error())
 		return
 	}
 
@@ -72,14 +73,14 @@ func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c, err := commenterGetByEmail("gitlab", email)
-	if err != nil && err != errorNoSuchCommenter {
+	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
 
 	var commenterHex string
 
-	if err == errorNoSuchCommenter {
+	if err =, app.ErrorNoSuchCommenter {
 		commenterHex, err = commenterNew(email, name, link, photo, "gitlab", "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())

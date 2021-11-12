@@ -19,7 +19,7 @@ func smtpDomainExport(to string, toName string, domain string, exportHex string)
 	err := smtpSendMail(to, toName, "", "Commento Data Export", body.String())
 	if err != nil {
 		util.GetLogger().Errorf("cannot send data export email: %v", err)
-		return errorCannotSendEmail
+		return app.ErrorCannotSendEmail
 	}
 
 	return nil

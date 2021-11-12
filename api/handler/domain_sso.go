@@ -2,19 +2,20 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
 func domainSsoSecretNew(domain string) (string, error) {
 	if domain == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	ssoSecret, err := randomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("error generating SSO secret hex: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	statement := `
@@ -25,7 +26,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 	_, err = repository.Db.Exec(statement, domain, ssoSecret)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update ssoSecret: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	return ssoSecret, nil

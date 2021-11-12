@@ -14,17 +14,17 @@ import (
 func commentNew(commenterHex string, domain string, path string, parentHex string, markdown string, state string, creationDate time.Time) (string, error) {
 	// path is allowed to be empty
 	if commenterHex == "" || domain == "" || parentHex == "" || markdown == "" || state == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	p, err := pageGet(domain, path)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get page attributes: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	if p.IsLocked {
-		return "", errorThreadLocked
+		return "", app.ErrorThreadLocked
 	}
 
 	commentHex, err := randomHex(32)
@@ -46,7 +46,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 	_, err = repository.Db.Exec(statement, commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert comment: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	app.NotificationHub.Broadcast <- []byte(domain + path)

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -11,11 +12,11 @@ import (
 
 func commenterNew(email string, name string, link string, photo string, provider string, password string) (string, error) {
 	if email == "" || name == "" || link == "" || photo == "" || provider == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	if provider == "commento" && password == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	// See utils_sanitise.go's documentation on isHttpsUrl. This is not a URL
@@ -27,17 +28,17 @@ func commenterNew(email string, name string, link string, photo string, provider
 
 	if provider != "anon" {
 		if _, err := commenterGetByEmail(provider, email); err == nil {
-			return "", errorEmailAlreadyExists
+			return "", app.ErrorEmailAlreadyExists
 		}
 
 		if err := emailNew(email); err != nil {
-			return "", errorInternal
+			return "", app.ErrorInternal
 		}
 	}
 
 	commenterHex, err := randomHex(32)
 	if err != nil {
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	passwordHash := []byte{}
@@ -45,7 +46,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 		passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
-			return "", errorInternal
+			return "", app.ErrorInternal
 		}
 	}
 	if provider == "anon" {
@@ -60,7 +61,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 	_, err = repository.Db.Exec(statement, commenterHex, email, name, link, photo, provider, string(passwordHash), time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert commenter: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	return commenterHex, nil

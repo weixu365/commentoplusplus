@@ -10,7 +10,7 @@ import (
 
 func ownerConfirmHex(confirmHex string) error {
 	if confirmHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -24,17 +24,17 @@ func ownerConfirmHex(confirmHex string) error {
 	res, err := repository.Db.Exec(statement, confirmHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot mark user's confirmedEmail as true: %v\n", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	count, err := res.RowsAffected()
 	if err != nil {
 		util.GetLogger().Errorf("cannot count rows affected: %v\n", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	if count == 0 {
-		return errorNoSuchConfirmationToken
+		return app.ErrorNoSuchConfirmationToken
 	}
 
 	statement = `

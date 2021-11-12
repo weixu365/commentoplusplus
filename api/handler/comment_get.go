@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/repository"
+import (
+	"simple-commenting/app"
+	"simple-commenting/repository"
+)
 
 var commentsRowColumns = `
 	comments.commentHex,
@@ -30,7 +33,7 @@ func commentsRowScan(s sqlScanner, c *comment) error {
 
 func commentGetByCommentHex(commentHex string) (comment, error) {
 	if commentHex == "" {
-		return comment{}, errorMissingField
+		return comment{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -43,7 +46,7 @@ func commentGetByCommentHex(commentHex string) (comment, error) {
 	var c comment
 	if err := commentsRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return c, errorNoSuchComment
+		return c, app.ErrorNoSuchComment
 	}
 
 	return c, nil

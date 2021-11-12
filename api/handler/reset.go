@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 
@@ -10,7 +11,7 @@ import (
 
 func reset(resetHex string, password string) (string, error) {
 	if resetHex == "" || password == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	statement := `
@@ -24,13 +25,13 @@ func reset(resetHex string, password string) (string, error) {
 	var entity string
 	if err := row.Scan(&hex, &entity); err != nil {
 		// TODO: is this the only error?
-		return "", errorNoSuchResetToken
+		return "", app.ErrorNoSuchResetToken
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	if entity == "owner" {
@@ -48,7 +49,7 @@ func reset(resetHex string, password string) (string, error) {
 	_, err = repository.Db.Exec(statement, string(passwordHash), hex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot change %s's password: %v\n", entity, err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	statement = `

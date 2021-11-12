@@ -35,8 +35,8 @@ func TestAddHttpIfAbsent(t *testing.T) {
 		} else {
 			os.Setenv("SSL", "false")
 		}
-		if addHttpIfAbsent(in) != out {
-			t.Errorf("for in=%s expected out=%s got out=%s", in, out, addHttpIfAbsent(in))
+		if AddHttpIfAbsent(in) != out {
+			t.Errorf("for in=%s expected out=%s got out=%s", in, out, AddHttpIfAbsent(in))
 			return
 		}
 	}

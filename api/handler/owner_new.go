@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -12,31 +13,31 @@ import (
 
 func ownerNew(email string, name string, password string) (string, error) {
 	if email == "" || name == "" || password == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	if os.Getenv("FORBID_NEW_OWNERS") == "true" {
-		return "", errorNewOwnerForbidden
+		return "", app.ErrorNewOwnerForbidden
 	}
 
 	if _, err := ownerGetByEmail(email); err == nil {
-		return "", errorEmailAlreadyExists
+		return "", app.ErrorrrorEmailAlreadyExists
 	}
 
 	if err := emailNew(email); err != nil {
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	ownerHex, err := randomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot generate ownerHex: %v", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
-		return "", errorInternal
+		return "", app.ErrorInternal
 	}
 
 	statement := `
@@ -48,14 +49,14 @@ func ownerNew(email string, name string, password string) (string, error) {
 	if err != nil {
 		// TODO: Make sure `err` is actually about conflicting UNIQUE, and not some
 		// other error. If it is something else, we should probably return `errorInternal`.
-		return "", errorEmailAlreadyExists
+		return "", app.ErrorEmailAlreadyExists
 	}
 
 	if smtpConfigured {
 		confirmHex, err := randomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate confirmHex: %v", err)
-			return "", errorInternal
+			return "", app.ErrorInternal
 		}
 
 		statement = `
@@ -66,7 +67,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 		_, err = repository.Db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
 		if err != nil {
 			util.GetLogger().Errorf("cannot insert confirmHex: %v\n", err)
-			return "", errorInternal
+			return "", app.ErrorInternal
 		}
 
 		if err = smtpOwnerConfirmHex(email, name, confirmHex); err != nil {

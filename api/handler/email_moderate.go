@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -45,7 +46,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 	isModerator, err := isDomainModerator(domain, e.Email)
 	if err != nil {
 		util.GetLogger().Errorf("error checking if %s is a moderator: %v", e.Email, err)
-		fmt.Fprintf(w, "error: %v", errorInternal)
+		fmt.Fprintf(w, "error: %v", app.ErrorInternal)
 		return
 	}
 
@@ -68,7 +69,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 	var commenterHex string
 	if err = row.Scan(&commenterHex); err != nil {
 		util.GetLogger().Errorf("cannot retrieve commenterHex by email %q: %v", e.Email, err)
-		fmt.Fprintf(w, "error: %v", errorInternal)
+		fmt.Fprintf(w, "error: %v", app.ErrorInternal)
 		return
 	}
 
@@ -78,7 +79,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 	case "delete":
 		err = commentDelete(commentHex, commenterHex, domain, path)
 	default:
-		err = errorInvalidAction
+		err , app.ErrorInvalidAction
 	}
 
 	if err != nil {

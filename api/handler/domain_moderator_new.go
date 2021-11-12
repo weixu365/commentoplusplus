@@ -9,12 +9,12 @@ import (
 
 func domainModeratorNew(domain string, email string) error {
 	if domain == "" || email == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	if err := emailNew(email); err != nil {
 		util.GetLogger().Errorf("cannot create email when creating moderator: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement := `
@@ -25,7 +25,7 @@ func domainModeratorNew(domain string, email string) error {
 	_, err := repository.Db.Exec(statement, domain, email, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert new moderator: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

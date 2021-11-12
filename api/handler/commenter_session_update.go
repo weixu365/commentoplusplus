@@ -7,7 +7,7 @@ import (
 
 func commenterSessionUpdate(commenterToken string, commenterHex string) error {
 	if commenterToken == "" || commenterHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -18,7 +18,7 @@ func commenterSessionUpdate(commenterToken string, commenterHex string) error {
 	_, err := repository.Db.Exec(statement, commenterToken, commenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("error updating commenterHex: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

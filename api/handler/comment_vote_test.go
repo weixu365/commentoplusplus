@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/test"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ func TestCommentVoteBasics(t *testing.T) {
 
 	c0, _ := commentNew(cr0, "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 
-	if err := commentVote(cr0, c0, 1, "example.com/path.html"); err != errorSelfVote {
+	if err := commentVote(cr0, c0, 1, "example.com/path.html"); err != app.ErrorSelfVote {
 		t.Errorf("expected err=errorSelfVote got err=%v", err)
 		return
 	}

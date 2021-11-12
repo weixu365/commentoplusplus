@@ -8,7 +8,7 @@ import (
 
 func commenterDelete(commenterHex string) error {
 	if commenterHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -19,7 +19,7 @@ func commenterDelete(commenterHex string) error {
 	_, err := repository.Db.Exec(statement, commenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete commenter: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

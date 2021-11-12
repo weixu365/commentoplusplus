@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 
@@ -12,11 +13,11 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 	commentCounts := map[string]int{}
 
 	if domain == "" {
-		return nil, errorMissingField
+		return nil, app.ErrorMissingField
 	}
 
 	if len(paths) == 0 {
-		return nil, errorEmptyPaths
+		return nil, app.ErrorEmptyPaths
 	}
 
 	statement := `
@@ -27,7 +28,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 	rows, err := repository.Db.Query(statement, domain, pq.Array(paths))
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, errorInternal
+		return nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -36,7 +37,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 		var commentCount int
 		if err = rows.Scan(&path, &commentCount); err != nil {
 			util.GetLogger().Errorf("cannot scan path and commentCount: %v", err)
-			return nil, errorInternal
+			return nil, app.ErrorInternal
 		}
 
 		commentCounts[path] = commentCount

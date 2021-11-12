@@ -16,7 +16,7 @@ func ownerSelfHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	o, err := ownerGetByOwnerToken(*x.OwnerToken)
-	if err == errorNoSuchToken {
+	if err =, app.ErrorNoSuchToken {
 		bodyMarshal(w, response{"success": true, "loggedIn": false})
 		return
 	}

@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
 func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error) {
 	if commenterHex == "" || commentHex == "" {
-		return false, errorMissingField
+		return false, app.ErrorMissingField
 	}
 
 	statement := `
@@ -22,7 +23,7 @@ func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
 		util.GetLogger().Errorf("cannot query if comment owner: %v", err)
-		return false, errorInternal
+		return false, app.ErrorInternal
 	}
 
 	return exists, nil

@@ -9,7 +9,7 @@ import (
 func emailNew(email string) error {
 	unsubscribeSecretHex, err := randomHex(32)
 	if err != nil {
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	statement := `
@@ -21,7 +21,7 @@ func emailNew(email string) error {
 	_, err = repository.Db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert email into emails: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

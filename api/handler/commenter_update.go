@@ -8,7 +8,7 @@ import (
 
 func commenterUpdate(commenterHex string, email string, name string, link string, photo string, provider string) error {
 	if email == "" || name == "" || provider == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	// See utils_sanitise.go's documentation on isHttpsUrl. This is not a URL
@@ -28,7 +28,7 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 
 	// reserved "name"
 	if name == "[deleted]" {
-		return errorReservedName
+		return app.ErrorReservedName
 	}
 
 	statement := `
@@ -39,7 +39,7 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 	_, err := repository.Db.Exec(statement, commenterHex, provider, email, name, link, photo)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update commenter: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

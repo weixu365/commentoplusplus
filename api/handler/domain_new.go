@@ -10,17 +10,17 @@ import (
 
 func domainNew(ownerHex string, name string, domain string) error {
 	if ownerHex == "" || name == "" || domain == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	if strings.Contains(domain, "/") {
-		return errorInvalidDomain
+		return app.ErrorInvalidDomain
 	}
 
 	// if asked to disable wildcards, then don't allow them...
 	if os.Getenv("ENABLE_WILDCARDS") == "false" {
 		if strings.Contains(domain, "%") || strings.Contains(domain, "_") {
-			return errorInvalidDomain
+			return app.ErrorInvalidDomain
 		}
 	}
 
@@ -35,11 +35,11 @@ func domainNew(ownerHex string, name string, domain string) error {
 	var count int
 
 	if err = row.Scan(&count); err != nil {
-		return errorInvalidDomain
+		return app.ErrorInvalidDomain
 	}
 
 	if count > 0 {
-		return errorDomainAlreadyExists
+		return app.ErrorDomainAlreadyExists
 	}
 
 	statement = `
@@ -50,7 +50,7 @@ func domainNew(ownerHex string, name string, domain string) error {
 	_, err = repository.Db.Exec(statement, ownerHex, name, domain, time.Now().UTC())
 	if err != nil {
 		// TODO: This should not happen given the above check, so this is likely not the error. Be more informative?
-		return errorDomainAlreadyExists
+		return app.ErrorDomainAlreadyExists
 	}
 
 	return nil

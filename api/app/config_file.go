@@ -32,7 +32,7 @@ func configFileLoad(filepath string) error {
 		i := strings.Index(line, "=")
 		if i == -1 {
 			util.GetLogger().Errorf("%s: line %d: neither a comment nor a valid setting", filepath, num)
-			return errorInvalidConfigFile
+			return ErrorInvalidConfigFile
 		}
 
 		key := line[:i]

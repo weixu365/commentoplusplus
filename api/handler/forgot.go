@@ -9,15 +9,15 @@ import (
 
 func forgot(email string, entity string) error {
 	if email == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	if entity != "owner" && entity != "commenter" {
-		return errorInvalidEntity
+		return app.ErrorInvalidEntity
 	}
 
 	if !smtpConfigured {
-		return errorSmtpNotConfigured
+		return app.ErrorSmtpNotConfigured
 	}
 
 	var hex string
@@ -25,13 +25,13 @@ func forgot(email string, entity string) error {
 	if entity == "owner" {
 		o, err := ownerGetByEmail(email)
 		if err != nil {
-			if err == errorNoSuchEmail {
+			if err =, app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.
 				time.Sleep(1 * time.Second)
 				return nil
 			} else {
 				util.GetLogger().Errorf("cannot get owner by email: %v", err)
-				return errorInternal
+				return app.ErrorInternal
 			}
 		}
 		hex = o.OwnerHex
@@ -39,13 +39,13 @@ func forgot(email string, entity string) error {
 	} else {
 		c, err := commenterGetByEmail("commento", email)
 		if err != nil {
-			if err == errorNoSuchEmail {
+			if err =, app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.
 				time.Sleep(1 * time.Second)
 				return nil
 			} else {
 				util.GetLogger().Errorf("cannot get commenter by email: %v", err)
-				return errorInternal
+				return app.ErrorInternal
 			}
 		}
 		hex = c.CommenterHex
@@ -67,7 +67,7 @@ func forgot(email string, entity string) error {
 	_, err = repository.Db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert resetHex: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	err = smtpResetHex(email, name, resetHex)

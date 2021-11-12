@@ -86,23 +86,23 @@ func configParse() error {
 	for _, env := range []string{"POSTGRES", "PORT", "ORIGIN", "FORBID_NEW_OWNERS", "MAX_IDLE_PG_CONNECTIONS"} {
 		if os.Getenv(env) == "" {
 			util.GetLogger().Errorf("missing COMMENTO_%s environment variable", env)
-			return errorMissingConfig
+			return ErrorMissingConfig
 		}
 	}
 
 	os.Setenv("ORIGIN", strings.TrimSuffix(os.Getenv("ORIGIN"), "/"))
-	os.Setenv("ORIGIN", addHttpIfAbsent(os.Getenv("ORIGIN")))
+	os.Setenv("ORIGIN", util.AddHttpIfAbsent(os.Getenv("ORIGIN")))
 
 	if os.Getenv("CDN_PREFIX") == "" {
 		os.Setenv("CDN_PREFIX", os.Getenv("ORIGIN"))
 	}
 
 	os.Setenv("CDN_PREFIX", strings.TrimSuffix(os.Getenv("CDN_PREFIX"), "/"))
-	os.Setenv("CDN_PREFIX", addHttpIfAbsent(os.Getenv("CDN_PREFIX")))
+	os.Setenv("CDN_PREFIX", util.AddHttpIfAbsent(os.Getenv("CDN_PREFIX")))
 
 	if os.Getenv("FORBID_NEW_OWNERS") != "true" && os.Getenv("FORBID_NEW_OWNERS") != "false" {
 		util.GetLogger().Errorf("COMMENTO_FORBID_NEW_OWNERS neither 'true' nor 'false'")
-		return errorInvalidConfigValue
+		return ErrorInvalidConfigValue
 	}
 
 	static := os.Getenv("STATIC")
@@ -118,17 +118,17 @@ func configParse() error {
 
 	if !file.IsDir() {
 		util.GetLogger().Errorf("COMMENTO_STATIC=%s is not a directory", static)
-		return errorNotADirectory
+		return ErrorNotADirectory
 	}
 
 	os.Setenv("STATIC", static)
 
 	if num, err := strconv.Atoi(os.Getenv("MAX_IDLE_PG_CONNECTIONS")); err != nil {
 		util.GetLogger().Errorf("invalid COMMENTO_MAX_IDLE_PG_CONNECTIONS: %v", err)
-		return errorInvalidConfigValue
+		return ErrorInvalidConfigValue
 	} else if num <= 0 {
 		util.GetLogger().Errorf("COMMENTO_MAX_IDLE_PG_CONNECTIONS should be a positive integer")
-		return errorInvalidConfigValue
+		return ErrorInvalidConfigValue
 	}
 
 	return nil

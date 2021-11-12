@@ -8,7 +8,7 @@ import (
 
 func domainUpdate(d domain) error {
 	if d.SsoProvider && d.SsoUrl == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -51,7 +51,7 @@ func domainUpdate(d domain) error {
 		d.DefaultSortPolicy)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update non-moderators: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

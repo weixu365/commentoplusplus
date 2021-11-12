@@ -18,12 +18,12 @@ func githubOauthConfigure() error {
 
 	if os.Getenv("GITHUB_KEY") == "" {
 		util.GetLogger().Errorf("COMMENTO_GITHUB_KEY not configured, but COMMENTO_GITHUB_SECRET is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	if os.Getenv("GITHUB_SECRET") == "" {
 		util.GetLogger().Errorf("COMMENTO_GITHUB_SECRET not configured, but COMMENTO_GITHUB_KEY is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	util.GetLogger().Infof("loading github OAuth config")

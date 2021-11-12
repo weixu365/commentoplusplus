@@ -25,12 +25,12 @@ func twitterOauthConfigure() error {
 
 	if os.Getenv("TWITTER_KEY") == "" {
 		util.GetLogger().Errorf("COMMENTO_TWITTER_KEY not configured, but COMMENTO_TWITTER_SECRET is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	if os.Getenv("TWITTER_SECRET") == "" {
 		util.GetLogger().Errorf("COMMENTO_TWITTER_SECRET not configured, but COMMENTO_TWITTER_KEY is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	util.GetLogger().Infof("loading twitter OAuth config")

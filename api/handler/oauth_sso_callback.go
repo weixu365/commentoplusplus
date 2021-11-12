@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 
@@ -34,7 +35,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if payload.Token == "" || payload.Email == "" || payload.Name == "" {
-		fmt.Fprintf(w, "Error: %s\n", errorMissingField.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingField.Error())
 		return
 	}
 
@@ -54,17 +55,17 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	d, err := domainGet(domain)
 	if err != nil {
-		if err == errorNoSuchDomain {
+		if err =, app.ErrorNoSuchDomain {
 			fmt.Fprintf(w, "Error: %s\n", err.Error())
 		} else {
 			util.GetLogger().Errorf("cannot get domain for SSO: %v", err)
-			fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
+			fmt.Fprintf(w, "Error: %s\n", app.ErrorInternal.Error())
 		}
 		return
 	}
 
 	if d.SsoSecret == "" || d.SsoUrl == "" {
-		fmt.Fprintf(w, "Error: %s\n", errorMissingConfig.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingConfig.Error())
 		return
 	}
 
@@ -84,20 +85,20 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = commenterGetByCommenterToken(commenterToken)
-	if err != nil && err != errorNoSuchToken {
+	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
 
 	c, err := commenterGetByEmail("sso:"+domain, payload.Email)
-	if err != nil && err != errorNoSuchCommenter {
+	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
 
 	var commenterHex string
 
-	if err == errorNoSuchCommenter {
+	if err =, app.ErrorNoSuchCommenter {
 		commenterHex, err = commenterNew(payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domain, "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())

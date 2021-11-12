@@ -18,7 +18,7 @@ func smtpOwnerConfirmHex(to string, toName string, confirmHex string) error {
 	err := smtpSendMail(to, toName, "", "Please confirm your email address", body.String())
 	if err != nil {
 		util.GetLogger().Errorf("cannot send confirmation email: %v", err)
-		return errorCannotSendEmail
+		return app.ErrorCannotSendEmail
 	}
 
 	return nil

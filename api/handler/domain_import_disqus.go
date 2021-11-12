@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"strings"
 	"time"
@@ -61,14 +62,14 @@ type disqusXML struct {
 
 func domainImportDisqus(domain string, url string) (int, error) {
 	if domain == "" || url == "" {
-		return 0, errorMissingField
+		return 0, app.ErrorMissingField
 	}
 
 	// TODO: make sure this is from disqus.com
 	resp, err := http.Get(url)
 	if err != nil {
-		util.GetLogger().Errorf("cannot get url: %v", err)
-		return 0, errorCannotDownloadDisqus
+		util.Get, app.Error).Errorf("cannot get url: %v", err)
+		return 0, app.ErrorCannotDownloadDisqus
 	}
 
 	defer resp.Body.Close()
@@ -76,20 +77,20 @@ func domainImportDisqus(domain string, url string) (int, error) {
 	zr, err := gzip.NewReader(resp.Body)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create gzip reader: %v", err)
-		return 0, errorInternal
+		return 0, app.ErrorInternal
 	}
 
 	contents, err := ioutil.ReadAll(zr)
 	if err != nil {
 		util.GetLogger().Errorf("cannot read gzip contents uncompressed: %v", err)
-		return 0, errorInternal
+		return 0, app.ErrorInternal
 	}
 
 	x := disqusXML{}
 	err = xml.Unmarshal(contents, &x)
 	if err != nil {
 		util.GetLogger().Errorf("cannot unmarshal XML: %v", err)
-		return 0, errorInternal
+		return 0, app.ErrorInternal
 	}
 
 	// Map Disqus thread IDs to threads.
@@ -117,9 +118,9 @@ func domainImportDisqus(domain string, url string) (int, error) {
 		}
 
 		c, err := commenterGetByEmail("commento", email)
-		if err != nil && err != errorNoSuchCommenter {
+		if err != nil && err != app.ErrorNoSuchCommenter {
 			util.GetLogger().Errorf("cannot get commenter by email: %v", err)
-			return 0, errorInternal
+			return 0, app.ErrorInternal
 		}
 
 		if err == nil {
@@ -130,7 +131,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 		randomPassword, err := randomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate random password for new commenter: %v", err)
-			return 0, errorInternal
+			return 0, app.ErrorInternal
 		}
 
 		commenterHex[email], err = commenterNew(email, post.Author.Name, "undefined", "undefined", "commento", randomPassword)

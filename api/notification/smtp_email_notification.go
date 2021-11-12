@@ -24,7 +24,7 @@ func smtpEmailNotification(to string, toName string, kind string, domain string,
 	t, err := ht.ParseFiles(fmt.Sprintf("%s/templates/email-notification.txt", os.Getenv("STATIC")))
 	if err != nil {
 		util.GetLogger().Errorf("cannot parse %s/templates/email-notification.txt: %v", os.Getenv("STATIC"), err)
-		return errorMalformedTemplate
+		return app.ErrorMalformedTemplate
 	}
 
 	var body bytes.Buffer
@@ -47,7 +47,7 @@ func smtpEmailNotification(to string, toName string, kind string, domain string,
 	err = smtpSendMail(to, toName, "text/html; charset=UTF-8", "[Commento] "+title, body.String())
 	if err != nil {
 		util.GetLogger().Errorf("cannot send email notification email: %v", err)
-		return errorCannotSendEmail
+		return app.ErrorCannotSendEmail
 	}
 
 	return nil

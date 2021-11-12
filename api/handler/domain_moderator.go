@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -21,7 +22,7 @@ func domainModeratorList(domain string) ([]moderator, error) {
 	rows, err := repository.Db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get moderators: %v", err)
-		return nil, errorInternal
+		return nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -30,7 +31,7 @@ func domainModeratorList(domain string) ([]moderator, error) {
 		m := moderator{}
 		if err = rows.Scan(&m.Email, &m.AddDate); err != nil {
 			util.GetLogger().Errorf("cannot Scan moderator: %v", err)
-			return nil, errorInternal
+			return nil, app.ErrorInternal
 		}
 
 		moderators = append(moderators, m)
@@ -52,7 +53,7 @@ func isDomainModerator(domain string, email string) (bool, error) {
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
 		util.GetLogger().Errorf("cannot query if moderator: %v", err)
-		return false, errorInternal
+		return false, app.ErrorInternal
 	}
 
 	return exists, nil

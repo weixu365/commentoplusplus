@@ -18,12 +18,12 @@ func gitlabOauthConfigure() error {
 
 	if os.Getenv("GITLAB_KEY") == "" {
 		util.GetLogger().Errorf("COMMENTO_GITLAB_KEY not configured, but COMMENTO_GITLAB_SECRET is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	if os.Getenv("GITLAB_SECRET") == "" {
 		util.GetLogger().Errorf("COMMENTO_GITLAB_SECRET not configured, but COMMENTO_GITLAB_KEY is set")
-		return errorOauthMisconfigured
+		return app.ErrorOauthMisconfigured
 	}
 
 	util.GetLogger().Infof("loading gitlab OAuth config")

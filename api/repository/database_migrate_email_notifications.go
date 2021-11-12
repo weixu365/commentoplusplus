@@ -16,7 +16,7 @@ func MigrateEmails() error {
 	rows, err := repository.Db.Query(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return errorDatabaseMigration
+		return app.ErrorDatabaseMigration
 	}
 	defer rows.Close()
 
@@ -24,12 +24,12 @@ func MigrateEmails() error {
 		var email string
 		if err = rows.Scan(&email); err != nil {
 			util.GetLogger().Errorf("cannot get email from tables during migration: %v", err)
-			return errorDatabaseMigration
+			return app.ErrorDatabaseMigration
 		}
 
 		if err = emailNew(email); err != nil {
 			util.GetLogger().Errorf("cannot insert email during migration: %v", err)
-			return errorDatabaseMigration
+			return app.ErrorDatabaseMigration
 		}
 	}
 

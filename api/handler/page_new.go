@@ -8,7 +8,7 @@ import (
 func pageNew(domain string, path string) error {
 	// path can be empty
 	if domain == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -20,7 +20,7 @@ func pageNew(domain string, path string) error {
 	_, err := repository.Db.Exec(statement, domain, path)
 	if err != nil {
 		util.GetLogger().Errorf("error inserting new page: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

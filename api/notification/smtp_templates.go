@@ -29,7 +29,7 @@ Subject: {{.Subject}}
 `)
 	if err != nil {
 		util.GetLogger().Errorf("cannot parse header template: %v", err)
-		return errorMalformedTemplate
+		return app.ErrorMalformedTemplate
 	}
 
 	names := []string{
@@ -48,7 +48,7 @@ Subject: {{.Subject}}
 		templates[name], err = template.ParseFiles(fmt.Sprintf("%s/templates/%s.txt", os.Getenv("STATIC"), name))
 		if err != nil {
 			util.GetLogger().Errorf("cannot parse %s/templates/%s.txt: %v", os.Getenv("STATIC"), name, err)
-			return errorMalformedTemplate
+			return app.ErrorMalformedTemplate
 		}
 	}
 

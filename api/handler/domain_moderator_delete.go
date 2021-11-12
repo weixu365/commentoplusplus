@@ -8,7 +8,7 @@ import (
 
 func domainModeratorDelete(domain string, email string) error {
 	if domain == "" || email == "" {
-		return errorMissingConfig
+		return app.ErrorMissingConfig
 	}
 
 	statement := `
@@ -18,7 +18,7 @@ func domainModeratorDelete(domain string, email string) error {
 	_, err := repository.Db.Exec(statement, domain, email)
 	if err != nil {
 		util.GetLogger().Errorf("cannot delete moderator: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

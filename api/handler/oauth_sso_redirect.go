@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 
@@ -15,7 +16,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	domain := r.Header.Get("Referer")
 
 	if commenterToken == "" {
-		fmt.Fprintf(w, "Error: %s\n", errorMissingField.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingField.Error())
 		return
 	}
 
@@ -26,14 +27,14 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := commenterGetByCommenterToken(commenterToken)
-	if err != nil && err != errorNoSuchToken {
+	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
 
 	d, err := domainGet(domain)
 	if err != nil {
-		fmt.Fprintf(w, "Error: %s\n", errorNoSuchDomain.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorNoSuchDomain.Error())
 		return
 	}
 
@@ -43,7 +44,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if d.SsoSecret == "" || d.SsoUrl == "" {
-		fmt.Fprintf(w, "Error: %s\n", errorMissingConfig.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingConfig.Error())
 		return
 	}
 
@@ -63,7 +64,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	tokenBytes, err := hex.DecodeString(token)
 	if err != nil {
 		util.GetLogger().Errorf("cannot decode hex token: %v", err)
-		fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorInternal.Error())
 		return
 	}
 
@@ -76,7 +77,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 		// this should really not be happening; we're checking if the
 		// passed URL is valid at domain update
 		util.GetLogger().Errorf("cannot parse URL: %v", err)
-		fmt.Fprintf(w, "Error: %s\n", errorInternal.Error())
+		fmt.Fprintf(w, "Error: %s\n", app.ErrorInternal.Error())
 		return
 	}
 

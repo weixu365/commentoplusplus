@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -10,7 +11,7 @@ import (
 func commentList(commenterHex string, domain string, path string, includeUnapproved bool) ([]comment, map[string]commenter, error) {
 	// path can be empty
 	if commenterHex == "" || domain == "" {
-		return nil, nil, errorMissingField
+		return nil, nil, app.ErrorMissingField
 	}
 
 	statement := `
@@ -51,7 +52,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, errorInternal
+		return nil, nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -71,7 +72,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 			&c.State,
 			&c.Deleted,
 			&c.CreationDate); err != nil {
-			return nil, nil, errorInternal
+			return nil, nil, app.ErrorInternal
 		}
 
 		if commenterHex != "anonymous" {
@@ -102,7 +103,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
 				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, errorInternal
+				return nil, nil, app.ErrorInternal
 			}
 		}
 	}
@@ -145,7 +146,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 	if *x.CommenterToken != "anonymous" {
 		c, err := commenterGetByCommenterToken(*x.CommenterToken)
 		if err != nil {
-			if err == errorNoSuchToken {
+			if err =, app.ErrorNoSuchToken {
 				commenterHex = "anonymous"
 			} else {
 				bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -208,7 +209,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 
 func commentListApprovals(domain string) ([]comment, map[string]commenter, error) {
 	if domain == "" {
-		return nil, nil, errorMissingField
+		return nil, nil, app.ErrorMissingField
 	}
 
 	statement := `
@@ -236,7 +237,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, errorInternal
+		return nil, nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -257,7 +258,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 			&c.State,
 			&c.Deleted,
 			&c.CreationDate); err != nil {
-			return nil, nil, errorInternal
+			return nil, nil, app.ErrorInternal
 		}
 
 		comments = append(comments, c)
@@ -266,7 +267,7 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
 				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, errorInternal
+				return nil, nil, app.ErrorInternal
 			}
 		}
 	}
@@ -327,7 +328,7 @@ func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 
 func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 	if domain == "" {
-		return nil, nil, errorMissingField
+		return nil, nil, app.ErrorMissingField
 	}
 
 	statement := `
@@ -355,7 +356,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, errorInternal
+		return nil, nil, app.ErrorInternal
 	}
 	defer rows.Close()
 
@@ -376,7 +377,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 			&c.State,
 			&c.Deleted,
 			&c.CreationDate); err != nil {
-			return nil, nil, errorInternal
+			return nil, nil, app.ErrorInternal
 		}
 
 		comments = append(comments, c)
@@ -385,7 +386,7 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 			commenters[c.CommenterHex], err = commenterGetByHex(c.CommenterHex)
 			if err != nil {
 				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, errorInternal
+				return nil, nil, app.ErrorInternal
 			}
 		}
 	}

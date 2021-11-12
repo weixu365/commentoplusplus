@@ -8,7 +8,7 @@ import (
 
 func commentEdit(commentHex string, markdown string, url string) (string, error) {
 	if commentHex == "" {
-		return "", errorMissingField
+		return "", app.ErrorMissingField
 	}
 
 	html := markdownToHtml(markdown)
@@ -22,7 +22,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 
 	if err != nil {
 		// TODO: make sure this is the error is actually non-existant commentHex
-		return "", errorNoSuchComment
+		return "", app.ErrorNoSuchComment
 	}
 
 	app.NotificationHub.Broadcast <- []byte(url)

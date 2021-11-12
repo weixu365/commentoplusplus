@@ -9,7 +9,7 @@ import (
 
 func commentDelete(commentHex string, deleterHex string, domain string, path string) error {
 	if commentHex == "" || deleterHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -27,7 +27,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 
 	if err != nil {
 		// TODO: make sure this is the error is actually non-existant commentHex
-		return errorNoSuchComment
+		return app.ErrorNoSuchComment
 	}
 
 	// Since we're no longer actually deleting comments, we are no longer running the trigger function!
@@ -39,7 +39,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 	_, err = repository.Db.Exec(statement, domain, path)
 
 	if err != nil {
-		return errorNoSuchComment
+		return app.ErrorNoSuchComment
 	}
 
 	app.NotificationHub.Broadcast <- []byte(domain + path)

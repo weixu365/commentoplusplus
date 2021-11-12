@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/repository"
+import (
+	"simple-commenting/app"
+	"simple-commenting/repository"
+)
 
 var commentersRowColumns string = `
 	commenters.commenterHex,
@@ -28,7 +31,7 @@ func commentersRowScan(s sqlScanner, c *commenter) error {
 
 func commenterGetByHex(commenterHex string) (commenter, error) {
 	if commenterHex == "" {
-		return commenter{}, errorMissingField
+		return commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -41,7 +44,7 @@ func commenterGetByHex(commenterHex string) (commenter, error) {
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, errorNoSuchCommenter
+		return commenter{}, app.ErrorNoSuchCommenter
 	}
 
 	if c.Deleted == true {
@@ -56,7 +59,7 @@ func commenterGetByHex(commenterHex string) (commenter, error) {
 
 func commenterGetByEmail(provider string, email string) (commenter, error) {
 	if provider == "" || email == "" {
-		return commenter{}, errorMissingField
+		return commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -69,7 +72,7 @@ func commenterGetByEmail(provider string, email string) (commenter, error) {
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, errorNoSuchCommenter
+		return commenter{}, app.ErrorNoSuchCommenter
 	}
 
 	if c.Deleted == true {
@@ -84,7 +87,7 @@ func commenterGetByEmail(provider string, email string) (commenter, error) {
 
 func commenterGetByCommenterToken(commenterToken string) (commenter, error) {
 	if commenterToken == "" {
-		return commenter{}, errorMissingField
+		return commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -98,11 +101,11 @@ func commenterGetByCommenterToken(commenterToken string) (commenter, error) {
 	var c commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, errorNoSuchToken
+		return commenter{}, app.ErrorNoSuchToken
 	}
 
 	if c.CommenterHex == "none" {
-		return commenter{}, errorNoSuchToken
+		return commenter{}, app.ErrorNoSuchToken
 	}
 
 	if c.Deleted == true {

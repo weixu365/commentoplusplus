@@ -18,7 +18,7 @@ func smtpResetHex(to string, toName string, resetHex string) error {
 	err := smtpSendMail(to, toName, "", "Reset your password", body.String())
 	if err != nil {
 		util.GetLogger().Errorf("cannot send reset email: %v", err)
-		return errorCannotSendEmail
+		return app.ErrorCannotSendEmail
 	}
 
 	return nil

@@ -9,7 +9,7 @@ import (
 
 func commentApprove(commentHex string, url string) error {
 	if commentHex == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	statement := `
@@ -21,7 +21,7 @@ func commentApprove(commentHex string, url string) error {
 	_, err := repository.Db.Exec(statement, commentHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot approve comment: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	app.NotificationHub.Broadcast <- []byte(url)

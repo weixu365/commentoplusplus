@@ -8,7 +8,7 @@ import (
 
 func pageUpdate(p page) error {
 	if p.Domain == "" {
-		return errorMissingField
+		return app.ErrorMissingField
 	}
 
 	// fields to not update:
@@ -23,7 +23,7 @@ func pageUpdate(p page) error {
 	_, err := repository.Db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
 	if err != nil {
 		util.GetLogger().Errorf("error setting page attributes: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil

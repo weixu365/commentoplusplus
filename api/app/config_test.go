@@ -121,7 +121,7 @@ func TestConfigParseStaticNotADirectory(t *testing.T) {
 	os.Setenv("COMMENTO_ORIGIN", "https://commento.io")
 	os.Setenv("COMMENTO_STATIC", os.Args[0])
 
-	if err := configParse(); err != errorNotADirectory {
+	if err := configParse(); err != ErrorNotADirectory {
 		t.Errorf("expected error not found when a file is used")
 		return
 	}

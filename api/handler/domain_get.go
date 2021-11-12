@@ -1,6 +1,9 @@
 package handler
 
-import "simple-commenting/repository"
+import (
+	"simple-commenting/app"
+	"simple-commenting/repository"
+)
 
 var domainsRowColumns = `
 	domains.domain,
@@ -52,7 +55,7 @@ func domainsRowScan(s sqlScanner, d *domain) error {
 
 func domainGet(dmn string) (domain, error) {
 	if dmn == "" {
-		return domain{}, errorMissingField
+		return domain{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -65,7 +68,7 @@ func domainGet(dmn string) (domain, error) {
 	var err error
 	d := domain{}
 	if err = domainsRowScan(row, &d); err != nil {
-		return d, errorNoSuchDomain
+		return d, app.ErrorNoSuchDomain
 	}
 
 	d.Moderators, err = domainModeratorList(d.Domain)

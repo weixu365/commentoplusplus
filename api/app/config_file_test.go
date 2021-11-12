@@ -85,8 +85,8 @@ func TestConfigFileLoadInvalid(t *testing.T) {
 		return
 	}
 
-	if err := configFileLoad(f.Name()); err != errorInvalidConfigFile {
-		t.Errorf("expected err=%v got err=%v", errorInvalidConfigFile, err)
+	if err := configFileLoad(f.Name()); err != ErrorInvalidConfigFile {
+		t.Errorf("expected err=%v got err=%v", ErrorInvalidConfigFile, err)
 		return
 	}
 }

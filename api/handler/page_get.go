@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -9,7 +10,7 @@ import (
 func pageGet(domain string, path string) (page, error) {
 	// path can be empty
 	if domain == "" {
-		return page{}, errorMissingField
+		return page{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -31,7 +32,7 @@ func pageGet(domain string, path string) (page, error) {
 			p.Title = ""
 		} else {
 			util.GetLogger().Errorf("error scanning page: %v", err)
-			return page{}, errorInternal
+			return page{}, app.ErrorInternal
 		}
 	}
 

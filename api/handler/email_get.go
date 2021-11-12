@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 )
 
@@ -34,7 +35,7 @@ func emailGet(em string) (email, error) {
 	var e email
 	if err := emailsRowScan(row, &e); err != nil {
 		// TODO: is this the only error?
-		return e, errorNoSuchEmail
+		return e, app.ErrorNoSuchEmail
 	}
 
 	return e, nil
@@ -51,7 +52,7 @@ func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (email, error) 
 	e := email{}
 	if err := emailsRowScan(row, &e); err != nil {
 		// TODO: is this the only error?
-		return e, errorNoSuchUnsubscribeSecretHex
+		return e, app.ErrorNoSuchUnsubscribeSecretHex
 	}
 
 	return e, nil

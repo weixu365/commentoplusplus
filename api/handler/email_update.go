@@ -15,7 +15,7 @@ func emailUpdate(e email) error {
 	_, err := repository.Db.Exec(statement, e.Email, e.UnsubscribeSecretHex, e.SendReplyNotifications, e.SendModeratorNotifications)
 	if err != nil {
 		util.GetLogger().Errorf("error updating email: %v", err)
-		return errorInternal
+		return app.ErrorInternal
 	}
 
 	return nil
