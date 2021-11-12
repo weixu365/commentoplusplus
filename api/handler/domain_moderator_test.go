@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainModeratorListBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainModeratorNew("example.com", "test@example.com")
 	domainModeratorNew("example.com", "test2@example.com")
@@ -33,7 +34,7 @@ func TestDomainModeratorListBasics(t *testing.T) {
 }
 
 func TestIsDomainModeratorBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainModeratorNew("example.com", "test@example.com")
 

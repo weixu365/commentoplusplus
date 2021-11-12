@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestOwnerNewBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerNew("test@example.com", "Test", "hunter2"); err != nil {
 		t.Errorf("unexpected error when creating new owner: %v", err)
@@ -14,7 +15,7 @@ func TestOwnerNewBasics(t *testing.T) {
 }
 
 func TestOwnerNewClash(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerNew("test@example.com", "Test", "hunter2"); err != nil {
 		t.Errorf("unexpected error when creating new owner: %v", err)
@@ -28,7 +29,7 @@ func TestOwnerNewClash(t *testing.T) {
 }
 
 func TestOwnerNewEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerNew("test@example.com", "", "hunter2"); err == nil {
 		t.Errorf("expected error not found when passing empty name")

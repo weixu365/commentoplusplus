@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainListBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainNew("temp-owner-hex", "Example", "example.com")
 	domainNew("temp-owner-hex", "Example", "example2.com")

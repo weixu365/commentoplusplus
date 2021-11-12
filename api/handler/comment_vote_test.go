@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentVoteBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	cr0, _ := commenterNew("test1@example.com", "Test1", "undefined", "http://example.com/photo.jpg", "google", "")
 	cr1, _ := commenterNew("test2@example.com", "Test2", "undefined", "http://example.com/photo.jpg", "google", "")

@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentOwnershipVerifyBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentHex, _ := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 
@@ -34,7 +35,7 @@ func TestCommentOwnershipVerifyBasics(t *testing.T) {
 }
 
 func TestCommentOwnershipVerifyEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commentOwnershipVerify("temp-commenter-hex", ""); err == nil {
 		t.Errorf("expected error not founding verifying ownership with empty commentHex")

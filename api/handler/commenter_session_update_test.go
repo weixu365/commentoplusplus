@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestCommenterSessionUpdateBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterToken, _ := commenterTokenNew()
 
@@ -34,7 +35,7 @@ func TestCommenterSessionUpdateBasics(t *testing.T) {
 }
 
 func TestCommenterSessionUpdateEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := commenterSessionUpdate("", "temp-commenter-hex"); err == nil {
 		t.Errorf("expected error not found when updating with empty commenterToken")

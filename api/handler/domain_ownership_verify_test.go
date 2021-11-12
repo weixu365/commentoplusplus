@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainVerifyOwnershipBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	ownerHex, _ := ownerNew("test@example.com", "Test", "hunter2")
 	ownerLogin("test@example.com", "hunter2")

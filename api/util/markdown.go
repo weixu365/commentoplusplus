@@ -9,7 +9,7 @@ var policy *bluemonday.Policy
 var renderer blackfriday.Renderer
 var extensions int
 
-func markdownRendererCreate() error {
+func MarkdownRendererCreate() error {
 	policy = bluemonday.UGCPolicy()
 	policy.AddTargetBlankToFullyQualifiedLinks(true)
 	policy.RequireParseableURLs(true)

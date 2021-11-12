@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestCommenterLoginBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterLogin("test@example.com", "hunter2"); err == nil {
 		t.Errorf("expected error not found when logging in without creating an account")
@@ -31,7 +32,7 @@ func TestCommenterLoginBasics(t *testing.T) {
 }
 
 func TestCommenterLoginEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterLogin("test@example.com", ""); err == nil {
 		t.Errorf("expected error not found when passing empty password")
@@ -47,7 +48,7 @@ func TestCommenterLoginEmpty(t *testing.T) {
 }
 
 func TestCommenterLoginNonCommento(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterNew("test@example.com", "Test", "undefined", "undefined", "google", "")
 

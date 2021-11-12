@@ -8,14 +8,14 @@ import (
 )
 
 var goMigrations = map[string](func() error){
-	"20190213033530-email-notifications.sql": migrateEmails,
+	"20190213033530-email-notifications.sql": MigrateEmails,
 }
 
-func migrate() error {
-	return migrateFromDir(os.Getenv("STATIC") + "/db")
+func Migrate() error {
+	return MigrateFromDir(os.Getenv("STATIC") + "/db")
 }
 
-func migrateFromDir(dir string) error {
+func MigrateFromDir(dir string) error {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		util.GetLogger().Errorf("cannot read directory for migrations: %v", err)

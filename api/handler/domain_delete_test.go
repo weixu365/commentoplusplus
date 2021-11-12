@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainDeleteBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainNew("temp-owner-hex", "Example", "example.com")
 	domainNew("temp-owner-hex", "Example", "example2.com")
@@ -29,7 +30,7 @@ func TestDomainDeleteBasics(t *testing.T) {
 }
 
 func TestDomainDeleteEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := domainDelete(""); err == nil {
 		t.Errorf("expected error not found when deleting with empty domain")

@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestCommenterGetByHexBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
 
@@ -22,7 +23,7 @@ func TestCommenterGetByHexBasics(t *testing.T) {
 }
 
 func TestCommenterGetByHexEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterGetByHex(""); err == nil {
 		t.Errorf("expected error not found getting commenter with empty hex")
@@ -31,7 +32,7 @@ func TestCommenterGetByHexEmpty(t *testing.T) {
 }
 
 func TestCommenterGetByCommenterToken(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
 
@@ -52,7 +53,7 @@ func TestCommenterGetByCommenterToken(t *testing.T) {
 }
 
 func TestCommenterGetByCommenterTokenEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterGetByCommenterToken(""); err == nil {
 		t.Errorf("expected error not found getting commenter with empty commenterToken")
@@ -61,7 +62,7 @@ func TestCommenterGetByCommenterTokenEmpty(t *testing.T) {
 }
 
 func TestCommenterGetByName(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
 
@@ -82,7 +83,7 @@ func TestCommenterGetByName(t *testing.T) {
 }
 
 func TestCommenterGetByNameEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterGetByEmail("", ""); err == nil {
 		t.Errorf("expected error not found getting commenter with empty everything")

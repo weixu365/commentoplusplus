@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainGetBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainNew("temp-owner-hex", "Example", "example.com")
 
@@ -22,7 +23,7 @@ func TestDomainGetBasics(t *testing.T) {
 }
 
 func TestDomainGetEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := domainGet(""); err == nil {
 		t.Errorf("expected error not found when getting with empty domain")
@@ -31,7 +32,7 @@ func TestDomainGetEmpty(t *testing.T) {
 }
 
 func TestDomainGetDNE(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := domainGet("example.com"); err == nil {
 		t.Errorf("expected error not found when getting non-existant domain")

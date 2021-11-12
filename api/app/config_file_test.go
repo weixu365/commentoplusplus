@@ -3,11 +3,12 @@ package app
 import (
 	"io/ioutil"
 	"os"
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestConfigFileLoadBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	f, err := ioutil.TempFile("", "commento")
 	if err != nil {
@@ -55,7 +56,7 @@ func TestConfigFileLoadBasics(t *testing.T) {
 }
 
 func TestConfigFileLoadInvalid(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	f, err := ioutil.TempFile("", "commento")
 	if err != nil {

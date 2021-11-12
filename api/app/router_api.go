@@ -2,11 +2,12 @@ package app
 
 import (
 	"net/http"
+	"simple-commenting/notification"
 
 	"github.com/gorilla/mux"
 )
 
-var hub *Hub
+var NotificationHub *notification.Hub
 
 func apiRouterInit(router *mux.Router) error {
 	router.HandleFunc("/api/owner/new", ownerNewHandler).Methods("POST")
@@ -73,10 +74,10 @@ func apiRouterInit(router *mux.Router) error {
 
 	router.HandleFunc("/api/page/update", pageUpdateHandler).Methods("POST")
 
-	hub = newHub()
-	go hub.run()
+	NotificationHub = notification.NewHub()
+	go NotificationHub.Run()
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+		notification.ServeWs(NotificationHub, w, r)
 	})
 
 	return nil

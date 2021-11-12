@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentDomainPathGetBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentHex, _ := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 
@@ -28,7 +29,7 @@ func TestCommentDomainPathGetBasics(t *testing.T) {
 }
 
 func TestCommentDomainGetEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, _, err := commentDomainPathGet(""); err == nil {
 		t.Errorf("expected error not found getting domain with empty commentHex")

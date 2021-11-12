@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestPageGetBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	pageNew("example.com", "/path.html")
 
@@ -27,7 +28,7 @@ func TestPageGetBasics(t *testing.T) {
 }
 
 func TestPageGetEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	pageNew("example.com", "")
 

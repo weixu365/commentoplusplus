@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestOwnerConfirmHexBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	ownerHex, _ := ownerNew("test@example.com", "Test", "hunter2")
 

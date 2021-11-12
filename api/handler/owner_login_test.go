@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestOwnerLoginBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerLogin("test@example.com", "hunter2"); err == nil {
 		t.Errorf("expected error not found when logging in without creating an account")
@@ -31,7 +32,7 @@ func TestOwnerLoginBasics(t *testing.T) {
 }
 
 func TestOwnerLoginEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerLogin("test@example.com", ""); err == nil {
 		t.Errorf("expected error not found when passing empty password")

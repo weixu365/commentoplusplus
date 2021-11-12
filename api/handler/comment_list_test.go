@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"strings"
 	"testing"
 	"time"
 )
 
 func TestCommentListBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "http://example.com/photo.jpg", "google", "")
 
@@ -54,7 +55,7 @@ func TestCommentListBasics(t *testing.T) {
 }
 
 func TestCommentListEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, _, err := commentList("temp-commenter-hex", "", "/path.html", false); err == nil {
 		t.Errorf("expected error not found listing comments with empty domain")
@@ -63,7 +64,7 @@ func TestCommentListEmpty(t *testing.T) {
 }
 
 func TestCommentListSelfUnapproved(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "http://example.com/photo.jpg", "google", "")
 
@@ -85,7 +86,7 @@ func TestCommentListSelfUnapproved(t *testing.T) {
 }
 
 func TestCommentListAnonymousUnapproved(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentNew("anonymous", "example.com", "/path.html", "root", "**foo**", "unapproved", time.Now().UTC())
 
@@ -98,7 +99,7 @@ func TestCommentListAnonymousUnapproved(t *testing.T) {
 }
 
 func TestCommentListIncludeUnapproved(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentNew("anonymous", "example.com", "/path.html", "root", "**foo**", "unapproved", time.Now().UTC())
 
@@ -111,7 +112,7 @@ func TestCommentListIncludeUnapproved(t *testing.T) {
 }
 
 func TestCommentListDifferentPaths(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentNew("anonymous", "example.com", "/path1.html", "root", "**foo**", "unapproved", time.Now().UTC())
 	commentNew("anonymous", "example.com", "/path1.html", "root", "**foo**", "unapproved", time.Now().UTC())
@@ -133,7 +134,7 @@ func TestCommentListDifferentPaths(t *testing.T) {
 }
 
 func TestCommentListDifferentDomains(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentNew("anonymous", "example1.com", "/path.html", "root", "**foo**", "unapproved", time.Now().UTC())
 	commentNew("anonymous", "example2.com", "/path.html", "root", "**foo**", "unapproved", time.Now().UTC())

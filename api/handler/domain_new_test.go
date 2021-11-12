@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainNewBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := domainNew("temp-owner-hex", "Example", "example.com"); err != nil {
 		t.Errorf("unexpected error creating domain: %v", err)
@@ -14,7 +15,7 @@ func TestDomainNewBasics(t *testing.T) {
 }
 
 func TestDomainNewClash(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := domainNew("temp-owner-hex", "Example", "example.com"); err != nil {
 		t.Errorf("unexpected error creating domain: %v", err)
@@ -28,7 +29,7 @@ func TestDomainNewClash(t *testing.T) {
 }
 
 func TestDomainNewEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := domainNew("temp-owner-hex", "Example", ""); err == nil {
 		t.Errorf("expected error not found when creating with emtpy domain")

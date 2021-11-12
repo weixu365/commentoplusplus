@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestOwnerGetByEmailBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	ownerHex, _ := ownerNew("test@example.com", "Test", "hunter2")
 
@@ -22,7 +23,7 @@ func TestOwnerGetByEmailBasics(t *testing.T) {
 }
 
 func TestOwnerGetByEmailDNE(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerGetByEmail("invalid@example.com"); err == nil {
 		t.Errorf("expected error not found on ownerGetByEmail before creating an account")
@@ -31,7 +32,7 @@ func TestOwnerGetByEmailDNE(t *testing.T) {
 }
 
 func TestOwnerGetByOwnerTokenBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	ownerHex, _ := ownerNew("test@example.com", "Test", "hunter2")
 
@@ -50,7 +51,7 @@ func TestOwnerGetByOwnerTokenBasics(t *testing.T) {
 }
 
 func TestOwnerGetByOwnerTokenDNE(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := ownerGetByOwnerToken("does-not-exist"); err == nil {
 		t.Errorf("expected error not found on ownerGetByOwnerToken before creating an account")

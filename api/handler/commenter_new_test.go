@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestCommenterNewBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", ""); err != nil {
 		t.Errorf("unexpected error creating new commenter: %v", err)
@@ -14,7 +15,7 @@ func TestCommenterNewBasics(t *testing.T) {
 }
 
 func TestCommenterNewEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterNew("", "Test", "undefined", "https://example.com/photo.jpg", "google", ""); err == nil {
 		t.Errorf("expected error not found creating new commenter with empty email")
@@ -28,7 +29,7 @@ func TestCommenterNewEmpty(t *testing.T) {
 }
 
 func TestCommenterNewCommento(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commenterNew("test@example.com", "Test", "undefined", "", "commento", ""); err == nil {
 		t.Errorf("expected error not found creating new commento account with empty password")

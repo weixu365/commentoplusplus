@@ -1,12 +1,13 @@
 package util
 
 import (
+	"simple-commenting/test"
 	"strings"
 	"testing"
 )
 
 func TestMarkdownToHtmlBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	// basic markdown and expected html tests
 	tests := map[string]string{

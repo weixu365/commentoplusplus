@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestDomainModeratorDeleteBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainModeratorNew("example.com", "test@example.com")
 	domainModeratorNew("example.com", "test2@example.com")
@@ -29,7 +30,7 @@ func TestDomainModeratorDeleteBasics(t *testing.T) {
 }
 
 func TestDomainModeratorDeleteEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	domainModeratorNew("example.com", "test@example.com")
 

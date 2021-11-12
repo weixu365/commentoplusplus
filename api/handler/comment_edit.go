@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 )
 
 func commentEdit(commentHex string, markdown string, url string) (string, error) {
@@ -23,7 +24,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 		return "", errorNoSuchComment
 	}
 
-	hub.broadcast <- []byte(url)
+	app.NotificationHub.Broadcast <- []byte(url)
 
 	return html, nil
 }

@@ -2,7 +2,7 @@ package repository
 
 import "simple-commenting/util"
 
-func migrateEmails() error {
+func MigrateEmails() error {
 	statement := `
 		SELECT commenters.email
 		FROM commenters

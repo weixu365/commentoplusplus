@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 )
 
 func TestPageNewBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := pageNew("example.com", "/path.html"); err != nil {
 		t.Errorf("unexpected error creating page: %v", err)
@@ -14,7 +15,7 @@ func TestPageNewBasics(t *testing.T) {
 }
 
 func TestPageNewEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := pageNew("example.com", ""); err != nil {
 		t.Errorf("unexpected error creating page with empty path: %v", err)
@@ -28,7 +29,7 @@ func TestPageNewEmpty(t *testing.T) {
 }
 
 func TestPageNewUnique(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := pageNew("example.com", "/path.html"); err != nil {
 		t.Errorf("unexpected error creating page: %v", err)

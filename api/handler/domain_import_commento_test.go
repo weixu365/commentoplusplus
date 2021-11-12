@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestImportCommento(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	// Create JSON data
 	data := commentoExportV1{

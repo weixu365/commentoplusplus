@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentCountBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "http://example.com/photo.jpg", "google", "")
 
@@ -27,7 +28,7 @@ func TestCommentCountBasics(t *testing.T) {
 }
 
 func TestCommentCountNewPage(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	counts, err := commentCount("example.com", []string{"/path.html"})
 	if err != nil {

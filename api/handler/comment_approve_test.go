@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentApproveBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
 
@@ -24,7 +25,7 @@ func TestCommentApproveBasics(t *testing.T) {
 }
 
 func TestCommentApproveEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if err := commentApprove("", "/any-path.html"); err == nil {
 		t.Errorf("expected error not found approving comment with empty commentHex")

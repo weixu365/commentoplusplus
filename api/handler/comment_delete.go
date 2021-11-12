@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 		return errorNoSuchComment
 	}
 
-	hub.broadcast <- []byte(domain + path)
+	app.NotificationHub.Broadcast <- []byte(domain + path)
 
 	return nil
 }

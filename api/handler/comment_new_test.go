@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"simple-commenting/repository"
+	"simple-commenting/test"
 	"testing"
 	"time"
 )
 
 func TestCommentNewBasics(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC()); err != nil {
 		t.Errorf("unexpected error creating new comment: %v", err)
@@ -15,7 +17,7 @@ func TestCommentNewBasics(t *testing.T) {
 }
 
 func TestCommentNewEmpty(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	if _, err := commentNew("temp-commenter-hex", "example.com", "", "root", "**foo**", "approved", time.Now().UTC()); err != nil {
 		t.Errorf("empty path not allowed: %v", err)
@@ -34,7 +36,7 @@ func TestCommentNewEmpty(t *testing.T) {
 }
 
 func TestCommentNewUpvoted(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	commentHex, _ := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 
@@ -43,7 +45,7 @@ func TestCommentNewUpvoted(t *testing.T) {
 		FROM comments
 		WHERE commentHex = $1;
 	`
-	row := db.QueryRow(statement, commentHex)
+	row := repository.Db.QueryRow(statement, commentHex)
 
 	var score int
 	if err := row.Scan(&score); err != nil {
@@ -58,7 +60,7 @@ func TestCommentNewUpvoted(t *testing.T) {
 }
 
 func TestCommentNewThreadLocked(t *testing.T) {
-	failTestOnError(t, setupTestEnv())
+	test.FailTestOnError(t, test.SetupTestEnv())
 
 	pageNew("example.com", "/path.html")
 	p, _ := pageGet("example.com", "/path.html")

@@ -11,7 +11,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func dbConnect(retriesLeft int) error {
+func DbConnect(retriesLeft int) error {
 	con := os.Getenv("POSTGRES")
 	u, err := url.Parse(con)
 	if err != nil {
@@ -32,7 +32,7 @@ func dbConnect(retriesLeft int) error {
 		if retriesLeft > 0 {
 			util.GetLogger().Errorf("cannot talk to postgres, retrying in 10 seconds (%d attempts left): %v", retriesLeft-1, err)
 			time.Sleep(10 * time.Second)
-			return dbConnect(retriesLeft - 1)
+			return DbConnect(retriesLeft - 1)
 		} else {
 			util.GetLogger().Errorf("cannot talk to postgres, last attempt failed: %v", err)
 			return err
