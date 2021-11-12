@@ -42,6 +42,7 @@ func migrateFromDir(dir string) error {
 		}
 
 		filenames[filename] = true
+		logger.Infof("Found applied db script: %s", filename)
 	}
 
 	logger.Infof("%d migrations already installed, looking for more", len(filenames))

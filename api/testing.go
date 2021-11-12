@@ -130,5 +130,7 @@ func setupTestEnv() error {
 		return err
 	}
 
+	hub = newHub()
+
 	return nil
 }

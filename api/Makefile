@@ -20,6 +20,8 @@ test: test-go
 clean:
 	rm -rf $(BUILD_DIR)
 
+psql:
+	bash -c "docker exec -it -u postgres $$(docker ps | grep postgres | cut -d" " -f1) psql --dbname commento_test"
 # There's really no difference between the prod and devel binaries in Go, but
 # for consistency sake, we'll use separate targets (maybe this will be useful
 # later down the line).
