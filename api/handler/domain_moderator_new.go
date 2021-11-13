@@ -32,7 +32,7 @@ func domainModeratorNew(domain string, email string) error {
 	return nil
 }
 
-func domainModeratorNewHandler(w http.ResponseWriter, r *http.Request) {
+func DomainModeratorNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

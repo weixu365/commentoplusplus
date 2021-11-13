@@ -80,7 +80,7 @@ func forgot(email string, entity string) error {
 	return nil
 }
 
-func forgotHandler(w http.ResponseWriter, r *http.Request) {
+func ForgotHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email  *string `json:"email"`
 		Entity *string `json:"entity"`

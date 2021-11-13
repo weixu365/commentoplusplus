@@ -48,7 +48,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 	return nil
 }
 
-func commentDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func CommentDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		CommentHex     *string `json:"commentHex"`
@@ -97,7 +97,7 @@ func commentDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	bodyMarshal(w, response{"success": true})
 }
 
-func commentOwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func CommentOwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		CommentHex *string `json:"commentHex"`

@@ -32,7 +32,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 	return ssoSecret, nil
 }
 
-func domainSsoSecretNewHandler(w http.ResponseWriter, r *http.Request) {
+func DomainSsoSecretNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

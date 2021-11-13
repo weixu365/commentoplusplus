@@ -56,7 +56,7 @@ func ownerDelete(ownerHex string, deleteDomains bool) error {
 	return nil
 }
 
-func ownerDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func OwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 	}

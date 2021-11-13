@@ -64,7 +64,7 @@ func reset(resetHex string, password string) (string, error) {
 	return entity, nil
 }
 
-func resetHandler(w http.ResponseWriter, r *http.Request) {
+func ResetHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		ResetHex *string `json:"resetHex"`
 		Password *string `json:"password"`

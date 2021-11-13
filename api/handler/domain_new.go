@@ -58,7 +58,7 @@ func domainNew(ownerHex string, name string, domain string) error {
 	return nil
 }
 
-func domainNewHandler(w http.ResponseWriter, r *http.Request) {
+func DomainNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Name       *string `json:"name"`

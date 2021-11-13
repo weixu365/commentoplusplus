@@ -11,7 +11,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("state")
 	code := r.FormValue("code")
 

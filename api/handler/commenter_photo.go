@@ -10,7 +10,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func commenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
+func CommenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
 	c, err := commenterGetByHex(r.FormValue("commenterHex"))
 	if err != nil {
 		http.NotFound(w, r)

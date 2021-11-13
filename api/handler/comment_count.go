@@ -46,7 +46,7 @@ func commentCount(domain string, paths []string) (map[string]int, error) {
 	return commentCounts, nil
 }
 
-func commentCountHandler(w http.ResponseWriter, r *http.Request) {
+func CommentCountHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Domain *string   `json:"domain"`
 		Paths  *[]string `json:"paths"`

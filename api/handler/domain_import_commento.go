@@ -130,7 +130,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 	return numImported, nil
 }
 
-func domainImportCommentoHandler(w http.ResponseWriter, r *http.Request) {
+func DomainImportCommentoHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

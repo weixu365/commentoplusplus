@@ -59,7 +59,7 @@ func domainUpdate(d model.Domain) error {
 	return nil
 }
 
-func domainUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func DomainUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string       `json:"ownerToken"`
 		D          *model.Domain `json:"domain"`

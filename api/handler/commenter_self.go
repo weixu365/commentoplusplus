@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func commenterSelfHandler(w http.ResponseWriter, r *http.Request) {
+func CommenterSelfHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 	}

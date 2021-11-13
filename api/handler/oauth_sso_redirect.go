@@ -11,7 +11,7 @@ import (
 	"simple-commenting/util"
 )
 
-func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
+func SsoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("commenterToken")
 	domain := r.Header.Get("Referer")
 

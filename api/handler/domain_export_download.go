@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func domainExportDownloadHandler(w http.ResponseWriter, r *http.Request) {
+func DomainExportDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	exportHex := r.FormValue("exportHex")
 	if exportHex == "" {
 		fmt.Fprintf(w, "Error: empty exportHex\n")

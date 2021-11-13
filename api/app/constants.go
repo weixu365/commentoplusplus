@@ -1,3 +1,3 @@
 package app
 
-var version string
+var Version string

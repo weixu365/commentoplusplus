@@ -23,7 +23,7 @@ func emailUpdate(e model.Email) error {
 	return nil
 }
 
-func emailUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func EmailUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email *model.Email `json:"email"`
 	}

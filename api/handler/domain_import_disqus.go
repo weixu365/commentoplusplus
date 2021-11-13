@@ -185,7 +185,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 	return numImported, nil
 }
 
-func domainImportDisqusHandler(w http.ResponseWriter, r *http.Request) {
+func DomainImportDisqusHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

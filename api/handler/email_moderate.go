@@ -8,7 +8,7 @@ import (
 	"simple-commenting/util"
 )
 
-func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
+func EmailModerateHandler(w http.ResponseWriter, r *http.Request) {
 	unsubscribeSecretHex := r.FormValue("unsubscribeSecretHex")
 	action := r.FormValue("action")
 	commentHex := r.FormValue("commentHex")

@@ -110,7 +110,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	}
 }
 
-func domainExportBeginHandler(w http.ResponseWriter, r *http.Request) {
+func DomainExportBeginHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

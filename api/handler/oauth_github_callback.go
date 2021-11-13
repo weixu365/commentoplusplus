@@ -40,7 +40,7 @@ func githubGetPrimaryEmail(accessToken string) (string, error) {
 	return nonPrimaryEmail, nil
 }
 
-func githubCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("state")
 	code := r.FormValue("code")
 

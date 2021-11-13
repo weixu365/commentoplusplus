@@ -7,7 +7,7 @@ import (
 	"simple-commenting/util"
 )
 
-func githubRedirectHandler(w http.ResponseWriter, r *http.Request) {
+func GithubRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if githubConfig == nil {
 		util.GetLogger().Errorf("github oauth access attempt without configuration")
 		fmt.Fprintf(w, "error: this website has not configured github OAuth")

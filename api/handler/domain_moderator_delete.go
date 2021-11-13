@@ -25,7 +25,7 @@ func domainModeratorDelete(domain string, email string) error {
 	return nil
 }
 
-func domainModeratorDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func DomainModeratorDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

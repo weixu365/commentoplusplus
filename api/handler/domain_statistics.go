@@ -40,7 +40,7 @@ func domainStatistics(domain string) ([]int64, error) {
 	return last30Days, nil
 }
 
-func domainStatisticsHandler(w http.ResponseWriter, r *http.Request) {
+func DomainStatisticsHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

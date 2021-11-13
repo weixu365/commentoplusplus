@@ -68,7 +68,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 	return commenterHex, nil
 }
 
-func commenterNewHandler(w http.ResponseWriter, r *http.Request) {
+func CommenterNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email    *string `json:"email"`
 		Name     *string `json:"name"`

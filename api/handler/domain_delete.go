@@ -60,7 +60,7 @@ func domainDelete(domain string) error {
 	return nil
 }
 
-func domainDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func DomainDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

@@ -8,7 +8,7 @@ import (
 	"simple-commenting/util"
 )
 
-func twitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
+func TwitterRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if twitterClient == nil {
 		util.GetLogger().Errorf("twitter oauth access attempt without configuration")
 		fmt.Fprintf(w, "error: this website has not configured twitter OAuth")

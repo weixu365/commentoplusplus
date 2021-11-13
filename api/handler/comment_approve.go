@@ -30,7 +30,7 @@ func commentApprove(commentHex string, url string) error {
 	return nil
 }
 
-func commentApproveHandler(w http.ResponseWriter, r *http.Request) {
+func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		CommentHex     *string `json:"commentHex"`
@@ -73,7 +73,7 @@ func commentApproveHandler(w http.ResponseWriter, r *http.Request) {
 	bodyMarshal(w, response{"success": true})
 }
 
-func commentOwnerApproveHandler(w http.ResponseWriter, r *http.Request) {
+func CommentOwnerApproveHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		CommentHex *string `json:"commentHex"`

@@ -58,7 +58,7 @@ func ownerLogin(email string, password string) (string, error) {
 	return ownerToken, nil
 }
 
-func ownerLoginHandler(w http.ResponseWriter, r *http.Request) {
+func OwnerLoginHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email    *string `json:"email"`
 		Password *string `json:"password"`

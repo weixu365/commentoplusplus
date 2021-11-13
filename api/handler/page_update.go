@@ -31,7 +31,7 @@ func pageUpdate(p model.Page) error {
 	return nil
 }
 
-func pageUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func PageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string     `json:"commenterToken"`
 		Domain         *string     `json:"domain"`

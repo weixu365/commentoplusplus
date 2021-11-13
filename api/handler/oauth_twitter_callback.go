@@ -11,7 +11,7 @@ import (
 	"simple-commenting/util"
 )
 
-func twitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func TwitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.FormValue("oauth_token")
 	verifier := r.FormValue("oauth_verifier")
 

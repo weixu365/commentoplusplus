@@ -51,7 +51,7 @@ func ownerConfirmHex(confirmHex string) error {
 	return nil
 }
 
-func ownerConfirmHexHandler(w http.ResponseWriter, r *http.Request) {
+func OwnerConfirmHexHandler(w http.ResponseWriter, r *http.Request) {
 	if confirmHex := r.FormValue("confirmHex"); confirmHex != "" {
 		if err := ownerConfirmHex(confirmHex); err == nil {
 			http.Redirect(w, r, fmt.Sprintf("%s/login?confirmed=true", os.Getenv("ORIGIN")), http.StatusTemporaryRedirect)

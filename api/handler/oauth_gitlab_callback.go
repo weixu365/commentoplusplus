@@ -12,7 +12,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func gitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("state")
 	code := r.FormValue("code")
 

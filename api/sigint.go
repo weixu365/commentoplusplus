@@ -9,7 +9,7 @@ import (
 )
 
 func sigintCleanup() int {
-	if db != nil {
+	if repository.Db != nil {
 		err := repository.Db.Close()
 		if err == nil {
 			util.GetLogger().Errorf("cannot close database connection: %v", err)

@@ -55,7 +55,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 	return commentHex, nil
 }
 
-func commentNewHandler(w http.ResponseWriter, r *http.Request) {
+func CommentNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		AnonName       *string `json:"anonName"`

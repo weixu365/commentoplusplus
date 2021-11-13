@@ -32,7 +32,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 	return html, nil
 }
 
-func commentEditHandler(w http.ResponseWriter, r *http.Request) {
+func CommentEditHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		CommentHex     *string `json:"commentHex"`

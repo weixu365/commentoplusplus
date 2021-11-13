@@ -59,7 +59,7 @@ func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (model.Email, e
 	return e, nil
 }
 
-func emailGetHandler(w http.ResponseWriter, r *http.Request) {
+func EmailGetHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		UnsubscribeSecretHex *string `json:"unsubscribeSecretHex"`
 	}

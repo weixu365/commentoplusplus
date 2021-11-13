@@ -46,7 +46,7 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 	return nil
 }
 
-func commenterUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func CommenterUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		Name           *string `json:"name"`

@@ -44,7 +44,7 @@ func domainList(ownerHex string) ([]model.Domain, error) {
 	return domains, rows.Err()
 }
 
-func domainListHandler(w http.ResponseWriter, r *http.Request) {
+func DomainListHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 	}

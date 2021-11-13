@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"strings"
 
 	"github.com/gorilla/mux"
 )
 
-func redirectLogin(w http.ResponseWriter, r *http.Request) {
+func RedirectLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, os.Getenv("ORIGIN")+"/login", 301)
 }
 
@@ -38,7 +39,7 @@ func fileDetemplate(f string) ([]byte, error) {
 	x = strings.Replace(x, "[[[.Origin]]]", os.Getenv("ORIGIN"), -1)
 	x = strings.Replace(x, "[[[.CdnPrefix]]]", os.Getenv("CDN_PREFIX"), -1)
 	x = strings.Replace(x, "[[[.Footer]]]", footer, -1)
-	x = strings.Replace(x, "[[[.Version]]]", version, -1)
+	x = strings.Replace(x, "[[[.Version]]]", app.Version, -1)
 
 	return []byte(x), nil
 }
@@ -134,7 +135,7 @@ func staticRouterInit(router *mux.Router) error {
 		})
 	}
 
-	router.HandleFunc("/", redirectLogin)
+	router.HandleFunc("/", RedirectLogin)
 
 	return nil
 }

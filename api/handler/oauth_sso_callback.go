@@ -11,7 +11,7 @@ import (
 	"simple-commenting/util"
 )
 
-func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	payloadHex := r.FormValue("payload")
 	signature := r.FormValue("hmac")
 

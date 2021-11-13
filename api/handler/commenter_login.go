@@ -53,7 +53,7 @@ func commenterLogin(email string, password string) (string, error) {
 	return commenterToken, nil
 }
 
-func commenterLoginHandler(w http.ResponseWriter, r *http.Request) {
+func CommenterLoginHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email    *string `json:"email"`
 		Password *string `json:"password"`

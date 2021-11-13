@@ -112,7 +112,7 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 	return comments, commenters, nil
 }
 
-func commentListHandler(w http.ResponseWriter, r *http.Request) {
+func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"CommenterToken"`
 		Domain         *string `json:"domain"`
@@ -276,7 +276,7 @@ func commentListApprovals(domain string) ([]model.Comment, map[string]model.Comm
 	return comments, commenters, nil
 }
 
-func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
+func CommentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`
@@ -395,7 +395,7 @@ func commentListAll(domain string) ([]model.Comment, map[string]model.Commenter,
 	return comments, commenters, nil
 }
 
-func commentListAllHandler(w http.ResponseWriter, r *http.Request) {
+func CommentListAllHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 		Domain     *string `json:"domain"`

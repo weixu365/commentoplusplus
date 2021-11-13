@@ -79,7 +79,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 	return ownerHex, nil
 }
 
-func ownerNewHandler(w http.ResponseWriter, r *http.Request) {
+func OwnerNewHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email    *string `json:"email"`
 		Name     *string `json:"name"`

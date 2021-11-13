@@ -49,7 +49,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 	return nil
 }
 
-func commentVoteHandler(w http.ResponseWriter, r *http.Request) {
+func CommentVoteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"commenterToken"`
 		CommentHex     *string `json:"commentHex"`

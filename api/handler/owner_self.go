@@ -5,7 +5,7 @@ import (
 	"simple-commenting/app"
 )
 
-func ownerSelfHandler(w http.ResponseWriter, r *http.Request) {
+func OwnerSelfHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
 	}

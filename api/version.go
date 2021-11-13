@@ -6,12 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"time"
 )
 
 func versionPrint() error {
-	util.GetLogger().Infof("starting Commento %s", version)
+	util.GetLogger().Infof("starting Commento %s", app.Version)
 	return nil
 }
 
@@ -25,7 +26,7 @@ func versionCheckStart() error {
 			time.Sleep(5 * time.Minute)
 
 			data := url.Values{
-				"version": {version},
+				"version": {app.Version},
 			}
 
 			resp, err := http.Post("https://version.commento.io/api/check", "application/x-www-form-urlencoded", bytes.NewBufferString(data.Encode()))
