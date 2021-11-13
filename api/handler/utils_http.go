@@ -38,7 +38,7 @@ func bodyMarshal(w http.ResponseWriter, x map[string]interface{}) error {
 	resp, err := json.Marshal(x)
 	if err != nil {
 		w.Write([]byte(`{"success":false,"message":"Some internal error occurred"}`))
-		util.GetLogger().Errorf("cannot marshal response: %v\n")
+		util.GetLogger().Errorf("cannot marshal response: %v\n", err)
 		return app.ErrorInternal
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"simple-commenting/model"
 	"simple-commenting/test"
 	"testing"
 	"time"
@@ -17,7 +18,7 @@ func TestImportCommento(t *testing.T) {
 	// Create JSON data
 	data := commentoExportV1{
 		Version: 1,
-		Comments: []comment{
+		Comments: []model.Comment{
 			{
 				CommentHex:   "5a349182b3b8e25107ab2b12e514f40fe0b69160a334019491d7c204aff6fdc2",
 				Domain:       "localhost:1313",
@@ -61,7 +62,7 @@ func TestImportCommento(t *testing.T) {
 				Deleted:      false,
 			},
 		},
-		Commenters: []commenter{
+		Commenters: []model.Commenter{
 			{
 				CommenterHex: "4629a8216538b73987597d66f266c1a1801b0451f99cf066e7122aa104ef3b07",
 				Email:        "john@doe.com",

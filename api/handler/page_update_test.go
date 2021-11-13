@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/model"
 	"simple-commenting/test"
 	"testing"
 	"time"
@@ -36,7 +37,7 @@ func TestPageUpdateBasics(t *testing.T) {
 func TestPageUpdateEmpty(t *testing.T) {
 	test.FailTestOnError(t, test.SetupTestEnv())
 
-	p := page{Domain: "", Path: "", IsLocked: false}
+	p := model.Page{Domain: "", Path: "", IsLocked: false}
 	if err := pageUpdate(p); err == nil {
 		t.Errorf("expected error not found updating page with empty everything")
 		return

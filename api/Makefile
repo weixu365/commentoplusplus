@@ -36,6 +36,6 @@ prod-go:
 
 test-go:
 	GO111MODULE=on go mod vendor
-	go test -v .
+	go test -v ./...
 
 $(shell mkdir -p $(GO_DEVEL_BUILD_DIR) $(GO_PROD_BUILD_DIR))

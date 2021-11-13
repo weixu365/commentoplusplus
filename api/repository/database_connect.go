@@ -21,7 +21,7 @@ func DbConnect(retriesLeft int) error {
 	u.User = url.UserPassword(u.User.Username(), "redacted")
 	util.GetLogger().Infof("opening connection to postgres: %s", u.String())
 
-	db, err = sql.Open("postgres", con)
+	Db, err = sql.Open("postgres", con)
 	if err != nil {
 		util.GetLogger().Errorf("cannot open connection to postgres: %v", err)
 		return err
@@ -56,7 +56,7 @@ func DbConnect(retriesLeft int) error {
 		maxIdleConnections = 50
 	}
 
-	db.SetMaxIdleConns(maxIdleConnections)
+	Db.SetMaxIdleConns(maxIdleConnections)
 
 	return nil
 }

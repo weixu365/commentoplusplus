@@ -5,7 +5,7 @@ import (
 )
 
 func TestRandomHexBasics(t *testing.T) {
-	hex1, err := randomHex(32)
+	hex1, err := RandomHex(32)
 	if err != nil {
 		t.Errorf("unexpected error creating hex: %v", err)
 		return
@@ -16,7 +16,7 @@ func TestRandomHexBasics(t *testing.T) {
 		return
 	}
 
-	hex2, err := randomHex(32)
+	hex2, err := RandomHex(32)
 	if err != nil {
 		t.Errorf("unexpected error creating hex: %v", err)
 		return

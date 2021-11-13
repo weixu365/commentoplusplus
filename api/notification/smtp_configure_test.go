@@ -2,7 +2,6 @@ package notification
 
 import (
 	"os"
-	"simple-commenting/test"
 	"testing"
 )
 
@@ -13,7 +12,7 @@ func smtpVarsClean() {
 }
 
 func TestSmtpConfigureBasics(t *testing.T) {
-	test.FailTestOnError(t, test.SetupTestEnv())
+	// test.FailTestOnError(t, test.SetupTestEnv())
 	smtpVarsClean()
 
 	os.Setenv("SMTP_USERNAME", "test@example.com")
@@ -28,7 +27,7 @@ func TestSmtpConfigureBasics(t *testing.T) {
 }
 
 func TestSmtpConfigureEmptyHost(t *testing.T) {
-	test.FailTestOnError(t, test.SetupTestEnv())
+	// test.FailTestOnError(t, test.SetupTestEnv())
 	smtpVarsClean()
 
 	os.Setenv("SMTP_USERNAME", "test@example.com")
@@ -47,7 +46,7 @@ func TestSmtpConfigureEmptyHost(t *testing.T) {
 }
 
 func TestSmtpConfigureEmptyAddress(t *testing.T) {
-	test.FailTestOnError(t, test.SetupTestEnv())
+	// test.FailTestOnError(t, test.SetupTestEnv())
 	smtpVarsClean()
 
 	os.Setenv("SMTP_USERNAME", "test@example.com")
