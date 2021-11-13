@@ -6,7 +6,7 @@ import (
 )
 
 func TestMarkdownToHtmlBasics(t *testing.T) {
-	// test.FailTestOnError(t, test.SetupTestEnv())
+	MarkdownRendererCreate()
 
 	// basic markdown and expected html tests
 	tests := map[string]string{

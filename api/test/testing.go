@@ -3,6 +3,7 @@ package test
 import (
 	"fmt"
 	"os"
+	"path"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
@@ -64,7 +65,7 @@ func DropTables() error {
 	return nil
 }
 
-func setupTestDatabase() error {
+func setupTestDatabase(rootPath string) error {
 	if os.Getenv("COMMENTO_POSTGRES") != "" {
 		// set it manually because we need to use commento_test, not commento, by mistake
 		os.Setenv("POSTGRES", os.Getenv("COMMENTO_POSTGRES"))
@@ -80,7 +81,7 @@ func setupTestDatabase() error {
 		return err
 	}
 
-	if err := repository.MigrateFromDir("../db/"); err != nil {
+	if err := repository.MigrateFromDir(path.Join(rootPath, "db")); err != nil {
 		return err
 	}
 
@@ -106,6 +107,33 @@ func clearTables() error {
 
 var setupComplete bool
 
+func FindRootFolder() string {
+	currentFolder, err := os.Getwd()
+
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		fi, err := os.Stat(path.Join(currentFolder, "db/Makefile"))
+
+		if err == nil {
+			switch mode := fi.Mode(); {
+			case mode.IsRegular():
+				return currentFolder
+			}
+		}
+
+		parentFolder := path.Dir(currentFolder)
+
+		if parentFolder == "/" || parentFolder == currentFolder {
+			panic("Couldn't find project root folder, please check if the file path is correct")
+		}
+
+		currentFolder = parentFolder
+	}
+}
+
 func SetupTestEnv() error {
 	if !setupComplete {
 		setupComplete = true
@@ -118,7 +146,7 @@ func SetupTestEnv() error {
 			logging.SetLevel(logging.CRITICAL, "")
 		}
 
-		if err := setupTestDatabase(); err != nil {
+		if err := setupTestDatabase(FindRootFolder()); err != nil {
 			return err
 		}
 
