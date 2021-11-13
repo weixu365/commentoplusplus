@@ -31,12 +31,12 @@ func commenterNew(email string, name string, link string, photo string, provider
 			return "", app.ErrorEmailAlreadyExists
 		}
 
-		if err := emailNew(email); err != nil {
+		if err := EmailNew(email); err != nil {
 			return "", app.ErrorInternal
 		}
 	}
 
-	commenterHex, err := randomHex(32)
+	commenterHex, err := util.RandomHex(32)
 	if err != nil {
 		return "", app.ErrorInternal
 	}

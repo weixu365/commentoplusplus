@@ -75,14 +75,14 @@ func domainExportBegin(email string, toName string, domain string) {
 		return
 	}
 
-	gje, err := gzipStatic(je)
+	gje, err := util.GzipStatic(je)
 	if err != nil {
 		util.GetLogger().Errorf("cannot gzip JSON while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, app.ErrorInternal)
 		return
 	}
 
-	exportHex, err := randomHex(32)
+	exportHex, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot generate exportHex while exporting %s: %v", domain, err)
 		domainExportBeginError(email, toName, domain, app.ErrorInternal)

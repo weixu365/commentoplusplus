@@ -52,7 +52,7 @@ func forgot(email string, entity string) error {
 		name = c.Name
 	}
 
-	resetHex, err := randomHex(32)
+	resetHex, err := util.RandomHex(32)
 	if err != nil {
 		return err
 	}

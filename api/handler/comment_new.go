@@ -27,7 +27,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 		return "", app.ErrorThreadLocked
 	}
 
-	commentHex, err := randomHex(32)
+	commentHex, err := util.RandomHex(32)
 	if err != nil {
 		return "", err
 	}

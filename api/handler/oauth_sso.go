@@ -17,7 +17,7 @@ type ssoPayload struct {
 }
 
 func ssoTokenNew(domain string, commenterToken string) (string, error) {
-	token, err := randomHex(32)
+	token, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("error generating SSO token hex: %v", err)
 		return "", app.ErrorInternal

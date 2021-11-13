@@ -24,11 +24,11 @@ func ownerNew(email string, name string, password string) (string, error) {
 		return "", app.ErrorrrorEmailAlreadyExists
 	}
 
-	if err := emailNew(email); err != nil {
+	if err := EmailNew(email); err != nil {
 		return "", app.ErrorInternal
 	}
 
-	ownerHex, err := randomHex(32)
+	ownerHex, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot generate ownerHex: %v", err)
 		return "", app.ErrorInternal
@@ -53,7 +53,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 	}
 
 	if smtpConfigured {
-		confirmHex, err := randomHex(32)
+		confirmHex, err := util.RandomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate confirmHex: %v", err)
 			return "", app.ErrorInternal

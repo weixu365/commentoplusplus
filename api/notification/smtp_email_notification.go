@@ -5,6 +5,7 @@ import (
 	"fmt"
 	ht "html/template"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 

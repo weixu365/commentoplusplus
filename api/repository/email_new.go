@@ -1,13 +1,13 @@
-package handler
+package repository
 
 import (
-	"simple-commenting/repository"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"time"
 )
 
-func emailNew(email string) error {
-	unsubscribeSecretHex, err := randomHex(32)
+func EmailNew(email string) error {
+	unsubscribeSecretHex, err := util.RandomHex(32)
 	if err != nil {
 		return app.ErrorInternal
 	}
@@ -18,7 +18,7 @@ func emailNew(email string) error {
 		VALUES ($1,    $2,                   $3                       )
 		ON CONFLICT DO NOTHING;
 	`
-	_, err = repository.Db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
+	_, err = Db.Exec(statement, email, unsubscribeSecretHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert email into emails: %v", err)
 		return app.ErrorInternal

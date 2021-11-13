@@ -30,7 +30,7 @@ func domainStrip(domain string) string {
 
 var pathMatch = regexp.MustCompile(`(https?://[^/]*)`)
 
-func pathStrip(url string) string {
+func PathStrip(url string) string {
 	strippedPath := pathMatch.ReplaceAllString(url, ``)
 
 	return strippedPath

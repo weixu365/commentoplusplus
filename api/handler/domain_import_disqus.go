@@ -128,7 +128,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 			continue
 		}
 
-		randomPassword, err := randomHex(32)
+		randomPassword, err := util.RandomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate random password for new commenter: %v", err)
 			return 0, app.ErrorInternal
@@ -169,7 +169,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 		commentHex, err := commentNew(
 			cHex,
 			domain,
-			pathStrip(threads[post.ThreadId.Id].URL),
+			util.PathStrip(threads[post.ThreadId.Id].URL),
 			parentHex,
 			html2md.Convert(post.Message),
 			"approved",

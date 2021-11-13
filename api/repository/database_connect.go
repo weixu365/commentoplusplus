@@ -27,7 +27,7 @@ func DbConnect(retriesLeft int) error {
 		return err
 	}
 
-	err = repository.Db.Ping()
+	err = Db.Ping()
 	if err != nil {
 		if retriesLeft > 0 {
 			util.GetLogger().Errorf("cannot talk to postgres, retrying in 10 seconds (%d attempts left): %v", retriesLeft-1, err)
@@ -44,7 +44,7 @@ func DbConnect(retriesLeft int) error {
 			filename TEXT NOT NULL UNIQUE
 		);
 	`
-	_, err = repository.Db.Exec(statement)
+	_, err = Db.Exec(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create migrations table: %v", err)
 		return err

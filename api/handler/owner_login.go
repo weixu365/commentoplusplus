@@ -38,7 +38,7 @@ func ownerLogin(email string, password string) (string, error) {
 		return "", app.ErrorInvalidEmailPassword
 	}
 
-	ownerToken, err := randomHex(32)
+	ownerToken, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create ownerToken: %v", err)
 		return "", app.ErrorInternal

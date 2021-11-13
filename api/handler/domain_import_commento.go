@@ -72,7 +72,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 			continue
 		}
 
-		randomPassword, err := randomHex(32)
+		randomPassword, err := util.RandomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate random password for new commenter: %v", err)
 			return 0, app.ErrorInternal

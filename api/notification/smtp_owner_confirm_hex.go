@@ -3,6 +3,7 @@ package notification
 import (
 	"bytes"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 

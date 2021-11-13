@@ -9,7 +9,7 @@ import (
 )
 
 func commenterTokenNew() (string, error) {
-	commenterToken, err := randomHex(32)
+	commenterToken, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create commenterToken: %v", err)
 		return "", app.ErrorInternal

@@ -3,6 +3,7 @@ package notification
 import (
 	"fmt"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"text/template"
 )

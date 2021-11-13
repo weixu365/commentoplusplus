@@ -3,6 +3,7 @@ package notification
 import (
 	"net/smtp"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 

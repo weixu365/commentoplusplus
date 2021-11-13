@@ -12,7 +12,7 @@ func domainSsoSecretNew(domain string) (string, error) {
 		return "", app.ErrorMissingField
 	}
 
-	ssoSecret, err := randomHex(32)
+	ssoSecret, err := util.RandomHex(32)
 	if err != nil {
 		util.GetLogger().Errorf("error generating SSO secret hex: %v", err)
 		return "", app.ErrorInternal

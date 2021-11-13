@@ -22,7 +22,7 @@ func TestOwnerConfirmHexBasics(t *testing.T) {
 		return
 	}
 
-	confirmHex, _ := randomHex(32)
+	confirmHex, _ := util.RandomHex(32)
 
 	statement = `
 		INSERT INTO

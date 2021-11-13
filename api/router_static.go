@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"io/ioutil"
@@ -65,13 +65,13 @@ func fileLoad(f string) ([]byte, error) {
 		return b, nil
 	}
 
-	return gzipStatic(b)
+	return util.GzipStatic(b)
 }
 
 func staticRouterInit(router *mux.Router) error {
 	var err error
 
-	subdir := pathStrip(os.Getenv("ORIGIN"))
+	subdir := util.PathStrip(os.Getenv("ORIGIN"))
 
 	if err = footerInit(); err != nil {
 		util.GetLogger().Errorf("error initialising static router: %v", err)

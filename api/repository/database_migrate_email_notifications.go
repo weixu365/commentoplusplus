@@ -1,6 +1,9 @@
 package repository
 
-import "simple-commenting/util"
+import (
+	"simple-commenting/app"
+	"simple-commenting/util"
+)
 
 func MigrateEmails() error {
 	statement := `
@@ -13,7 +16,7 @@ func MigrateEmails() error {
 		SELECT moderators.email
 		FROM moderators;
 	`
-	rows, err := repository.Db.Query(statement)
+	rows, err := Db.Query(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
 		return app.ErrorDatabaseMigration
@@ -27,7 +30,7 @@ func MigrateEmails() error {
 			return app.ErrorDatabaseMigration
 		}
 
-		if err = emailNew(email); err != nil {
+		if err = EmailNew(email); err != nil {
 			util.GetLogger().Errorf("cannot insert email during migration: %v", err)
 			return app.ErrorDatabaseMigration
 		}

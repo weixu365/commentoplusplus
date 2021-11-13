@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func routesServe() error {
 		router.PathPrefix("/debug/").Handler(http.DefaultServeMux)
 	}
 
-	subdir := pathStrip(os.Getenv("ORIGIN"))
+	subdir := util.PathStrip(os.Getenv("ORIGIN"))
 	if subdir != "" {
 		router = router.PathPrefix(subdir).Subrouter()
 	}

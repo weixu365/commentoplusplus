@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -12,7 +13,7 @@ func domainModeratorNew(domain string, email string) error {
 		return app.ErrorMissingField
 	}
 
-	if err := emailNew(email); err != nil {
+	if err := EmailNew(email); err != nil {
 		util.GetLogger().Errorf("cannot create email when creating moderator: %v", err)
 		return app.ErrorInternal
 	}

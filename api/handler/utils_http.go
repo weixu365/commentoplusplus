@@ -1,10 +1,12 @@
-package util
+package handler
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"simple-commenting/app"
+	"simple-commenting/util"
 )
 
 type response map[string]interface{}
