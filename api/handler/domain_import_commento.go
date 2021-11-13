@@ -23,7 +23,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		util.Get, app.Error).Errorf("cannot get url: %v", err)
+		util.GetLogger().Errorf("cannot get url: %v", err)
 		return 0, app.ErrorCannotDownloadCommento
 	}
 

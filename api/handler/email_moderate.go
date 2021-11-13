@@ -79,7 +79,7 @@ func emailModerateHandler(w http.ResponseWriter, r *http.Request) {
 	case "delete":
 		err = commentDelete(commentHex, commenterHex, domain, path)
 	default:
-		err , app.ErrorInvalidAction
+		err = app.ErrorInvalidAction
 	}
 
 	if err != nil {

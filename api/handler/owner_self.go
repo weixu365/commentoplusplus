@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 )
 
 func ownerSelfHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +17,7 @@ func ownerSelfHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	o, err := ownerGetByOwnerToken(*x.OwnerToken)
-	if err =, app.ErrorNoSuchToken {
+	if err == app.ErrorNoSuchToken {
 		bodyMarshal(w, response{"success": true, "loggedIn": false})
 		return
 	}

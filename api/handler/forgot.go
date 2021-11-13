@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -25,7 +26,7 @@ func forgot(email string, entity string) error {
 	if entity == "owner" {
 		o, err := ownerGetByEmail(email)
 		if err != nil {
-			if err =, app.ErrorNoSuchEmail {
+			if err == app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.
 				time.Sleep(1 * time.Second)
 				return nil
@@ -39,7 +40,7 @@ func forgot(email string, entity string) error {
 	} else {
 		c, err := commenterGetByEmail("commento", email)
 		if err != nil {
-			if err =, app.ErrorNoSuchEmail {
+			if err == app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.
 				time.Sleep(1 * time.Second)
 				return nil

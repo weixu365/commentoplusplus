@@ -68,7 +68,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 	// TODO: make sure this is from disqus.com
 	resp, err := http.Get(url)
 	if err != nil {
-		util.Get, app.Error).Errorf("cannot get url: %v", err)
+		util.GetLogger().Errorf("cannot get url: %v", err)
 		return 0, app.ErrorCannotDownloadDisqus
 	}
 

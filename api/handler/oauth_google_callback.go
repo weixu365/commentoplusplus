@@ -69,7 +69,7 @@ func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	var commenterHex string
 
-	if err =, app.ErrorNoSuchCommenter {
+	if err == app.ErrorNoSuchCommenter {
 		commenterHex, err = commenterNew(email, name, link, photo, "google", "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())

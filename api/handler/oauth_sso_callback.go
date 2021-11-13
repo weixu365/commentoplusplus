@@ -55,7 +55,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	d, err := domainGet(domain)
 	if err != nil {
-		if err =, app.ErrorNoSuchDomain {
+		if err == app.ErrorNoSuchDomain {
 			fmt.Fprintf(w, "Error: %s\n", err.Error())
 		} else {
 			util.GetLogger().Errorf("cannot get domain for SSO: %v", err)
@@ -98,7 +98,7 @@ func ssoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	var commenterHex string
 
-	if err =, app.ErrorNoSuchCommenter {
+	if err == app.ErrorNoSuchCommenter {
 		commenterHex, err = commenterNew(payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domain, "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())

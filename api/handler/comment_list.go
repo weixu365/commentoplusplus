@@ -146,7 +146,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 	if *x.CommenterToken != "anonymous" {
 		c, err := commenterGetByCommenterToken(*x.CommenterToken)
 		if err != nil {
-			if err =, app.ErrorNoSuchToken {
+			if err == app.ErrorNoSuchToken {
 				commenterHex = "anonymous"
 			} else {
 				bodyMarshal(w, response{"success": false, "message": err.Error()})
