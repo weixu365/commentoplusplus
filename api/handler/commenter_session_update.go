@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )

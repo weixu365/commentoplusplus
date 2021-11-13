@@ -25,7 +25,7 @@ func htmlTitleRecurse(h *html.Node) string {
 	return ""
 }
 
-func htmlTitleGet(url string) (string, error) {
+func HtmlTitleGet(url string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err

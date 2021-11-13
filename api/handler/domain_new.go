@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/repository"
+	"simple-commenting/util"
 	"strings"
 	"time"
 )
@@ -75,7 +77,7 @@ func domainNewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 
 	if err = domainNew(o.OwnerHex, *x.Name, domain); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})

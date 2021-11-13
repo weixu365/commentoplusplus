@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -19,10 +20,10 @@ func commenterNew(email string, name string, link string, photo string, provider
 		return "", app.ErrorMissingField
 	}
 
-	// See utils_sanitise.go's documentation on isHttpsUrl. This is not a URL
+	// See utils_sanitise.go's documentation on IsHttpsUrl. This is not a URL
 	// validator, just an XSS preventor.
 	// TODO: reject URLs instead of malforming them.
-	if link != "undefined" && !isHttpsUrl(link) {
+	if link != "undefined" && !util.IsHttpsUrl(link) {
 		link = "https://" + link
 	}
 
@@ -31,7 +32,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 			return "", app.ErrorEmailAlreadyExists
 		}
 
-		if err := EmailNew(email); err != nil {
+		if err := repository.EmailNew(email); err != nil {
 			return "", app.ErrorInternal
 		}
 	}
@@ -93,5 +94,5 @@ func commenterNewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bodyMarshal(w, response{"success": true, "confirmEmail": smtpConfigured})
+	bodyMarshal(w, response{"success": true, "confirmEmail": notification.SmtpConfigured})
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 )
 
@@ -16,7 +17,7 @@ var commentersRowColumns string = `
 	commenters.deleted
 `
 
-func commentersRowScan(s sqlScanner, c *commenter) error {
+func commentersRowScan(s repository.SqlScanner, c *model.Commenter) error {
 	return s.Scan(
 		&c.CommenterHex,
 		&c.Email,
@@ -29,9 +30,9 @@ func commentersRowScan(s sqlScanner, c *commenter) error {
 	)
 }
 
-func commenterGetByHex(commenterHex string) (commenter, error) {
+func commenterGetByHex(commenterHex string) (model.Commenter, error) {
 	if commenterHex == "" {
-		return commenter{}, app.ErrorMissingField
+		return model.Commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -41,10 +42,10 @@ func commenterGetByHex(commenterHex string) (commenter, error) {
 	`
 	row := repository.Db.QueryRow(statement, commenterHex)
 
-	var c commenter
+	var c model.Commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, app.ErrorNoSuchCommenter
+		return model.Commenter{}, app.ErrorNoSuchCommenter
 	}
 
 	if c.Deleted == true {
@@ -57,9 +58,9 @@ func commenterGetByHex(commenterHex string) (commenter, error) {
 	return c, nil
 }
 
-func commenterGetByEmail(provider string, email string) (commenter, error) {
+func commenterGetByEmail(provider string, email string) (model.Commenter, error) {
 	if provider == "" || email == "" {
-		return commenter{}, app.ErrorMissingField
+		return model.Commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -69,10 +70,10 @@ func commenterGetByEmail(provider string, email string) (commenter, error) {
 	`
 	row := repository.Db.QueryRow(statement, email, provider)
 
-	var c commenter
+	var c model.Commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, app.ErrorNoSuchCommenter
+		return model.Commenter{}, app.ErrorNoSuchCommenter
 	}
 
 	if c.Deleted == true {
@@ -85,9 +86,9 @@ func commenterGetByEmail(provider string, email string) (commenter, error) {
 	return c, nil
 }
 
-func commenterGetByCommenterToken(commenterToken string) (commenter, error) {
+func commenterGetByCommenterToken(commenterToken string) (model.Commenter, error) {
 	if commenterToken == "" {
-		return commenter{}, app.ErrorMissingField
+		return model.Commenter{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -98,14 +99,14 @@ func commenterGetByCommenterToken(commenterToken string) (commenter, error) {
 	`
 	row := repository.Db.QueryRow(statement, commenterToken)
 
-	var c commenter
+	var c model.Commenter
 	if err := commentersRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
-		return commenter{}, app.ErrorNoSuchToken
+		return model.Commenter{}, app.ErrorNoSuchToken
 	}
 
 	if c.CommenterHex == "none" {
-		return commenter{}, app.ErrorNoSuchToken
+		return model.Commenter{}, app.ErrorNoSuchToken
 	}
 
 	if c.Deleted == true {

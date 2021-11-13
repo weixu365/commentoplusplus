@@ -31,7 +31,7 @@ func TestMarkdownToHtmlBasics(t *testing.T) {
 	}
 
 	for in, out := range tests {
-		html := strings.TrimSpace(markdownToHtml(in))
+		html := strings.TrimSpace(MarkdownToHtml(in))
 		if html != out {
 			t.Errorf("for in=[%s] expected out=[%s] got out=[%s]", in, out, html)
 			return

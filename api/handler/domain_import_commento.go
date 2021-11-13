@@ -7,13 +7,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/util"
 )
 
 type commentoExportV1 struct {
-	Version    int         `json:"version"`
-	Comments   []comment   `json:"comments"`
-	Commenters []commenter `json:"commenters"`
+	Version    int               `json:"version"`
+	Comments   []model.Comment   `json:"comments"`
+	Commenters []model.Commenter `json:"commenters"`
 }
 
 func domainImportCommento(domain string, url string) (int, error) {
@@ -86,7 +87,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 	}
 
 	// Create a map of (parent hex, comments)
-	comments := make(map[string][]comment)
+	comments := make(map[string][]model.Comment)
 	for _, comment := range data.Comments {
 		parentHex := comment.ParentHex
 		comments[parentHex] = append(comments[parentHex], comment)
@@ -148,7 +149,7 @@ func domainImportCommentoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -156,7 +157,7 @@ func domainImportCommentoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

@@ -12,7 +12,7 @@ type domainExportErrorPlugs struct {
 	Domain string
 }
 
-func smtpDomainExportError(to string, toName string, domain string) error {
+func SmtpDomainExportError(to string, toName string, domain string) error {
 	var body bytes.Buffer
 	templates["data-export-error"].Execute(&body, &domainExportPlugs{Origin: os.Getenv("ORIGIN")})
 

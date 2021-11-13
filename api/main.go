@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"simple-commenting/app"
+	"simple-commenting/crons"
 	"simple-commenting/handler"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
@@ -29,9 +30,9 @@ func main() {
 	exitIfError(util.MarkdownRendererCreate())
 	exitIfError(sigintCleanupSetup())
 	exitIfError(versionCheckStart())
-	exitIfError(domainExportCleanupBegin())
-	exitIfError(viewsCleanupBegin())
-	exitIfError(ssoTokenCleanupBegin())
+	exitIfError(crons.DomainExportCleanupBegin())
+	exitIfError(crons.ViewsCleanupBegin())
+	exitIfError(crons.SsoTokenCleanupBegin())
 
 	exitIfError(routesServe())
 }

@@ -63,7 +63,7 @@ func commentVoteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if *x.CommenterToken == "anonymous" {
-		bodyMarshal(w, response{"success": false, "message": errorUnauthorisedVote.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorUnauthorisedVote.Error()})
 		return
 	}
 

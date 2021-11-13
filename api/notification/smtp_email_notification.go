@@ -21,7 +21,7 @@ type emailNotificationPlugs struct {
 	Html                 ht.HTML
 }
 
-func smtpEmailNotification(to string, toName string, kind string, domain string, path string, commentHex string, commenterName string, title string, html string, unsubscribeSecretHex string) error {
+func SmtpEmailNotification(to string, toName string, kind string, domain string, path string, commentHex string, commenterName string, title string, html string, unsubscribeSecretHex string) error {
 	t, err := ht.ParseFiles(fmt.Sprintf("%s/templates/email-notification.txt", os.Getenv("STATIC")))
 	if err != nil {
 		util.GetLogger().Errorf("cannot parse %s/templates/email-notification.txt: %v", os.Getenv("STATIC"), err)

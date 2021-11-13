@@ -5,6 +5,7 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
+	"simple-commenting/util"
 )
 
 func commentEdit(commentHex string, markdown string, url string) (string, error) {
@@ -12,7 +13,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 		return "", app.ErrorMissingField
 	}
 
-	html := markdownToHtml(markdown)
+	html := util.MarkdownToHtml(markdown)
 
 	statement := `
 		UPDATE comments
@@ -63,7 +64,7 @@ func commentEditHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if cm.CommenterHex != c.CommenterHex {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

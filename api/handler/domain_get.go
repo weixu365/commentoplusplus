@@ -2,6 +2,7 @@ package handler
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 )
 
@@ -28,7 +29,7 @@ var domainsRowColumns = `
 	domains.defaultSortPolicy
 `
 
-func domainsRowScan(s sqlScanner, d *domain) error {
+func domainsRowScan(s repository.SqlScanner, d *model.Domain) error {
 	return s.Scan(
 		&d.Domain,
 		&d.OwnerHex,
@@ -53,9 +54,9 @@ func domainsRowScan(s sqlScanner, d *domain) error {
 	)
 }
 
-func domainGet(dmn string) (domain, error) {
+func domainGet(dmn string) (model.Domain, error) {
 	if dmn == "" {
-		return domain{}, app.ErrorMissingField
+		return model.Domain{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -66,14 +67,14 @@ func domainGet(dmn string) (domain, error) {
 	row := repository.Db.QueryRow(statement, dmn)
 
 	var err error
-	d := domain{}
+	d := model.Domain{}
 	if err = domainsRowScan(row, &d); err != nil {
 		return d, app.ErrorNoSuchDomain
 	}
 
 	d.Moderators, err = domainModeratorList(d.Domain)
 	if err != nil {
-		return domain{}, err
+		return model.Domain{}, err
 	}
 
 	return d, nil

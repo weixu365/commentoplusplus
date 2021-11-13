@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func domainUpdate(d domain) error {
+func domainUpdate(d model.Domain) error {
 	if d.SsoProvider && d.SsoUrl == "" {
 		return app.ErrorMissingField
 	}
@@ -59,8 +61,8 @@ func domainUpdate(d domain) error {
 
 func domainUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		OwnerToken *string `json:"ownerToken"`
-		D          *domain `json:"domain"`
+		OwnerToken *string       `json:"ownerToken"`
+		D          *model.Domain `json:"domain"`
 	}
 
 	var x request
@@ -75,7 +77,7 @@ func domainUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip((*x.D).Domain)
+	domain := util.DomainStrip((*x.D).Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -83,7 +85,7 @@ func domainUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

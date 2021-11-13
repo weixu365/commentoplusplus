@@ -6,7 +6,7 @@ import (
 	"github.com/adtac/go-akismet/akismet"
 )
 
-func isSpam(domain string, userIp string, userAgent string, name string, email string, url string, markdown string) bool {
+func IsSpam(domain string, userIp string, userAgent string, name string, email string, url string, markdown string) bool {
 	akismetKey := os.Getenv("AKISMET_KEY")
 	if akismetKey == "" {
 		return false

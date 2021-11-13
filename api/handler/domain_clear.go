@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -63,7 +64,7 @@ func domainClearHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -71,7 +72,7 @@ func domainClearHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

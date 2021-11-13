@@ -3,13 +3,14 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func domainList(ownerHex string) ([]domain, error) {
+func domainList(ownerHex string) ([]model.Domain, error) {
 	if ownerHex == "" {
-		return []domain{}, app.ErrorMissingField
+		return []model.Domain{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -24,9 +25,9 @@ func domainList(ownerHex string) ([]domain, error) {
 	}
 	defer rows.Close()
 
-	domains := []domain{}
+	domains := []model.Domain{}
 	for rows.Next() {
-		var d domain
+		var d model.Domain
 		if err = domainsRowScan(rows, &d); err != nil {
 			util.GetLogger().Errorf("cannot Scan domain: %v", err)
 			return nil, app.ErrorInternal
@@ -34,7 +35,7 @@ func domainList(ownerHex string) ([]domain, error) {
 
 		d.Moderators, err = domainModeratorList(d.Domain)
 		if err != nil {
-			return []domain{}, err
+			return []model.Domain{}, err
 		}
 
 		domains = append(domains, d)

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -21,10 +22,10 @@ func ownerNew(email string, name string, password string) (string, error) {
 	}
 
 	if _, err := ownerGetByEmail(email); err == nil {
-		return "", app.ErrorrrorEmailAlreadyExists
+		return "", app.ErrorEmailAlreadyExists
 	}
 
-	if err := EmailNew(email); err != nil {
+	if err := repository.EmailNew(email); err != nil {
 		return "", app.ErrorInternal
 	}
 
@@ -45,14 +46,14 @@ func ownerNew(email string, name string, password string) (string, error) {
 		owners (ownerHex, email, name, passwordHash, joinDate, confirmedEmail)
 		VALUES ($1,       $2,    $3,   $4,           $5,       $6            );
 	`
-	_, err = repository.Db.Exec(statement, ownerHex, email, name, string(passwordHash), time.Now().UTC(), !smtpConfigured)
+	_, err = repository.Db.Exec(statement, ownerHex, email, name, string(passwordHash), time.Now().UTC(), !notification.SmtpConfigured)
 	if err != nil {
 		// TODO: Make sure `err` is actually about conflicting UNIQUE, and not some
 		// other error. If it is something else, we should probably return `errorInternal`.
 		return "", app.ErrorEmailAlreadyExists
 	}
 
-	if smtpConfigured {
+	if notification.SmtpConfigured {
 		confirmHex, err := util.RandomHex(32)
 		if err != nil {
 			util.GetLogger().Errorf("cannot generate confirmHex: %v", err)
@@ -70,7 +71,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 			return "", app.ErrorInternal
 		}
 
-		if err = smtpOwnerConfirmHex(email, name, confirmHex); err != nil {
+		if err = notification.SmtpOwnerConfirmHex(email, name, confirmHex); err != nil {
 			return "", err
 		}
 	}
@@ -99,5 +100,5 @@ func ownerNewHandler(w http.ResponseWriter, r *http.Request) {
 	// Errors in creating a commenter account should not hold this up.
 	_, _ = commenterNew(*x.Email, *x.Name, "undefined", "undefined", "commento", *x.Password)
 
-	bodyMarshal(w, response{"success": true, "confirmEmail": smtpConfigured})
+	bodyMarshal(w, response{"success": true, "confirmEmail": notification.SmtpConfigured})
 }

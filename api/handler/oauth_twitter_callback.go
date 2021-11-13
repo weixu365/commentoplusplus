@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"simple-commenting/app"
 	"simple-commenting/util"
 )
 
@@ -112,10 +114,10 @@ type twitterOAuthReponse struct {
 
 func (r twitterOAuthReponse) validate() error {
 	if r.Email == "" {
-		return app.Errors.New("no email address returned by Twitter")
+		return errors.New("no email address returned by Twitter")
 	}
 	if r.Name == "" {
-		return app.Errors.New("no name returned by Twitter")
+		return errors.New("no name returned by Twitter")
 	}
 	return nil
 }

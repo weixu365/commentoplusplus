@@ -21,7 +21,7 @@ func emailStrip(email string) string {
 var https = regexp.MustCompile(`(https?://)`)
 var domainTrail = regexp.MustCompile(`(/.*$)`)
 
-func domainStrip(domain string) string {
+func DomainStrip(domain string) string {
 	noProtocol := https.ReplaceAllString(domain, ``)
 	noTrail := domainTrail.ReplaceAllString(noProtocol, ``)
 
@@ -38,7 +38,7 @@ func PathStrip(url string) string {
 
 var httpsUrl = regexp.MustCompile(`^https?://`)
 
-func isHttpsUrl(in string) bool {
+func IsHttpsUrl(in string) bool {
 	// Admittedly, this isn't the greatest URL checker. But it does what we need.
 	// I don't care if the user gives an invalid URL, I just want to make sure
 	// they don't do any XSS shenanigans. Hopefully, enforcing a https?:// prefix

@@ -20,7 +20,7 @@ func ssoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain = domainStrip(domain)
+	domain = util.DomainStrip(domain)
 	if domain == "" {
 		fmt.Fprintf(w, "Error: No Referer header found in request\n")
 		return

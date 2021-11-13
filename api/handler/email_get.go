@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 )
 
@@ -14,7 +15,7 @@ var emailsRowColumns = `
 	emails.sendModeratorNotifications
 `
 
-func emailsRowScan(s sqlScanner, e *email) error {
+func emailsRowScan(s repository.SqlScanner, e *model.Email) error {
 	return s.Scan(
 		&e.Email,
 		&e.UnsubscribeSecretHex,
@@ -24,7 +25,7 @@ func emailsRowScan(s sqlScanner, e *email) error {
 	)
 }
 
-func emailGet(em string) (email, error) {
+func emailGet(em string) (model.Email, error) {
 	statement := `
 		SELECT ` + emailsRowColumns + `
 		FROM emails
@@ -32,7 +33,7 @@ func emailGet(em string) (email, error) {
 	`
 	row := repository.Db.QueryRow(statement, em)
 
-	var e email
+	var e model.Email
 	if err := emailsRowScan(row, &e); err != nil {
 		// TODO: is this the only error?
 		return e, app.ErrorNoSuchEmail
@@ -41,7 +42,7 @@ func emailGet(em string) (email, error) {
 	return e, nil
 }
 
-func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (email, error) {
+func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (model.Email, error) {
 	statement := `
 		SELECT ` + emailsRowColumns + `
 		FROM emails
@@ -49,7 +50,7 @@ func emailGetByUnsubscribeSecretHex(unsubscribeSecretHex string) (email, error) 
 	`
 	row := repository.Db.QueryRow(statement, unsubscribeSecretHex)
 
-	e := email{}
+	e := model.Email{}
 	if err := emailsRowScan(row, &e); err != nil {
 		// TODO: is this the only error?
 		return e, app.ErrorNoSuchUnsubscribeSecretHex

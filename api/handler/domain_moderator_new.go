@@ -13,7 +13,7 @@ func domainModeratorNew(domain string, email string) error {
 		return app.ErrorMissingField
 	}
 
-	if err := EmailNew(email); err != nil {
+	if err := repository.EmailNew(email); err != nil {
 		util.GetLogger().Errorf("cannot create email when creating moderator: %v", err)
 		return app.ErrorInternal
 	}
@@ -51,7 +51,7 @@ func domainModeratorNewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -59,7 +59,7 @@ func domainModeratorNewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

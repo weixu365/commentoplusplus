@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type commenter struct {
+type Commenter struct {
 	CommenterHex string    `json:"commenterHex,omitempty"`
 	Email        string    `json:"email,omitempty"`
 	Name         string    `json:"name"`

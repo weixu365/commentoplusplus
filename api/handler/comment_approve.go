@@ -61,7 +61,7 @@ func commentApproveHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isModerator {
-		bodyMarshal(w, response{"success": false, "message": errorNotModerator.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotModerator.Error()})
 		return
 	}
 
@@ -104,7 +104,7 @@ func commentOwnerApproveHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

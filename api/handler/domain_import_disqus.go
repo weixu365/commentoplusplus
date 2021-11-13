@@ -50,7 +50,7 @@ type disqusPost struct {
 	Message      string         `xml:"message"`
 	CreationDate time.Time      `xml:"createdAt"`
 	IsDeleted    bool           `xml:"isDeleted"`
-	IsSpam       bool           `xml:"isSpam"`
+	IsSpam       bool           `xml:"IsSpam"`
 	Author       disqusAuthor   `xml:"author"`
 }
 
@@ -204,7 +204,7 @@ func domainImportDisqusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -212,7 +212,7 @@ func domainImportDisqusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

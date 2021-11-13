@@ -85,7 +85,7 @@ func commentDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isModerator && cm.CommenterHex != c.CommenterHex {
-		bodyMarshal(w, response{"success": false, "message": errorNotModerator.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotModerator.Error()})
 		return
 	}
 
@@ -128,7 +128,7 @@ func commentOwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

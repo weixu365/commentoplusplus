@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func domainExportCleanupBegin() error {
+func DomainExportCleanupBegin() error {
 	go func() {
 		for {
 			statement := `

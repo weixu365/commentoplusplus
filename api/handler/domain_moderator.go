@@ -2,18 +2,12 @@ package handler
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
-	"time"
 )
 
-type moderator struct {
-	Email   string    `json:"email"`
-	Domain  string    `json:"domain"`
-	AddDate time.Time `json:"addDate"`
-}
-
-func domainModeratorList(domain string) ([]moderator, error) {
+func domainModeratorList(domain string) ([]model.Moderator, error) {
 	statement := `
 		SELECT email, addDate
 		FROM moderators
@@ -26,9 +20,9 @@ func domainModeratorList(domain string) ([]moderator, error) {
 	}
 	defer rows.Close()
 
-	moderators := []moderator{}
+	moderators := []model.Moderator{}
 	for rows.Next() {
-		m := moderator{}
+		m := model.Moderator{}
 		if err = rows.Scan(&m.Email, &m.AddDate); err != nil {
 			util.GetLogger().Errorf("cannot Scan moderator: %v", err)
 			return nil, app.ErrorInternal

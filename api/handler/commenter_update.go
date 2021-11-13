@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -11,18 +12,18 @@ func commenterUpdate(commenterHex string, email string, name string, link string
 		return app.ErrorMissingField
 	}
 
-	// See utils_sanitise.go's documentation on isHttpsUrl. This is not a URL
+	// See utils_sanitise.go's documentation on util.IsHttpsUrl. This is not a URL
 	// validator, just an XSS preventor.
 	// TODO: reject URLs instead of malforming them.
 	if link == "" {
 		link = "undefined"
-	} else if link != "undefined" && !isHttpsUrl(link) {
+	} else if link != "undefined" && !util.IsHttpsUrl(link) {
 		link = "https://" + link
 	}
 
 	if photo == "" {
 		photo = "undefined"
-	} else if photo != "undefined" && !isHttpsUrl(photo) {
+	} else if photo != "undefined" && !util.IsHttpsUrl(photo) {
 		photo = "https://" + photo
 	}
 
@@ -67,7 +68,7 @@ func commenterUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c.Provider != "commento" {
-		bodyMarshal(w, response{"success": false, "message": errorCannotUpdateOauthProfile.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorCannotUpdateOauthProfile.Error()})
 		return
 	}
 

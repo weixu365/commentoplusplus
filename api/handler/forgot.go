@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -17,7 +18,7 @@ func forgot(email string, entity string) error {
 		return app.ErrorInvalidEntity
 	}
 
-	if !smtpConfigured {
+	if !notification.SmtpConfigured {
 		return app.ErrorSmtpNotConfigured
 	}
 
@@ -71,7 +72,7 @@ func forgot(email string, entity string) error {
 		return app.ErrorInternal
 	}
 
-	err = smtpResetHex(email, name, resetHex)
+	err = notification.SmtpResetHex(email, name, resetHex)
 	if err != nil {
 		return err
 	}

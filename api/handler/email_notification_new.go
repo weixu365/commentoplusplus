@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"simple-commenting/model"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func emailNotificationModerator(d domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
+func emailNotificationModerator(d model.Domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
 	if d.EmailNotificationPolicy == "none" {
 		return
 	}
@@ -63,14 +65,14 @@ func emailNotificationModerator(d domain, path string, title string, commenterHe
 			continue
 		}
 
-		if err := smtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, e.UnsubscribeSecretHex); err != nil {
+		if err := notification.SmtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, e.UnsubscribeSecretHex); err != nil {
 			util.GetLogger().Errorf("error sending email to %s: %v", m.Email, err)
 			continue
 		}
 	}
 }
 
-func emailNotificationReply(d domain, path string, title string, commenterHex string, commentHex string, html string, parentHex string, state string) {
+func emailNotificationReply(d model.Domain, path string, title string, commenterHex string, commentHex string, html string, parentHex string, state string) {
 	// No reply notifications for root comments.
 	if parentHex == "root" {
 		return
@@ -133,10 +135,10 @@ func emailNotificationReply(d domain, path string, title string, commenterHex st
 		return
 	}
 
-	smtpEmailNotification(pc.Email, pc.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
+	notification.SmtpEmailNotification(pc.Email, pc.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
 }
 
-func emailNotificationNew(d domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
+func emailNotificationNew(d model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
 	p, err := pageGet(d.Domain, path)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get page to send email notification: %v", err)

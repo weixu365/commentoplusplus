@@ -40,7 +40,7 @@ func TestSmtpConfigureEmptyHost(t *testing.T) {
 		return
 	}
 
-	if smtpConfigured {
+	if SmtpConfigured {
 		t.Errorf("SMTP configured when it should not be due to empty COMMENTO_SMTP_HOST")
 		return
 	}

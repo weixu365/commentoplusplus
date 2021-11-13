@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func emailUpdate(e email) error {
+func emailUpdate(e model.Email) error {
 	statement := `
 		UPDATE emails
 		SET sendReplyNotifications = $3, sendModeratorNotifications = $4
@@ -23,7 +25,7 @@ func emailUpdate(e email) error {
 
 func emailUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		Email *email `json:"email"`
+		Email *model.Email `json:"email"`
 	}
 
 	var x request

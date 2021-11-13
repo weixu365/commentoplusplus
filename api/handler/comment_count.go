@@ -58,7 +58,7 @@ func commentCountHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 
 	commentCounts, err := commentCount(domain, *x.Paths)
 	if err != nil {

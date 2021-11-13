@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type comment struct {
+type Comment struct {
 	CommentHex   string    `json:"commentHex"`
 	Domain       string    `json:"domain,omitempty"`
 	Path         string    `json:"url,omitempty"`

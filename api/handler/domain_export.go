@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -11,14 +13,14 @@ import (
 
 func domainExportBeginError(email string, toName string, domain string, err error) {
 	// we're not using err at the moment because it's all errorInternal
-	if err2 := smtpDomainExportError(email, toName, domain); err2 != nil {
+	if err2 := notification.SmtpDomainExportError(email, toName, domain); err2 != nil {
 		util.GetLogger().Errorf("cannot send domain export error email for %s: %v", domain, err2)
 		return
 	}
 }
 
 func domainExportBegin(email string, toName string, domain string) {
-	e := commentoExportV1{Version: 1, Comments: []comment{}, Commenters: []commenter{}}
+	e := commentoExportV1{Version: 1, Comments: []model.Comment{}, Commenters: []model.Commenter{}}
 
 	statement := `
 		SELECT commentHex, domain, path, commenterHex, markdown, parentHex, score, state, creationDate
@@ -34,7 +36,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	defer rows1.Close()
 
 	for rows1.Next() {
-		c := comment{}
+		c := model.Comment{}
 		if err = rows1.Scan(&c.CommentHex, &c.Domain, &c.Path, &c.CommenterHex, &c.Markdown, &c.ParentHex, &c.Score, &c.State, &c.CreationDate); err != nil {
 			util.GetLogger().Errorf("cannot scan comment while exporting %s: %v", domain, err)
 			domainExportBeginError(email, toName, domain, app.ErrorInternal)
@@ -58,7 +60,7 @@ func domainExportBegin(email string, toName string, domain string) {
 	defer rows2.Close()
 
 	for rows2.Next() {
-		c := commenter{}
+		c := model.Commenter{}
 		if err := rows2.Scan(&c.CommenterHex, &c.Email, &c.Name, &c.Link, &c.Photo, &c.Provider, &c.JoinDate); err != nil {
 			util.GetLogger().Errorf("cannot scan commenter while exporting %s: %v", domain, err)
 			domainExportBeginError(email, toName, domain, app.ErrorInternal)
@@ -101,7 +103,7 @@ func domainExportBegin(email string, toName string, domain string) {
 		return
 	}
 
-	err = smtpDomainExport(email, toName, domain, exportHex)
+	err = notification.SmtpDomainExport(email, toName, domain, exportHex)
 	if err != nil {
 		util.GetLogger().Errorf("error sending data export email for %s: %v", domain, err)
 		return
@@ -120,8 +122,8 @@ func domainExportBeginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !smtpConfigured {
-		bodyMarshal(w, response{"success": false, "message": errorSmtpNotConfigured.Error()})
+	if !notification.SmtpConfigured {
+		bodyMarshal(w, response{"success": false, "message": app.ErrorSmtpNotConfigured.Error()})
 		return
 	}
 
@@ -138,7 +140,7 @@ func domainExportBeginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 

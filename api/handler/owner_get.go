@@ -14,7 +14,7 @@ var ownersRowColumns string = `
 	owners.joinDate
 `
 
-func ownersRowScan(s sqlScanner, o *owner) error {
+func ownersRowScan(s repository.SqlScanner, o *owner) error {
 	return s.Scan(
 		&o.OwnerHex,
 		&o.Email,

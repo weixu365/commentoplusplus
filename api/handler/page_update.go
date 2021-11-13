@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func pageUpdate(p page) error {
+func pageUpdate(p model.Page) error {
 	if p.Domain == "" {
 		return app.ErrorMissingField
 	}
@@ -31,10 +33,10 @@ func pageUpdate(p page) error {
 
 func pageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		CommenterToken *string `json:"commenterToken"`
-		Domain         *string `json:"domain"`
-		Path           *string `json:"path"`
-		Attributes     *page   `json:"attributes"`
+		CommenterToken *string     `json:"commenterToken"`
+		Domain         *string     `json:"domain"`
+		Path           *string     `json:"path"`
+		Attributes     *model.Page `json:"attributes"`
 	}
 
 	var x request
@@ -49,7 +51,7 @@ func pageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 
 	isModerator, err := isDomainModerator(domain, c.Email)
 	if err != nil {
@@ -58,7 +60,7 @@ func pageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isModerator {
-		bodyMarshal(w, response{"success": false, "message": errorNotModerator.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotModerator.Error()})
 		return
 	}
 

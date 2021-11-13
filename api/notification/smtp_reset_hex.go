@@ -12,7 +12,7 @@ type resetHexPlugs struct {
 	ResetHex string
 }
 
-func smtpResetHex(to string, toName string, resetHex string) error {
+func SmtpResetHex(to string, toName string, resetHex string) error {
 	var body bytes.Buffer
 	templates["reset-hex"].Execute(&body, &resetHexPlugs{Origin: os.Getenv("ORIGIN"), ResetHex: resetHex})
 

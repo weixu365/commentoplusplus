@@ -2,6 +2,7 @@ package handler
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 )
 
@@ -17,7 +18,7 @@ var commentsRowColumns = `
 	comments.creationDate
 `
 
-func commentsRowScan(s sqlScanner, c *comment) error {
+func commentsRowScan(s repository.SqlScanner, c *model.Comment) error {
 	return s.Scan(
 		&c.CommentHex,
 		&c.CommenterHex,
@@ -31,9 +32,9 @@ func commentsRowScan(s sqlScanner, c *comment) error {
 	)
 }
 
-func commentGetByCommentHex(commentHex string) (comment, error) {
+func commentGetByCommentHex(commentHex string) (model.Comment, error) {
 	if commentHex == "" {
-		return comment{}, app.ErrorMissingField
+		return model.Comment{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -43,7 +44,7 @@ func commentGetByCommentHex(commentHex string) (comment, error) {
 	`
 	row := repository.Db.QueryRow(statement, commentHex)
 
-	var c comment
+	var c model.Comment
 	if err := commentsRowScan(row, &c); err != nil {
 		// TODO: is this the only error?
 		return c, app.ErrorNoSuchComment

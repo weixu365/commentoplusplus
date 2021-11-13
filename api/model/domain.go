@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type domain struct {
+type Domain struct {
 	Domain                  string      `json:"domain"`
 	OwnerHex                string      `json:"ownerHex"`
 	Name                    string      `json:"name"`
@@ -15,7 +15,7 @@ type domain struct {
 	RequireModeration       bool        `json:"requireModeration"`
 	RequireIdentification   bool        `json:"requireIdentification"`
 	ModerateAllAnonymous    bool        `json:"moderateAllAnonymous"`
-	Moderators              []moderator `json:"moderators"`
+	Moderators              []Moderator `json:"moderators"`
 	EmailNotificationPolicy string      `json:"emailNotificationPolicy"`
 	CommentoProvider        bool        `json:"commentoProvider"`
 	GoogleProvider          bool        `json:"googleProvider"`

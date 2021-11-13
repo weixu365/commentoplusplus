@@ -33,7 +33,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 		return "", err
 	}
 
-	html := markdownToHtml(markdown)
+	html := util.MarkdownToHtml(markdown)
 
 	if err = pageNew(domain, path); err != nil {
 		return "", err
@@ -71,7 +71,7 @@ func commentNewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	path := *x.Path
 
 	d, err := domainGet(domain)
@@ -81,12 +81,12 @@ func commentNewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if d.State == "frozen" {
-		bodyMarshal(w, response{"success": false, "message": errorDomainFrozen.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorDomainFrozen.Error()})
 		return
 	}
 
 	if d.RequireIdentification && *x.CommenterToken == "anonymous" {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 	var state string
@@ -96,7 +96,7 @@ func commentNewHandler(w http.ResponseWriter, r *http.Request) {
 
 	if *x.CommenterToken == "anonymous" {
 		commenterHex, commenterName, commenterEmail, commenterLink = "anonymous", "Anonymous", "", ""
-		if isSpam(*x.Domain, getIp(r), getUserAgent(r), "Anonymous", "", "", *x.Markdown) {
+		if util.IsSpam(*x.Domain, getIp(r), getUserAgent(r), "Anonymous", "", "", *x.Markdown) {
 			state = "flagged"
 		} else {
 			// if given an anonName, add it to a new commenter entry
@@ -135,7 +135,7 @@ func commentNewHandler(w http.ResponseWriter, r *http.Request) {
 		state = "unapproved"
 	} else if commenterHex == "anonymous" && d.ModerateAllAnonymous {
 		state = "unapproved"
-	} else if d.AutoSpamFilter && isSpam(*x.Domain, getIp(r), getUserAgent(r), commenterName, commenterEmail, commenterLink, *x.Markdown) {
+	} else if d.AutoSpamFilter && util.IsSpam(*x.Domain, getIp(r), getUserAgent(r), commenterName, commenterEmail, commenterLink, *x.Markdown) {
 		state = "flagged"
 	} else {
 		state = "approved"
@@ -148,10 +148,10 @@ func commentNewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: reuse html in commentNew and do only one markdown to HTML conversion?
-	html := markdownToHtml(*x.Markdown)
+	html := util.MarkdownToHtml(*x.Markdown)
 
 	bodyMarshal(w, response{"success": true, "commentHex": commentHex, "state": state, "html": html})
-	if smtpConfigured {
+	if notification.SmtpConfigured {
 		go emailNotificationNew(d, path, commenterHex, commentHex, html, *x.ParentHex, state)
 	}
 }

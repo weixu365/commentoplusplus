@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func viewsCleanupBegin() error {
+func ViewsCleanupBegin() error {
 	go func() {
 		for {
 			statement := `

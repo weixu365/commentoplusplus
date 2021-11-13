@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
-func commentList(commenterHex string, domain string, path string, includeUnapproved bool) ([]comment, map[string]commenter, error) {
+func commentList(commenterHex string, domain string, path string, includeUnapproved bool) ([]model.Comment, map[string]model.Commenter, error) {
 	// path can be empty
 	if commenterHex == "" || domain == "" {
 		return nil, nil, app.ErrorMissingField
@@ -56,12 +57,12 @@ func commentList(commenterHex string, domain string, path string, includeUnappro
 	}
 	defer rows.Close()
 
-	commenters := make(map[string]commenter)
-	commenters["anonymous"] = commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
+	commenters := make(map[string]model.Commenter)
+	commenters["anonymous"] = model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
 
-	comments := []comment{}
+	comments := []model.Comment{}
 	for rows.Next() {
-		c := comment{}
+		c := model.Comment{}
 		if err = rows.Scan(
 			&c.CommentHex,
 			&c.CommenterHex,
@@ -124,7 +125,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	path := *x.Path
 
 	d, err := domainGet(domain)
@@ -176,7 +177,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_commenters := map[string]commenter{}
+	_commenters := map[string]model.Commenter{}
 	for commenterHex, cr := range commenters {
 		if _, ok := modList[cr.Email]; ok {
 			cr.IsModerator = true
@@ -207,7 +208,7 @@ func commentListHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func commentListApprovals(domain string) ([]comment, map[string]commenter, error) {
+func commentListApprovals(domain string) ([]model.Comment, map[string]model.Commenter, error) {
 	if domain == "" {
 		return nil, nil, app.ErrorMissingField
 	}
@@ -241,12 +242,12 @@ func commentListApprovals(domain string) ([]comment, map[string]commenter, error
 	}
 	defer rows.Close()
 
-	commenters := make(map[string]commenter)
-	commenters["anonymous"] = commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
+	commenters := make(map[string]model.Commenter)
+	commenters["anonymous"] = model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
 
-	comments := []comment{}
+	comments := []model.Comment{}
 	for rows.Next() {
-		c := comment{}
+		c := model.Comment{}
 		if err = rows.Scan(
 			&c.Path,
 			&c.CommentHex,
@@ -293,7 +294,7 @@ func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -301,7 +302,7 @@ func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 
@@ -311,7 +312,7 @@ func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_commenters := map[string]commenter{}
+	_commenters := map[string]model.Commenter{}
 	for commenterHex, cr := range commenters {
 		cr.Email = ""
 		_commenters[commenterHex] = cr
@@ -326,7 +327,7 @@ func commentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func commentListAll(domain string) ([]comment, map[string]commenter, error) {
+func commentListAll(domain string) ([]model.Comment, map[string]model.Commenter, error) {
 	if domain == "" {
 		return nil, nil, app.ErrorMissingField
 	}
@@ -360,12 +361,12 @@ func commentListAll(domain string) ([]comment, map[string]commenter, error) {
 	}
 	defer rows.Close()
 
-	commenters := make(map[string]commenter)
-	commenters["anonymous"] = commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
+	commenters := make(map[string]model.Commenter)
+	commenters["anonymous"] = model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
 
-	comments := []comment{}
+	comments := []model.Comment{}
 	for rows.Next() {
-		c := comment{}
+		c := model.Comment{}
 		if err = rows.Scan(
 			&c.Path,
 			&c.CommentHex,
@@ -412,7 +413,7 @@ func commentListAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain := domainStrip(*x.Domain)
+	domain := util.DomainStrip(*x.Domain)
 	isOwner, err := domainOwnershipVerify(o.OwnerHex, domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
@@ -420,7 +421,7 @@ func commentListAllHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isOwner {
-		bodyMarshal(w, response{"success": false, "message": errorNotAuthorised.Error()})
+		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}
 
@@ -430,7 +431,7 @@ func commentListAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_commenters := map[string]commenter{}
+	_commenters := map[string]model.Commenter{}
 	for commenterHex, cr := range commenters {
 		cr.Email = ""
 		_commenters[commenterHex] = cr

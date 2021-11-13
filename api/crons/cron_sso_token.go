@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func ssoTokenCleanupBegin() error {
+func SsoTokenCleanupBegin() error {
 	go func() {
 		for {
 			statement := `

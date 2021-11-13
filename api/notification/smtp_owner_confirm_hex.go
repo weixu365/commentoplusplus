@@ -12,7 +12,7 @@ type ownerConfirmHexPlugs struct {
 	ConfirmHex string
 }
 
-func smtpOwnerConfirmHex(to string, toName string, confirmHex string) error {
+func SmtpOwnerConfirmHex(to string, toName string, confirmHex string) error {
 	var body bytes.Buffer
 	templates["confirm-hex"].Execute(&body, &ownerConfirmHexPlugs{Origin: os.Getenv("ORIGIN"), ConfirmHex: confirmHex})
 

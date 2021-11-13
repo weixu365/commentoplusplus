@@ -7,7 +7,7 @@ import (
 	"simple-commenting/util"
 )
 
-var smtpConfigured bool
+var SmtpConfigured bool
 var smtpAuth smtp.Auth
 
 func SmtpConfigure() error {
@@ -17,13 +17,13 @@ func SmtpConfigure() error {
 	port := os.Getenv("SMTP_PORT")
 	if host == "" || port == "" {
 		util.GetLogger().Warningf("smtp not configured, no emails will be sent")
-		smtpConfigured = false
+		SmtpConfigured = false
 		return nil
 	}
 
 	if os.Getenv("SMTP_FROM_ADDRESS") == "" {
 		util.GetLogger().Errorf("COMMENTO_SMTP_FROM_ADDRESS not set")
-		smtpConfigured = false
+		SmtpConfigured = false
 		return app.ErrorMissingSmtpAddress
 	}
 
@@ -33,6 +33,6 @@ func SmtpConfigure() error {
 	} else {
 		smtpAuth = smtp.PlainAuth("", username, password, host)
 	}
-	smtpConfigured = true
+	SmtpConfigured = true
 	return nil
 }

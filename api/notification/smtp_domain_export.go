@@ -13,7 +13,7 @@ type domainExportPlugs struct {
 	ExportHex string
 }
 
-func smtpDomainExport(to string, toName string, domain string, exportHex string) error {
+func SmtpDomainExport(to string, toName string, domain string, exportHex string) error {
 	var body bytes.Buffer
 	templates["domain-export"].Execute(&body, &domainExportPlugs{Origin: os.Getenv("ORIGIN"), ExportHex: exportHex})
 

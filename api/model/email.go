@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type email struct {
+type Email struct {
 	Email                      string    `json:"email"`
 	UnsubscribeSecretHex       string    `json:"unsubscribeSecretHex"`
 	LastEmailNotificationDate  time.Time `json:"lastEmailNotificationDate"`
