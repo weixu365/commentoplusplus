@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 )
 
@@ -25,7 +26,7 @@ func commentEdit(commentHex string, markdown string, url string) (string, error)
 		return "", app.ErrorNoSuchComment
 	}
 
-	app.NotificationHub.Broadcast <- []byte(url)
+	notification.NotificationHub.Broadcast <- []byte(url)
 
 	return html, nil
 }

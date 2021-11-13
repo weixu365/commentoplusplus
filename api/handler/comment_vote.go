@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"time"
@@ -43,7 +44,7 @@ func commentVote(commenterHex string, commentHex string, direction int, url stri
 		return app.ErrorInternal
 	}
 
-	app.NotificationHub.Broadcast <- []byte(url)
+	notification.NotificationHub.Broadcast <- []byte(url)
 
 	return nil
 }

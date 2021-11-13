@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func configParse() error {
+func ConfigParse() error {
 	binPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		util.GetLogger().Errorf("cannot load binary path: %v", err)

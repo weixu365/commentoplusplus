@@ -21,7 +21,7 @@ func TestSmtpConfigureBasics(t *testing.T) {
 	os.Setenv("SMTP_HOST", "smtp.commento.io")
 	os.Setenv("SMTP_FROM_ADDRESS", "no-reply@commento.io")
 
-	if err := smtpConfigure(); err != nil {
+	if err := SmtpConfigure(); err != nil {
 		t.Errorf("unexpected error when configuring SMTP: %v", err)
 		return
 	}
@@ -35,7 +35,7 @@ func TestSmtpConfigureEmptyHost(t *testing.T) {
 	os.Setenv("SMTP_PASSWORD", "hunter2")
 	os.Setenv("SMTP_FROM_ADDRESS", "no-reply@commento.io")
 
-	if err := smtpConfigure(); err != nil {
+	if err := SmtpConfigure(); err != nil {
 		t.Errorf("unexpected error when configuring SMTP: %v", err)
 		return
 	}
@@ -55,7 +55,7 @@ func TestSmtpConfigureEmptyAddress(t *testing.T) {
 	os.Setenv("SMTP_HOST", "smtp.commento.io")
 	os.Setenv("SMTP_PORT", "25")
 
-	if err := smtpConfigure(); err == nil {
+	if err := SmtpConfigure(); err == nil {
 		t.Errorf("expected error not found; SMTP should not be configured when COMMENTO_SMTP_FROM_ADDRESS is empty")
 		return
 	}

@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"time"
 )
@@ -42,7 +43,7 @@ func commentDelete(commentHex string, deleterHex string, domain string, path str
 		return app.ErrorNoSuchComment
 	}
 
-	app.NotificationHub.Broadcast <- []byte(domain + path)
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	return nil
 }

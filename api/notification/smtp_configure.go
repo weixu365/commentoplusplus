@@ -10,7 +10,7 @@ import (
 var smtpConfigured bool
 var smtpAuth smtp.Auth
 
-func smtpConfigure() error {
+func SmtpConfigure() error {
 	username := os.Getenv("SMTP_USERNAME")
 	password := os.Getenv("SMTP_PASSWORD")
 	host := os.Getenv("SMTP_HOST")

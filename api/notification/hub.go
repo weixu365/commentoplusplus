@@ -16,6 +16,8 @@ type Hub struct {
 	unregister chan *Client
 }
 
+var NotificationHub *Hub
+
 func NewHub() *Hub {
 	return &Hub{
 		Broadcast:  make(chan []byte, 10),

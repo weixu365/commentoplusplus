@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -24,7 +25,7 @@ func commentApprove(commentHex string, url string) error {
 		return app.ErrorInternal
 	}
 
-	app.NotificationHub.Broadcast <- []byte(url)
+	notification.NotificationHub.Broadcast <- []byte(url)
 
 	return nil
 }

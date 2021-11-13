@@ -3,7 +3,6 @@ package test
 import (
 	"fmt"
 	"os"
-	"simple-commenting/app"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
@@ -132,7 +131,7 @@ func SetupTestEnv() error {
 		return err
 	}
 
-	app.NotificationHub = notification.NewHub()
+	notification.NotificationHub = notification.NewHub()
 
 	return nil
 }

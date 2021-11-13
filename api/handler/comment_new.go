@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"strings"
@@ -49,7 +50,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 		return "", app.ErrorInternal
 	}
 
-	app.NotificationHub.Broadcast <- []byte(domain + path)
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	return commentHex, nil
 }

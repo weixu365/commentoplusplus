@@ -5,7 +5,7 @@ var twitterConfigured bool
 var githubConfigured bool
 var gitlabConfigured bool
 
-func oauthConfigure() error {
+func OauthConfigure() error {
 	if err := googleOauthConfigure(); err != nil {
 		return err
 	}

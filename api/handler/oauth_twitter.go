@@ -2,6 +2,7 @@ package handler
 
 import (
 	"os"
+	"simple-commenting/app"
 	"simple-commenting/util"
 	"sync"
 

@@ -7,8 +7,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var NotificationHub *notification.Hub
-
 func apiRouterInit(router *mux.Router) error {
 	router.HandleFunc("/api/owner/new", ownerNewHandler).Methods("POST")
 	router.HandleFunc("/api/owner/confirm-hex", ownerConfirmHexHandler).Methods("GET")
@@ -74,10 +72,10 @@ func apiRouterInit(router *mux.Router) error {
 
 	router.HandleFunc("/api/page/update", pageUpdateHandler).Methods("POST")
 
-	NotificationHub = notification.NewHub()
-	go NotificationHub.Run()
+	notification.NotificationHub = notification.NewHub()
+	go notification.NotificationHub.Run()
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		notification.ServeWs(NotificationHub, w, r)
+		notification.ServeWs(notification.NotificationHub, w, r)
 	})
 
 	return nil

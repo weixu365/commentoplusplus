@@ -19,7 +19,7 @@ type headerPlugs struct {
 
 var templates map[string]*template.Template
 
-func smtpTemplatesLoad() error {
+func SmtpTemplatesLoad() error {
 	var err error
 	headerTemplate, err = template.New("header").Parse(`MIME-Version: 1.0
 From: Commento <{{.FromAddress}}>
