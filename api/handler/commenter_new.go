@@ -32,7 +32,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 			return "", app.ErrorEmailAlreadyExists
 		}
 
-		if err := repository.EmailNew(email); err != nil {
+		if err := repository.Repo.EmailRepository.CreateEmail(email); err != nil {
 			return "", app.ErrorInternal
 		}
 	}

@@ -7,31 +7,8 @@ import (
 	"simple-commenting/util"
 )
 
-func domainModeratorList(domain string) ([]model.Moderator, error) {
-	statement := `
-		SELECT email, addDate
-		FROM moderators
-		WHERE domain=$1;
-	`
-	rows, err := repository.Db.Query(statement, domain)
-	if err != nil {
-		util.GetLogger().Errorf("cannot get moderators: %v", err)
-		return nil, app.ErrorInternal
-	}
-	defer rows.Close()
-
-	moderators := []model.Moderator{}
-	for rows.Next() {
-		m := model.Moderator{}
-		if err = rows.Scan(&m.Email, &m.AddDate); err != nil {
-			util.GetLogger().Errorf("cannot Scan moderator: %v", err)
-			return nil, app.ErrorInternal
-		}
-
-		moderators = append(moderators, m)
-	}
-
-	return moderators, nil
+func domainModeratorList(domainName string) (*[]model.Moderator, error) {
+	return repository.Repo.DomainModeratorRepository.GetModeratorsForDomain(domainName)
 }
 
 func isDomainModerator(domain string, email string) (bool, error) {

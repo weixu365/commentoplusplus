@@ -51,7 +51,7 @@ func DbConnect(retriesLeft int) error {
 			filename TEXT NOT NULL UNIQUE
 		);
 	`
-	
+
 	_, err = db.Exec(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create migrations table: %v", err)
@@ -65,11 +65,6 @@ func DbConnect(retriesLeft int) error {
 	}
 
 	Db.SetMaxIdleConns(maxIdleConnections)
-
-	Repo = &Repositories {
-		domainRepository: &DomainRepositoryPg{},
-		domainModeratorRepository: &DomainModeratorRepositoryPg {},
-	}
 
 	return nil
 }

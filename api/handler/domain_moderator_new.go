@@ -5,7 +5,6 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
-	"time"
 )
 
 func domainModeratorNew(domain string, email string) error {
@@ -13,18 +12,12 @@ func domainModeratorNew(domain string, email string) error {
 		return app.ErrorMissingField
 	}
 
-	if err := repository.EmailNew(email); err != nil {
+	if err := repository.Repo.EmailRepository.CreateEmail(email); err != nil {
 		util.GetLogger().Errorf("cannot create email when creating moderator: %v", err)
 		return app.ErrorInternal
 	}
 
-	statement := `
-		INSERT INTO
-		moderators (domain, email, addDate)
-		VALUES     ($1,     $2,    $3     );
-	`
-	_, err := repository.Db.Exec(statement, domain, email, time.Now().UTC())
-	if err != nil {
+	if err := repository.Repo.DomainModeratorRepository.CreateModerator(domain, email); err != nil {
 		util.GetLogger().Errorf("cannot insert new moderator: %v", err)
 		return app.ErrorInternal
 	}

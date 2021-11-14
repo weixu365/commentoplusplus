@@ -157,14 +157,14 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 			commenterHex = c.CommenterHex
 		}
 
-		for _, mod := range d.Moderators {
+		for _, mod := range *d.Moderators {
 			modList[mod.Email] = true
 			if mod.Email == c.Email {
 				isModerator = true
 			}
 		}
 	} else {
-		for _, mod := range d.Moderators {
+		for _, mod := range *d.Moderators {
 			modList[mod.Email] = true
 		}
 	}

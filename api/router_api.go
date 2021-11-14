@@ -2,13 +2,23 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"simple-commenting/handler"
 	"simple-commenting/notification"
+	"simple-commenting/repository"
 
 	"github.com/gorilla/mux"
 )
 
 func apiRouterInit(router *mux.Router) error {
+	con := os.Getenv("POSTGRES")
+	repos, err := repository.NewPostgresqlRepositories(con)
+	if err != nil {
+		return err
+	}
+
+	repository.Repo = repos
+
 	router.HandleFunc("/api/owner/new", handler.OwnerNewHandler).Methods("POST")
 	router.HandleFunc("/api/owner/confirm-hex", handler.OwnerConfirmHexHandler).Methods("GET")
 	router.HandleFunc("/api/owner/login", handler.OwnerLoginHandler).Methods("POST")

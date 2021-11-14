@@ -30,7 +30,7 @@ func MigrateEmails() error {
 			return app.ErrorDatabaseMigration
 		}
 
-		if err = EmailNew(email); err != nil {
+		if err = Repo.EmailRepository.CreateEmail(email); err != nil {
 			util.GetLogger().Errorf("cannot insert email during migration: %v", err)
 			return app.ErrorDatabaseMigration
 		}

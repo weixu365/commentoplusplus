@@ -7,7 +7,7 @@ import (
 	"simple-commenting/util"
 )
 
-func emailNotificationModerator(d model.Domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
+func emailNotificationModerator(d *model.Domain, path string, title string, commenterHex string, commentHex string, html string, state string) {
 	if d.EmailNotificationPolicy == "none" {
 		return
 	}
@@ -36,7 +36,7 @@ func emailNotificationModerator(d model.Domain, path string, title string, comme
 		kind = "pending-moderation"
 	}
 
-	for _, m := range d.Moderators {
+	for _, m := range *d.Moderators {
 		// Do not email the commenting moderator their own comment.
 		if commenterHex != "anonymous" && m.Email == commenterEmail {
 			continue
@@ -72,7 +72,7 @@ func emailNotificationModerator(d model.Domain, path string, title string, comme
 	}
 }
 
-func emailNotificationReply(d model.Domain, path string, title string, commenterHex string, commentHex string, html string, parentHex string, state string) {
+func emailNotificationReply(d *model.Domain, path string, title string, commenterHex string, commentHex string, html string, parentHex string, state string) {
 	// No reply notifications for root comments.
 	if parentHex == "root" {
 		return
@@ -138,7 +138,7 @@ func emailNotificationReply(d model.Domain, path string, title string, commenter
 	notification.SmtpEmailNotification(pc.Email, pc.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
 }
 
-func emailNotificationNew(d model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
+func emailNotificationNew(d *model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
 	p, err := pageGet(d.Domain, path)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get page to send email notification: %v", err)

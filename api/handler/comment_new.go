@@ -121,7 +121,7 @@ func CommentNewHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		commenterHex, commenterName, commenterEmail, commenterLink = c.CommenterHex, c.Name, c.Email, c.Link
-		for _, mod := range d.Moderators {
+		for _, mod := range *d.Moderators {
 			if mod.Email == c.Email {
 				isModerator = true
 				break

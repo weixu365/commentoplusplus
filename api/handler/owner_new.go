@@ -25,7 +25,7 @@ func ownerNew(email string, name string, password string) (string, error) {
 		return "", app.ErrorEmailAlreadyExists
 	}
 
-	if err := repository.EmailNew(email); err != nil {
+	if err := repository.Repo.EmailRepository.CreateEmail(email); err != nil {
 		return "", app.ErrorInternal
 	}
 

@@ -13,15 +13,15 @@ import (
 
 func SsoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("commenterToken")
-	domain := r.Header.Get("Referer")
+	domainName := r.Header.Get("Referer")
 
 	if commenterToken == "" {
 		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingField.Error())
 		return
 	}
 
-	domain = util.DomainStrip(domain)
-	if domain == "" {
+	domainName = util.DomainStrip(domainName)
+	if domainName == "" {
 		fmt.Fprintf(w, "Error: No Referer header found in request\n")
 		return
 	}
@@ -32,30 +32,30 @@ func SsoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := domainGet(domain)
+	domain, err := domainGet(domainName)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s\n", app.ErrorNoSuchDomain.Error())
 		return
 	}
 
-	if !d.SsoProvider {
-		fmt.Fprintf(w, "Error: SSO not configured for %s\n", domain)
+	if !domain.SsoProvider {
+		fmt.Fprintf(w, "Error: SSO not configured for %s\n", domainName)
 		return
 	}
 
-	if d.SsoSecret == "" || d.SsoUrl == "" {
+	if domain.SsoSecret == "" || domain.SsoUrl == "" {
 		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingConfig.Error())
 		return
 	}
 
-	key, err := hex.DecodeString(d.SsoSecret)
+	key, err := hex.DecodeString(domain.SsoSecret)
 	if err != nil {
 		util.GetLogger().Errorf("cannot decode SSO secret as hex: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
 
-	token, err := ssoTokenNew(domain, commenterToken)
+	token, err := ssoTokenNew(domainName, commenterToken)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
@@ -72,7 +72,7 @@ func SsoRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	h.Write(tokenBytes)
 	signature := hex.EncodeToString(h.Sum(nil))
 
-	u, err := url.Parse(d.SsoUrl)
+	u, err := url.Parse(domain.SsoUrl)
 	if err != nil {
 		// this should really not be happening; we're checking if the
 		// passed URL is valid at domain update

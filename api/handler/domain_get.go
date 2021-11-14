@@ -54,28 +54,20 @@ func domainsRowScan(s repository.SqlScanner, d *model.Domain) error {
 	)
 }
 
-func domainGet(dmn string) (model.Domain, error) {
-	if dmn == "" {
-		return model.Domain{}, app.ErrorMissingField
+func domainGet(domainName string) (*model.Domain, error) {
+	if domainName == "" {
+		return nil, app.ErrorMissingField
 	}
 
-	statement := `
-		SELECT ` + domainsRowColumns + `
-		FROM domains
-		WHERE canon($1) LIKE canon(domain);
-	`
-	row := repository.Db.QueryRow(statement, dmn)
-
-	var err error
-	d := model.Domain{}
-	if err = domainsRowScan(row, &d); err != nil {
-		return d, app.ErrorNoSuchDomain
-	}
-
-	d.Moderators, err = domainModeratorList(d.Domain)
+	domain, err := repository.Repo.DomainRepository.GetDomainByName(domainName)
 	if err != nil {
-		return model.Domain{}, err
+		return nil, err
 	}
 
-	return d, nil
+	domain.Moderators, err = repository.Repo.DomainModeratorRepository.GetModeratorsForDomain(domain.Domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return domain, nil
 }

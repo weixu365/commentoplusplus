@@ -33,7 +33,7 @@ func domainList(ownerHex string) ([]model.Domain, error) {
 			return nil, app.ErrorInternal
 		}
 
-		d.Moderators, err = domainModeratorList(d.Domain)
+		d.Moderators, err = repository.Repo.DomainModeratorRepository.GetModeratorsForDomain(d.Domain)
 		if err != nil {
 			return []model.Domain{}, err
 		}

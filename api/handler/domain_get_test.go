@@ -10,14 +10,14 @@ func TestDomainGetBasics(t *testing.T) {
 
 	domainNew("temp-owner-hex", "Example", "example.com")
 
-	d, err := domainGet("example.com")
+	domain, err := domainGet("example.com")
 	if err != nil {
 		t.Errorf("unexpected error getting domain: %v", err)
 		return
 	}
 
-	if d.Name != "Example" {
-		t.Errorf("expected name=Example got name=%s", d.Name)
+	if domain.Name != "Example" {
+		t.Errorf("expected name=Example got name=%s", domain.Name)
 		return
 	}
 }

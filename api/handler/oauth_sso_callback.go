@@ -47,13 +47,13 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		payload.Photo = "undefined"
 	}
 
-	domain, commenterToken, err := ssoTokenExtract(payload.Token)
+	domainName, commenterToken, err := ssoTokenExtract(payload.Token)
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}
 
-	d, err := domainGet(domain)
+	domain, err := domainGet(domainName)
 	if err != nil {
 		if err == app.ErrorNoSuchDomain {
 			fmt.Fprintf(w, "Error: %s\n", err.Error())
@@ -64,12 +64,12 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if d.SsoSecret == "" || d.SsoUrl == "" {
+	if domain.SsoSecret == "" || domain.SsoUrl == "" {
 		fmt.Fprintf(w, "Error: %s\n", app.ErrorMissingConfig.Error())
 		return
 	}
 
-	key, err := hex.DecodeString(d.SsoSecret)
+	key, err := hex.DecodeString(domain.SsoSecret)
 	if err != nil {
 		util.GetLogger().Errorf("cannot decode SSO secret as hex: %v", err)
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
@@ -90,7 +90,7 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByEmail("sso:"+domain, payload.Email)
+	c, err := commenterGetByEmail("sso:"+domainName, payload.Email)
 	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
@@ -99,13 +99,13 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var commenterHex string
 
 	if err == app.ErrorNoSuchCommenter {
-		commenterHex, err = commenterNew(payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domain, "")
+		commenterHex, err = commenterNew(payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domainName, "")
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err.Error())
 			return
 		}
 	} else {
-		if err = commenterUpdate(c.CommenterHex, payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domain); err != nil {
+		if err = commenterUpdate(c.CommenterHex, payload.Email, payload.Name, payload.Link, payload.Photo, "sso:"+domainName); err != nil {
 			util.GetLogger().Warningf("cannot update commenter: %s", err)
 			// not a serious enough to exit with an error
 		}
