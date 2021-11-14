@@ -139,21 +139,21 @@ func emailNotificationReply(d *model.Domain, path string, title string, commente
 }
 
 func emailNotificationNew(d *model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {
-	p, err := pageGet(d.Domain, path)
+	page, err := repository.Repo.PageRepository.GetPageByPath(d.Domain, path)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get page to send email notification: %v", err)
 		return
 	}
 
-	if p.Title == "" {
-		p.Title, err = pageTitleUpdate(d.Domain, path)
+	if page.Title == "" {
+		page.Title, err = pageTitleUpdate(d.Domain, path)
 		if err != nil {
 			// Not being able to update a page title isn't serious enough to skip an
 			// email notification.
-			p.Title = d.Domain
+			page.Title = d.Domain
 		}
 	}
 
-	emailNotificationModerator(d, path, p.Title, commenterHex, commentHex, html, state)
-	emailNotificationReply(d, path, p.Title, commenterHex, commentHex, html, parentHex, state)
+	emailNotificationModerator(d, path, page.Title, commenterHex, commentHex, html, state)
+	emailNotificationReply(d, path, page.Title, commenterHex, commentHex, html, parentHex, state)
 }

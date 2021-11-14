@@ -12,19 +12,19 @@ import (
 
 // Take `creationDate` as a param because comment import (from Disqus, for
 // example) will require a custom time.
-func commentNew(commenterHex string, domain string, path string, parentHex string, markdown string, state string, creationDate time.Time) (string, error) {
+func commentNew(commenterHex string, domainName string, path string, parentHex string, markdown string, state string, creationDate time.Time) (string, error) {
 	// path is allowed to be empty
-	if commenterHex == "" || domain == "" || parentHex == "" || markdown == "" || state == "" {
+	if commenterHex == "" || domainName == "" || parentHex == "" || markdown == "" || state == "" {
 		return "", app.ErrorMissingField
 	}
 
-	p, err := pageGet(domain, path)
+	page, err := repository.Repo.PageRepository.GetPageByPath(domainName, path)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get page attributes: %v", err)
 		return "", app.ErrorInternal
 	}
 
-	if p.IsLocked {
+	if page.IsLocked {
 		return "", app.ErrorThreadLocked
 	}
 
@@ -35,7 +35,7 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 
 	html := util.MarkdownToHtml(markdown)
 
-	if err = pageNew(domain, path); err != nil {
+	if err = repository.Repo.PageRepository.CreatePage(domainName, path); err != nil {
 		return "", err
 	}
 
@@ -44,13 +44,13 @@ func commentNew(commenterHex string, domain string, path string, parentHex strin
 		comments (commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
 		VALUES   ($1,         $2,     $3,   $4,           $5,        $6,       $7,   $8,           $9   );
 	`
-	_, err = repository.Db.Exec(statement, commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
+	_, err = repository.Db.Exec(statement, commentHex, domainName, path, commenterHex, parentHex, markdown, html, creationDate, state)
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert comment: %v", err)
 		return "", app.ErrorInternal
 	}
 
-	notification.NotificationHub.Broadcast <- []byte(domain + path)
+	notification.NotificationHub.Broadcast <- []byte(domainName + path)
 
 	return commentHex, nil
 }

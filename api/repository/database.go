@@ -17,6 +17,7 @@ type Repositories struct {
 	DomainRepository          DomainRepository
 	DomainModeratorRepository DomainModeratorRepository
 	EmailRepository           EmailRepository
+	PageRepository            PageRepository
 }
 
 type DomainRepository interface {
@@ -31,4 +32,9 @@ type DomainModeratorRepository interface {
 
 type EmailRepository interface {
 	CreateEmail(emailAddress string) error
+}
+
+type PageRepository interface {
+	CreatePage(domainName string, path string) error
+	GetPageByPath(domainName string, path string) (*model.Page, error)
 }

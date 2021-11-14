@@ -134,7 +134,7 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p, err := pageGet(domain, path)
+	p, err := repository.Repo.PageRepository.GetPageByPath(domain, path)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return

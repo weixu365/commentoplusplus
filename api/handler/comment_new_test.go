@@ -62,7 +62,7 @@ func TestCommentNewUpvoted(t *testing.T) {
 func TestCommentNewThreadLocked(t *testing.T) {
 	test.FailTestOnError(t, test.SetupTestEnv())
 
-	pageNew("example.com", "/path.html")
+	repository.Repo.PageRepository.CreatePage("example.com", "/path.html")
 	p, _ := pageGet("example.com", "/path.html")
 	p.IsLocked = true
 	pageUpdate(p)
