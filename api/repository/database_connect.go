@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -39,12 +40,19 @@ func DbConnect(retriesLeft int) error {
 		}
 	}
 
+	db, err = sqlx.Connect("postgres", con)
+	if err != nil {
+		util.GetLogger().Errorf("sqlx: cannot open connection to postgres: %v", err)
+		return err
+	}
+
 	statement := `
 		CREATE TABLE IF NOT EXISTS migrations (
 			filename TEXT NOT NULL UNIQUE
 		);
 	`
-	_, err = Db.Exec(statement)
+	
+	_, err = db.Exec(statement)
 	if err != nil {
 		util.GetLogger().Errorf("cannot create migrations table: %v", err)
 		return err
@@ -57,6 +65,11 @@ func DbConnect(retriesLeft int) error {
 	}
 
 	Db.SetMaxIdleConns(maxIdleConnections)
+
+	Repo = &Repositories {
+		domainRepository: &DomainRepositoryPg{},
+		domainModeratorRepository: &DomainModeratorRepositoryPg {},
+	}
 
 	return nil
 }
