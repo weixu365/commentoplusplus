@@ -85,36 +85,3 @@ func commenterGetByEmail(provider string, email string) (model.Commenter, error)
 
 	return c, nil
 }
-
-func commenterGetByCommenterToken(commenterToken string) (model.Commenter, error) {
-	if commenterToken == "" {
-		return model.Commenter{}, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT ` + commentersRowColumns + `
-		FROM commenterSessions
-		JOIN commenters ON commenterSessions.commenterHex = commenters.commenterHex
-		WHERE commenterToken = $1;
-	`
-	row := repository.Db.QueryRow(statement, commenterToken)
-
-	var c model.Commenter
-	if err := commentersRowScan(row, &c); err != nil {
-		// TODO: is this the only error?
-		return model.Commenter{}, app.ErrorNoSuchToken
-	}
-
-	if c.CommenterHex == "none" {
-		return model.Commenter{}, app.ErrorNoSuchToken
-	}
-
-	if c.Deleted == true {
-		c.Email = "undefined"
-		c.Name = "[deleted]"
-		c.Link = "undefined"
-		c.Photo = "undefined"
-	}
-
-	return c, nil
-}

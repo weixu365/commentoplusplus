@@ -45,7 +45,7 @@ func PageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	c, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return

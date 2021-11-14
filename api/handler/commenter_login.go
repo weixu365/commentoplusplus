@@ -71,18 +71,18 @@ func CommenterLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: modify commenterLogin to directly return c?
-	c, err := commenterGetByCommenterToken(commenterToken)
+	// TODO: modify commenterLogin to directly return commenter?
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(commenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	e, err := emailGet(c.Email)
+	e, err := emailGet(commenter.Email)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	bodyMarshal(w, response{"success": true, "commenterToken": commenterToken, "commenter": c, "email": e})
+	bodyMarshal(w, response{"success": true, "commenterToken": commenterToken, "commenter": commenter, "email": e})
 }

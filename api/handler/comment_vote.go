@@ -67,7 +67,7 @@ func CommentVoteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -86,7 +86,7 @@ func CommentVoteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := commentVote(c.CommenterHex, *x.CommentHex, direction, domain+path); err != nil {
+	if err := commentVote(commenter.CommenterHex, *x.CommentHex, direction, domain+path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}

@@ -115,14 +115,14 @@ func CommentNewHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else {
-		c, err := commenterGetByCommenterToken(*x.CommenterToken)
+		commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 		if err != nil {
 			bodyMarshal(w, response{"success": false, "message": err.Error()})
 			return
 		}
-		commenterHex, commenterName, commenterEmail, commenterLink = c.CommenterHex, c.Name, c.Email, c.Link
+		commenterHex, commenterName, commenterEmail, commenterLink = commenter.CommenterHex, commenter.Name, commenter.Email, commenter.Link
 		for _, mod := range *d.Moderators {
-			if mod.Email == c.Email {
+			if mod.Email == commenter.Email {
 				isModerator = true
 				break
 			}

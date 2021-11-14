@@ -145,7 +145,7 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 	modList := map[string]bool{}
 
 	if *x.CommenterToken != "anonymous" {
-		c, err := commenterGetByCommenterToken(*x.CommenterToken)
+		commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 		if err != nil {
 			if err == app.ErrorNoSuchToken {
 				commenterHex = "anonymous"
@@ -154,12 +154,12 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			commenterHex = c.CommenterHex
+			commenterHex = commenter.CommenterHex
 		}
 
 		for _, mod := range *d.Moderators {
 			modList[mod.Email] = true
-			if mod.Email == c.Email {
+			if mod.Email == commenter.Email {
 				isModerator = true
 			}
 		}

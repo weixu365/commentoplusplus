@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"simple-commenting/repository"
 )
 
 func CommenterSelfHandler(w http.ResponseWriter, r *http.Request) {
@@ -15,17 +16,17 @@ func CommenterSelfHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	e, err := emailGet(c.Email)
+	e, err := emailGet(commenter.Email)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	bodyMarshal(w, response{"success": true, "commenter": c, "email": e})
+	bodyMarshal(w, response{"success": true, "commenter": commenter, "email": e})
 }

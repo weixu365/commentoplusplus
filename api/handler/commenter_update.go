@@ -61,20 +61,20 @@ func CommenterUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	if c.Provider != "commento" {
+	if commenter.Provider != "commento" {
 		bodyMarshal(w, response{"success": false, "message": app.ErrorCannotUpdateOauthProfile.Error()})
 		return
 	}
 
-	*x.Email = c.Email
+	*x.Email = commenter.Email
 
-	if err = commenterUpdate(c.CommenterHex, *x.Email, *x.Name, *x.Link, *x.Photo, c.Provider); err != nil {
+	if err = commenterUpdate(commenter.CommenterHex, *x.Email, *x.Name, *x.Link, *x.Photo, commenter.Provider); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}

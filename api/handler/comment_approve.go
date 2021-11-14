@@ -42,7 +42,7 @@ func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -54,7 +54,7 @@ func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isModerator, err := isDomainModerator(domain, c.Email)
+	isModerator, err := isDomainModerator(domain, commenter.Email)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return

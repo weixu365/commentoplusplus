@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 
 	"golang.org/x/oauth2"
@@ -15,7 +16,7 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	commenterToken := r.FormValue("state")
 	code := r.FormValue("code")
 
-	_, err := commenterGetByCommenterToken(commenterToken)
+	_, err := repository.Repo.CommenterRepository.GetCommenterByToken(commenterToken)
 	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return

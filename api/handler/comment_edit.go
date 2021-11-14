@@ -51,7 +51,7 @@ func CommentEditHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByCommenterToken(*x.CommenterToken)
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByToken(*x.CommenterToken)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -63,7 +63,7 @@ func CommentEditHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cm.CommenterHex != c.CommenterHex {
+	if cm.CommenterHex != commenter.CommenterHex {
 		bodyMarshal(w, response{"success": false, "message": app.ErrorNotAuthorised.Error()})
 		return
 	}

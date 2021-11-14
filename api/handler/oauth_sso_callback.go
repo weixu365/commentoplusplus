@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -84,7 +85,7 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = commenterGetByCommenterToken(commenterToken)
+	_, err = repository.Repo.CommenterRepository.GetCommenterByToken(commenterToken)
 	if err != nil && err != app.ErrorNoSuchToken {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
