@@ -6,7 +6,8 @@ import (
 	"simple-commenting/util"
 )
 
-func commentOwnershipVerify(commenterHex string, commentHex string) (bool, error) {
+//TODO: useless?
+func commentOwnershipVerify1(commenterHex string, commentHex string) (bool, error) {
 	if commenterHex == "" || commentHex == "" {
 		return false, app.ErrorMissingField
 	}

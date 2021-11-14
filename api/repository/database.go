@@ -19,6 +19,7 @@ type Repositories struct {
 	EmailRepository           EmailRepository
 	PageRepository            PageRepository
 	CommenterRepository       CommenterRepository
+	CommentRepository         CommentRepository
 	LogRepository             LogRepository
 }
 

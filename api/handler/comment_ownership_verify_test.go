@@ -11,7 +11,7 @@ func TestCommentOwnershipVerifyBasics(t *testing.T) {
 
 	commentHex, _ := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 
-	isOwner, err := commentOwnershipVerify("temp-commenter-hex", commentHex)
+	isOwner, err := commentOwnershipVerify1("temp-commenter-hex", commentHex)
 	if err != nil {
 		t.Errorf("unexpected error verifying ownership: %v", err)
 		return
@@ -22,7 +22,7 @@ func TestCommentOwnershipVerifyBasics(t *testing.T) {
 		return
 	}
 
-	isOwner, err = commentOwnershipVerify("another-commenter-hex", commentHex)
+	isOwner, err = commentOwnershipVerify1("another-commenter-hex", commentHex)
 	if err != nil {
 		t.Errorf("unexpected error verifying ownership: %v", err)
 		return
@@ -37,7 +37,7 @@ func TestCommentOwnershipVerifyBasics(t *testing.T) {
 func TestCommentOwnershipVerifyEmpty(t *testing.T) {
 	test.FailTestOnError(t, test.SetupTestEnv())
 
-	if _, err := commentOwnershipVerify("temp-commenter-hex", ""); err == nil {
+	if _, err := commentOwnershipVerify1("temp-commenter-hex", ""); err == nil {
 		t.Errorf("expected error not founding verifying ownership with empty commentHex")
 		return
 	}

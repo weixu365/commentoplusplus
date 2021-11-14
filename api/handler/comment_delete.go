@@ -5,48 +5,7 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
-	"time"
 )
-
-func commentDelete(commentHex string, deleterHex string, domain string, path string) error {
-	if commentHex == "" || deleterHex == "" {
-		return app.ErrorMissingField
-	}
-
-	statement := `
-		UPDATE comments
-		SET
-			deleted = true,
-			markdown = '[deleted]',
-			html = '[deleted]',
-			commenterHex = 'anonymous',
-			deleterHex = $2,
-			deletionDate = $3
-		WHERE commentHex = $1;
-	`
-	_, err := repository.Db.Exec(statement, commentHex, deleterHex, time.Now().UTC())
-
-	if err != nil {
-		// TODO: make sure this is the error is actually non-existant commentHex
-		return app.ErrorNoSuchComment
-	}
-
-	// Since we're no longer actually deleting comments, we are no longer running the trigger function!
-	statement = `
-		UPDATE pages
-		SET commentCount = commentCount - 1
-		WHERE canon($1) LIKE canon(domain) AND path = $2;
-	`
-	_, err = repository.Db.Exec(statement, domain, path)
-
-	if err != nil {
-		return app.ErrorNoSuchComment
-	}
-
-	notification.NotificationHub.Broadcast <- []byte(domain + path)
-
-	return nil
-}
 
 func CommentDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
@@ -66,33 +25,35 @@ func CommentDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cm, err := commentGetByCommentHex(*x.CommentHex)
+	comment, err := repository.Repo.CommentRepository.GetByCommentHex(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	domain, path, err := commentDomainPathGet(*x.CommentHex)
+	domainName, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	isModerator, err := isDomainModerator(domain, commenter.Email)
+	isModerator, err := isDomainModerator(domainName, commenter.Email)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	if !isModerator && cm.CommenterHex != commenter.CommenterHex {
+	if !isModerator && comment.CommenterHex != commenter.CommenterHex {
 		bodyMarshal(w, response{"success": false, "message": app.ErrorNotModerator.Error()})
 		return
 	}
 
-	if err = commentDelete(*x.CommentHex, *x.CommenterToken, domain, path); err != nil {
+	if err = repository.Repo.CommentRepository.DeleteComment(*x.CommentHex, *x.CommenterToken, domainName, path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domainName + path)
 
 	bodyMarshal(w, response{"success": true})
 }
@@ -109,7 +70,7 @@ func CommentOwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain, path, err := commentDomainPathGet(*x.CommentHex)
+	domain, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -132,10 +93,12 @@ func CommentOwnerDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = commentDelete(*x.CommentHex, *x.OwnerToken, domain, path); err != nil {
+	if err = repository.Repo.CommentRepository.DeleteComment(*x.CommentHex, *x.OwnerToken, domain, path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	bodyMarshal(w, response{"success": true})
 }

@@ -9,109 +9,6 @@ import (
 	"simple-commenting/util"
 )
 
-func commentList(commenterHex string, domain string, path string, includeUnapproved bool) ([]*model.Comment, map[string]*model.Commenter, error) {
-	// path can be empty
-	if commenterHex == "" || domain == "" {
-		return nil, nil, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT
-			commentHex,
-			commenterHex,
-			markdown,
-			html,
-			parentHex,
-			score,
-			state,
-			deleted,
-			creationDate
-		FROM comments
-		WHERE
-			canon($1) LIKE canon(comments.domain) AND
-			comments.path = $2
-	`
-
-	if !includeUnapproved {
-		if commenterHex == "anonymous" {
-			statement += `AND state = 'approved'`
-		} else {
-			statement += `AND (state = 'approved' OR commenterHex = $3)`
-		}
-	}
-
-	statement += `;`
-
-	var rows *sql.Rows
-	var err error
-
-	if !includeUnapproved && commenterHex != "anonymous" {
-		rows, err = repository.Db.Query(statement, domain, path, commenterHex)
-	} else {
-		rows, err = repository.Db.Query(statement, domain, path)
-	}
-
-	if err != nil {
-		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, app.ErrorInternal
-	}
-	defer rows.Close()
-
-	commenters := make(map[string]*model.Commenter)
-	commenters["anonymous"] = &model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
-
-	comments := []*model.Comment{}
-	for rows.Next() {
-		comment := model.Comment{}
-		if err = rows.Scan(
-			&comment.CommentHex,
-			&comment.CommenterHex,
-			&comment.Markdown,
-			&comment.Html,
-			&comment.ParentHex,
-			&comment.Score,
-			&comment.State,
-			&comment.Deleted,
-			&comment.CreationDate); err != nil {
-			return nil, nil, app.ErrorInternal
-		}
-
-		if commenterHex != "anonymous" {
-			statement = `
-				SELECT direction
-				FROM votes
-				WHERE commentHex=$1 AND commenterHex=$2;
-			`
-			row := repository.Db.QueryRow(statement, comment.CommentHex, commenterHex)
-
-			if err = row.Scan(&comment.Direction); err != nil {
-				// TODO: is the only error here that there is no such entry?
-				comment.Direction = 0
-			}
-		}
-
-		if commenterHex != comment.CommenterHex {
-			comment.Markdown = ""
-		}
-
-		if !includeUnapproved {
-			comment.State = ""
-		}
-
-		comments = append(comments, &comment)
-
-		if _, ok := commenters[comment.CommenterHex]; !ok {
-			commenters[comment.CommenterHex], err = repository.Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
-			if err != nil {
-				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, app.ErrorInternal
-			}
-		}
-	}
-
-	return comments, commenters, nil
-}
-
 func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string `json:"CommenterToken"`
@@ -171,7 +68,7 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 
 	repository.Repo.LogRepository.LogDomainViewRecord(domainName, commenterHex)
 
-	comments, commenters, err := commentList(commenterHex, domainName, path, isModerator)
+	comments, commenters, err := repository.Repo.CommentRepository.ListComments(commenterHex, domainName, path, isModerator)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -431,10 +328,10 @@ func CommentListAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_commenters := map[string]model.Commenter{}
-	for commenterHex, cr := range commenters {
-		cr.Email = ""
-		_commenters[commenterHex] = cr
+	_commenters := map[string]*model.Commenter{}
+	for commenterHex, commenter := range commenters {
+		commenter.Email = ""
+		_commenters[commenterHex] = commenter
 	}
 
 	bodyMarshal(w, response{

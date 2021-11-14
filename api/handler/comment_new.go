@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
@@ -39,16 +40,19 @@ func commentNew(commenterHex string, domainName string, path string, parentHex s
 		return "", err
 	}
 
-	statement := `
-		INSERT INTO
-		comments (commentHex, domain, path, commenterHex, parentHex, markdown, html, creationDate, state)
-		VALUES   ($1,         $2,     $3,   $4,           $5,        $6,       $7,   $8,           $9   );
-	`
-	_, err = repository.Db.Exec(statement, commentHex, domainName, path, commenterHex, parentHex, markdown, html, creationDate, state)
-	if err != nil {
-		util.GetLogger().Errorf("cannot insert comment: %v", err)
-		return "", app.ErrorInternal
+	comment := model.Comment{
+		CommentHex:   commentHex,
+		Domain:       domainName,
+		Path:         path,
+		CommenterHex: commenterHex,
+		ParentHex:    parentHex,
+		Markdown:     markdown,
+		Html:         html,
+		CreationDate: creationDate,
+		State:        state,
 	}
+
+	repository.Repo.CommentRepository.CreateComment(&comment)
 
 	notification.NotificationHub.Broadcast <- []byte(domainName + path)
 

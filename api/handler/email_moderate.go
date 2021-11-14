@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -75,9 +76,9 @@ func EmailModerateHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch action {
 	case "approve":
-		err = commentApprove(commentHex, domain+path)
+		err = repository.Repo.CommentRepository.ApproveComment(commentHex, domain+path)
 	case "delete":
-		err = commentDelete(commentHex, commenterHex, domain, path)
+		err = repository.Repo.CommentRepository.DeleteComment(commentHex, commenterHex, domain, path)
 	default:
 		err = app.ErrorInvalidAction
 	}
@@ -86,6 +87,8 @@ func EmailModerateHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error: %v", err)
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	fmt.Fprintf(w, "comment successfully %sd", action)
 }

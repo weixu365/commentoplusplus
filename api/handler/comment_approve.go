@@ -5,30 +5,7 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
-	"simple-commenting/util"
 )
-
-func commentApprove(commentHex string, url string) error {
-	if commentHex == "" {
-		return app.ErrorMissingField
-	}
-
-	statement := `
-		UPDATE comments
-		SET state = 'approved'
-		WHERE commentHex = $1;
-	`
-
-	_, err := repository.Db.Exec(statement, commentHex)
-	if err != nil {
-		util.GetLogger().Errorf("cannot approve comment: %v", err)
-		return app.ErrorInternal
-	}
-
-	notification.NotificationHub.Broadcast <- []byte(url)
-
-	return nil
-}
 
 func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
@@ -48,7 +25,7 @@ func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain, path, err := commentDomainPathGet(*x.CommentHex)
+	domain, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -65,10 +42,12 @@ func CommentApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = commentApprove(*x.CommentHex, domain+path); err != nil {
+	if err = repository.Repo.CommentRepository.ApproveComment(*x.CommentHex, domain+path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	bodyMarshal(w, response{"success": true})
 }
@@ -85,7 +64,7 @@ func CommentOwnerApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domain, path, err := commentDomainPathGet(*x.CommentHex)
+	domain, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -108,10 +87,12 @@ func CommentOwnerApproveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = commentApprove(*x.CommentHex, domain+path); err != nil {
+	if err = repository.Repo.CommentRepository.ApproveComment(*x.CommentHex, domain+path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	bodyMarshal(w, response{"success": true})
 }

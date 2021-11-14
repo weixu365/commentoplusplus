@@ -5,49 +5,7 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
-	"simple-commenting/util"
-	"time"
 )
-
-func commentVote(commenterHex string, commentHex string, direction int, url string) error {
-	if commentHex == "" || commenterHex == "" {
-		return app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT commenterHex
-		FROM comments
-		WHERE commentHex = $1;
-	`
-	row := repository.Db.QueryRow(statement, commentHex)
-
-	var authorHex string
-	if err := row.Scan(&authorHex); err != nil {
-		util.GetLogger().Errorf("error selecting authorHex for vote")
-		return app.ErrorInternal
-	}
-
-	if authorHex == commenterHex {
-		return app.ErrorSelfVote
-	}
-
-	statement = `
-		INSERT INTO
-		votes  (commentHex, commenterHex, direction, voteDate)
-		VALUES ($1,         $2,           $3,        $4      )
-		ON CONFLICT (commentHex, commenterHex) DO
-		UPDATE SET direction = $3;
-	`
-	_, err := repository.Db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
-	if err != nil {
-		util.GetLogger().Errorf("error inserting/updating votes: %v", err)
-		return app.ErrorInternal
-	}
-
-	notification.NotificationHub.Broadcast <- []byte(url)
-
-	return nil
-}
 
 func CommentVoteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
@@ -80,16 +38,18 @@ func CommentVoteHandler(w http.ResponseWriter, r *http.Request) {
 		direction = -1
 	}
 
-	domain, path, err := commentDomainPathGet(*x.CommentHex)
+	domain, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(*x.CommentHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	if err := commentVote(commenter.CommenterHex, *x.CommentHex, direction, domain+path); err != nil {
+	if err := repository.Repo.CommentRepository.VoteComment(commenter.CommenterHex, *x.CommentHex, direction, domain+path); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
+
+	notification.NotificationHub.Broadcast <- []byte(domain + path)
 
 	bodyMarshal(w, response{"success": true})
 }

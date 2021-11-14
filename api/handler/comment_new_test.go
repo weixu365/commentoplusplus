@@ -5,6 +5,8 @@ import (
 	"simple-commenting/test"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCommentNewBasics(t *testing.T) {
@@ -72,4 +74,16 @@ func TestCommentNewThreadLocked(t *testing.T) {
 		t.Errorf("expected error not found creating a new comment on a locked thread")
 		return
 	}
+}
+
+func TestCommentDomainPathGetBasics(t *testing.T) {
+	test.FailTestOnError(t, test.SetupTestEnv())
+
+	commentHex, _ := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
+
+	domain, path, err := repository.Repo.CommentRepository.GetCommentDomainPath(commentHex)
+	assert.NoError(t, err)
+
+	assert.Equal(t, domain, "example.com")
+	assert.Equal(t, path, "/path.html")
 }

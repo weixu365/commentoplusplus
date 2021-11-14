@@ -132,7 +132,7 @@ func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		commenterHex = c.CommenterHex
 	}
 
-	if err := repository.Repo.CommenterRepository.(commenterToken, commenterHex); err != nil {
+	if err := repository.Repo.CommenterRepository.UpdateCommenterSession(commenterToken, commenterHex); err != nil {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
