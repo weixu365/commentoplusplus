@@ -91,7 +91,7 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := commenterGetByEmail("sso:"+domainName, payload.Email)
+	c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("sso:"+domainName, payload.Email)
 	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
@@ -114,7 +114,7 @@ func SsoCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		commenterHex = c.CommenterHex
 	}
 
-	if err = commenterSessionUpdate(commenterToken, commenterHex); err != nil {
+	if err = repository.Repo.CommenterRepository.UpdateCommenterSession(commenterToken, commenterHex); err != nil {
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
 		return
 	}

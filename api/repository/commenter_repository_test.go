@@ -22,7 +22,7 @@ func (suite *CommenterRepoTestSuite) SetupTest() {
 }
 
 func (suite *CommenterRepoTestSuite) TestCommenterGetByHexBasics() {
-	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
+	commenterHex, _ := suite.repo.CreateCommenter("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
 
 	c, err := suite.repo.GetCommenterByHex(commenterHex)
 
@@ -37,15 +37,14 @@ func (suite *CommenterRepoTestSuite) TestCommenterGetByHexEmpty() {
 }
 
 func (suite *CommenterRepoTestSuite) TestCommenterGetByCommenterToken() {
-	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
-	commenterToken, _ := commenterTokenNew()
-	commenterSessionUpdate(commenterToken, commenterHex)
+	commenterHex, _ := suite.repo.CreateCommenter("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
+	commenterToken, _ := suite.repo.CreateCommenterToken()
+	suite.repo.UpdateCommenterSession(commenterToken, commenterHex)
 
 	c, err := suite.repo.GetCommenterByToken(commenterToken)
 
 	suite.Require().Nil(err)
 	assert.Equal(suite.T(), c.Name, "Test")
-
 }
 
 func (suite *CommenterRepoTestSuite) TestCommenterGetByCommenterTokenEmpty() {
@@ -54,9 +53,9 @@ func (suite *CommenterRepoTestSuite) TestCommenterGetByCommenterTokenEmpty() {
 }
 
 func (suite *CommenterRepoTestSuite) TestCommenterGetByName() {
-	commenterHex, _ := commenterNew("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
-	commenterToken, _ := commenterTokenNew()
-	commenterSessionUpdate(commenterToken, commenterHex)
+	commenterHex, _ := suite.repo.CreateCommenter("test@example.com", "Test", "undefined", "https://example.com/photo.jpg", "google", "")
+	commenterToken, _ := suite.repo.CreateCommenterToken()
+	suite.repo.UpdateCommenterSession(commenterToken, commenterHex)
 
 	c, err := suite.repo.GetCommenterByEmail("google", "test@example.com")
 
@@ -68,4 +67,28 @@ func (suite *CommenterRepoTestSuite) TestCommenterGetByNameEmpty() {
 	_, err := suite.repo.GetCommenterByEmail("", "")
 
 	suite.Require().NotNil(err)
+}
+
+func (suite *CommenterRepoTestSuite) TestCommenterTokenNewBasics() {
+	_, err := suite.repo.CreateCommenterToken()
+
+	suite.Require().NoError(err)
+}
+
+func (suite *CommenterRepoTestSuite) TestCommenterSessionUpdateBasics() {
+	commenterToken, _ := suite.repo.CreateCommenterToken()
+
+	err := suite.repo.UpdateCommenterSession(commenterToken, "temp-commenter-hex")
+	suite.Require().NoError(err)
+
+	commenterHex, err := suite.repo.GetCommenterHex(commenterToken)
+
+	suite.Require().NoError(err)
+	assert.Equal(suite.T(), commenterHex, "temp-commenter-hex")
+}
+
+func (suite *CommenterRepoTestSuite) TestCommenterSessionUpdateEmpty() {
+	err := suite.repo.UpdateCommenterSession("", "temp-commenter-hex")
+
+	suite.Require().Error(err)
 }

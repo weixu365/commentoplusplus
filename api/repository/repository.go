@@ -19,5 +19,6 @@ func NewPostgresqlRepositories(dataSourceName string) (*Repositories, error) {
 		EmailRepository:           &EmailRepositoryPg{db: db},
 		PageRepository:            &PageRepositoryPg{db: db},
 		CommenterRepository:       &CommenterRepositoryPg{db: db},
+		LogRepository:             &LogRepositoryPg{db: db},
 	}, nil
 }

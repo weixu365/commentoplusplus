@@ -55,7 +55,7 @@ func EmailModerateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Do not use commenterGetByEmail here because we don't know which provider
+	// Do not use repository.Repo.CommenterRepository.GetCommenterByEmail here because we don't know which provider
 	// should be used. This was poor design on multiple fronts on my part, but
 	// let's deal with that later. For now, it suffices to match the
 	// deleter/approver with any account owned by the same email.

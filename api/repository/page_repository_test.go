@@ -12,6 +12,10 @@ type PageRepoTestSuite struct {
 	repo PageRepository
 }
 
+func TestPageRepoTestSuite(t *testing.T) {
+	suite.Run(t, new(PageRepoTestSuite))
+}
+
 func (suite *PageRepoTestSuite) SetupTest() {
 	SetupTestRepo()
 	suite.repo = Repo.PageRepository
@@ -58,8 +62,4 @@ func (suite *PageRepoTestSuite) Test_skip_saving_page_when_the_same_path_exists(
 
 	err = suite.repo.CreatePage("example.com", "/path.html")
 	suite.Require().Nil(err)
-}
-
-func TestPageRepoTestSuite(t *testing.T) {
-	suite.Run(t, new(PageRepoTestSuite))
 }

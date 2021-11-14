@@ -71,7 +71,7 @@ func TwitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	link := res.getLinkURL()
 	photo := res.getImageURL()
 
-	c, err := commenterGetByEmail("twitter", email)
+	c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("twitter", email)
 	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
@@ -94,7 +94,7 @@ func TwitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		commenterHex = c.CommenterHex
 	}
 
-	if err := commenterSessionUpdate(commenterToken, commenterHex); err != nil {
+	if err := repository.Repo.CommenterRepository.UpdateCommenterSession(commenterToken, commenterHex); err != nil {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}

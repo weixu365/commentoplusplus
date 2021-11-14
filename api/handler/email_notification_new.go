@@ -21,14 +21,14 @@ func emailNotificationModerator(d *model.Domain, path string, title string, comm
 	if commenterHex == "anonymous" {
 		commenterName = "Anonymous"
 	} else {
-		c, err := commenterGetByHex(commenterHex)
+		commenter, err := repository.Repo.CommenterRepository.GetCommenterByHex(commenterHex)
 		if err != nil {
 			util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 			return
 		}
 
-		commenterName = c.Name
-		commenterEmail = c.Email
+		commenterName = commenter.Name
+		commenterEmail = commenter.Email
 	}
 
 	kind := d.EmailNotificationPolicy
@@ -107,7 +107,7 @@ func emailNotificationReply(d *model.Domain, path string, title string, commente
 		return
 	}
 
-	pc, err := commenterGetByHex(parentCommenterHex)
+	parentCommenter, err := repository.Repo.CommenterRepository.GetCommenterByHex(parentCommenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 		return
@@ -117,15 +117,15 @@ func emailNotificationReply(d *model.Domain, path string, title string, commente
 	if commenterHex == "anonymous" {
 		commenterName = "Anonymous"
 	} else {
-		c, err := commenterGetByHex(commenterHex)
+		commenter, err := repository.Repo.CommenterRepository.GetCommenterByHex(commenterHex)
 		if err != nil {
 			util.GetLogger().Errorf("cannot get commenter to send email notification: %v", err)
 			return
 		}
-		commenterName = c.Name
+		commenterName = commenter.Name
 	}
 
-	epc, err := emailGet(pc.Email)
+	epc, err := emailGet(parentCommenter.Email)
 	if err != nil {
 		// No such email.
 		return
@@ -135,7 +135,7 @@ func emailNotificationReply(d *model.Domain, path string, title string, commente
 		return
 	}
 
-	notification.SmtpEmailNotification(pc.Email, pc.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
+	notification.SmtpEmailNotification(parentCommenter.Email, parentCommenter.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
 }
 
 func emailNotificationNew(d *model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {

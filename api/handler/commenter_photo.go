@@ -5,13 +5,14 @@ import (
 	"image"
 	"io"
 	"net/http"
+	"simple-commenting/repository"
 	"strings"
 
 	"github.com/disintegration/imaging"
 )
 
 func CommenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := commenterGetByHex(r.FormValue("commenterHex"))
+	c, err := repository.Repo.CommenterRepository.GetCommenterByHex(r.FormValue("commenterHex"))
 	if err != nil {
 		http.NotFound(w, r)
 		return

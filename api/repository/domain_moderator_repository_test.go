@@ -12,6 +12,10 @@ type DomainModeratorRepoTestSuite struct {
 	repo DomainModeratorRepository
 }
 
+func TestDomainModeratorRepoTestSuite(t *testing.T) {
+	suite.Run(t, new(DomainModeratorRepoTestSuite))
+}
+
 func (suite *DomainModeratorRepoTestSuite) SetupTest() {
 	SetupTestRepo()
 	suite.repo = Repo.DomainModeratorRepository
@@ -39,8 +43,4 @@ func (suite *DomainModeratorRepoTestSuite) TestIsDomainModerators() {
 	isMod, err = suite.repo.IsDomainModerator("example.com", "test2@example.com")
 	suite.Nil(err)
 	assert.False(suite.T(), isMod)
-}
-
-func TestDomainModeratorRepoTestSuite(t *testing.T) {
-	suite.Run(t, new(DomainModeratorRepoTestSuite))
 }

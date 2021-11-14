@@ -109,7 +109,7 @@ func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		photo = user["avatar_url"].(string)
 	}
 
-	c, err := commenterGetByEmail("github", email)
+	c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("github", email)
 	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
@@ -132,7 +132,7 @@ func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		commenterHex = c.CommenterHex
 	}
 
-	if err := commenterSessionUpdate(commenterToken, commenterHex); err != nil {
+	if err := repository.Repo.CommenterRepository.(commenterToken, commenterHex); err != nil {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}

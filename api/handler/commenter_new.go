@@ -6,9 +6,6 @@ import (
 	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
-	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func commenterNew(email string, name string, link string, photo string, provider string, password string) (string, error) {
@@ -28,7 +25,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 	}
 
 	if provider != "anon" {
-		if _, err := commenterGetByEmail(provider, email); err == nil {
+		if _, err := repository.Repo.CommenterRepository.GetCommenterByEmail(provider, email); err == nil {
 			return "", app.ErrorEmailAlreadyExists
 		}
 
@@ -37,35 +34,7 @@ func commenterNew(email string, name string, link string, photo string, provider
 		}
 	}
 
-	commenterHex, err := util.RandomHex(32)
-	if err != nil {
-		return "", app.ErrorInternal
-	}
-
-	passwordHash := []byte{}
-	if password != "" {
-		passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-		if err != nil {
-			util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
-			return "", app.ErrorInternal
-		}
-	}
-	if provider == "anon" {
-		passwordHash = []byte{}
-	}
-
-	statement := `
-		INSERT INTO
-		commenters (commenterHex, email, name, link, photo, provider, passwordHash, joinDate)
-		VALUES     ($1,           $2,    $3,   $4,   $5,    $6,       $7,           $8      );
-	`
-	_, err = repository.Db.Exec(statement, commenterHex, email, name, link, photo, provider, string(passwordHash), time.Now().UTC())
-	if err != nil {
-		util.GetLogger().Errorf("cannot insert commenter: %v", err)
-		return "", app.ErrorInternal
-	}
-
-	return commenterHex, nil
+	return repository.Repo.CommenterRepository.CreateCommenter(email, name, link, photo, provider, password)
 }
 
 func CommenterNewHandler(w http.ResponseWriter, r *http.Request) {

@@ -19,6 +19,7 @@ type Repositories struct {
 	EmailRepository           EmailRepository
 	PageRepository            PageRepository
 	CommenterRepository       CommenterRepository
+	LogRepository             LogRepository
 }
 
 type DomainRepository interface {
@@ -38,10 +39,4 @@ type EmailRepository interface {
 type PageRepository interface {
 	CreatePage(domainName string, path string) error
 	GetPageByPath(domainName string, path string) (*model.Page, error)
-}
-
-type CommenterRepository interface {
-	GetCommenterByEmail(provider string, email string) (*model.Commenter, error)
-	GetCommenterByHex(commenterHex string) (*model.Commenter, error)
-	GetCommenterByToken(commenterToken string) (*model.Commenter, error)
 }

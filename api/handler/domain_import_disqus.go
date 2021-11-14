@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"simple-commenting/app"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 	"strings"
 	"time"
@@ -117,7 +118,7 @@ func domainImportDisqus(domain string, url string) (int, error) {
 			continue
 		}
 
-		c, err := commenterGetByEmail("commento", email)
+		c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("commento", email)
 		if err != nil && err != app.ErrorNoSuchCommenter {
 			util.GetLogger().Errorf("cannot get commenter by email: %v", err)
 			return 0, app.ErrorInternal

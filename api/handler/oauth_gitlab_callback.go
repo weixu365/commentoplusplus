@@ -73,7 +73,7 @@ func GitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		photo = user["avatar_url"].(string)
 	}
 
-	c, err := commenterGetByEmail("gitlab", email)
+	c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("gitlab", email)
 	if err != nil && err != app.ErrorNoSuchCommenter {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
@@ -96,7 +96,7 @@ func GitlabCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		commenterHex = c.CommenterHex
 	}
 
-	if err := commenterSessionUpdate(commenterToken, commenterHex); err != nil {
+	if err := repository.Repo.CommenterRepository.UpdateCommenterSession(commenterToken, commenterHex); err != nil {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}

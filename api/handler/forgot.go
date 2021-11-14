@@ -39,7 +39,7 @@ func forgot(email string, entity string) error {
 		hex = o.OwnerHex
 		name = o.Name
 	} else {
-		c, err := commenterGetByEmail("commento", email)
+		c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("commento", email)
 		if err != nil {
 			if err == app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"simple-commenting/app"
 	"simple-commenting/model"
+	"simple-commenting/repository"
 	"simple-commenting/util"
 )
 
@@ -62,7 +63,7 @@ func domainImportCommento(domain string, url string) (int, error) {
 	// commenterHex (old hex, new hex)
 	commenterHex := map[string]string{"anonymous": "anonymous"}
 	for _, commenter := range data.Commenters {
-		c, err := commenterGetByEmail("commento", commenter.Email)
+		c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("commento", commenter.Email)
 		if err != nil && err != app.ErrorNoSuchCommenter {
 			util.GetLogger().Errorf("cannot get commenter by email: %v", err)
 			return 0, app.ErrorInternal
