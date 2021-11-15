@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"net/http"
 	"simple-commenting/app"
 	"simple-commenting/model"
@@ -105,74 +104,6 @@ func CommentListHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func commentListApprovals(domain string) ([]*model.Comment, map[string]*model.Commenter, error) {
-	if domain == "" {
-		return nil, nil, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT
-			path,
-			commentHex,
-			commenterHex,
-			markdown,
-			html,
-			parentHex,
-			score,
-			state,
-			deleted,
-			creationDate
-		FROM comments
-		WHERE
-		canon(comments.domain) LIKE canon($1) AND deleted = false AND
-			( state = 'unapproved' OR state = 'flagged' );
-	`
-
-	var rows *sql.Rows
-	var err error
-
-	rows, err = repository.Db.Query(statement, domain)
-
-	if err != nil {
-		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, app.ErrorInternal
-	}
-	defer rows.Close()
-
-	commenters := make(map[string]*model.Commenter)
-	commenters["anonymous"] = &model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
-
-	comments := []*model.Comment{}
-	for rows.Next() {
-		comment := model.Comment{}
-		if err = rows.Scan(
-			&comment.Path,
-			&comment.CommentHex,
-			&comment.CommenterHex,
-			&comment.Markdown,
-			&comment.Html,
-			&comment.ParentHex,
-			&comment.Score,
-			&comment.State,
-			&comment.Deleted,
-			&comment.CreationDate); err != nil {
-			return nil, nil, app.ErrorInternal
-		}
-
-		comments = append(comments, &comment)
-
-		if _, ok := commenters[comment.CommenterHex]; !ok {
-			commenters[comment.CommenterHex], err = repository.Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
-			if err != nil {
-				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, app.ErrorInternal
-			}
-		}
-	}
-
-	return comments, commenters, nil
-}
-
 func CommentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
@@ -203,7 +134,7 @@ func CommentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comments, commenters, err := commentListApprovals(domain)
+	comments, commenters, err := repository.Repo.CommentRepository.ListUnapprovedComments(domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
@@ -222,74 +153,6 @@ func CommentListApprovalsHandler(w http.ResponseWriter, r *http.Request) {
 		"commenters": _commenters,
 	})
 
-}
-
-func commentListAll(domain string) ([]*model.Comment, map[string]*model.Commenter, error) {
-	if domain == "" {
-		return nil, nil, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT
-			path,
-			commentHex,
-			commenterHex,
-			markdown,
-			html,
-			parentHex,
-			score,
-			state,
-			deleted,
-			creationDate
-		FROM comments
-		WHERE
-		canon(comments.domain) LIKE canon($1) AND deleted = false AND 
-			( state = 'approved'  );
-	`
-
-	var rows *sql.Rows
-	var err error
-
-	rows, err = repository.Db.Query(statement, domain)
-
-	if err != nil {
-		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, app.ErrorInternal
-	}
-	defer rows.Close()
-
-	commenters := make(map[string]*model.Commenter)
-	commenters["anonymous"] = &model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
-
-	comments := []*model.Comment{}
-	for rows.Next() {
-		comment := model.Comment{}
-		if err = rows.Scan(
-			&comment.Path,
-			&comment.CommentHex,
-			&comment.CommenterHex,
-			&comment.Markdown,
-			&comment.Html,
-			&comment.ParentHex,
-			&comment.Score,
-			&comment.State,
-			&comment.Deleted,
-			&comment.CreationDate); err != nil {
-			return nil, nil, app.ErrorInternal
-		}
-
-		comments = append(comments, &comment)
-
-		if _, ok := commenters[comment.CommenterHex]; !ok {
-			commenters[comment.CommenterHex], err = repository.Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
-			if err != nil {
-				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, app.ErrorInternal
-			}
-		}
-	}
-
-	return comments, commenters, nil
 }
 
 func CommentListAllHandler(w http.ResponseWriter, r *http.Request) {
@@ -322,7 +185,7 @@ func CommentListAllHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comments, commenters, err := commentListAll(domain)
+	comments, commenters, err := repository.Repo.CommentRepository.ListApprovedComments(domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return

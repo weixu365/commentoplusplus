@@ -20,6 +20,8 @@ type CommentRepository interface {
 	VoteComment(commenterHex string, commentHex string, direction int, url string) error
 	DeleteComment(commentHex string, deleterHex string, domain string, path string) error
 	ListComments(commenterHex string, domain string, path string, includeUnapproved bool) ([]*model.Comment, map[string]*model.Commenter, error)
+	ListApprovedComments(domain string) ([]*model.Comment, map[string]*model.Commenter, error)
+	ListUnapprovedComments(domain string) ([]*model.Comment, map[string]*model.Commenter, error)
 	GetCommentsCount(domain string, paths []string) (map[string]int, error)
 }
 
@@ -398,4 +400,140 @@ func (r *CommentRepositoryPg) LogDomainViewRecord(domain string, commenterHex st
 			util.GetLogger().Warningf("cannot insert views: %v", err)
 		}
 	}
+}
+
+func (r *CommentRepositoryPg) ListApprovedComments(domain string) ([]*model.Comment, map[string]*model.Commenter, error) {
+	if domain == "" {
+		return nil, nil, app.ErrorMissingField
+	}
+
+	statement := `
+		SELECT
+			path,
+			commentHex,
+			commenterHex,
+			markdown,
+			html,
+			parentHex,
+			score,
+			state,
+			deleted,
+			creationDate
+		FROM comments
+		WHERE
+		canon(comments.domain) LIKE canon($1) AND deleted = false AND 
+			( state = 'approved'  );
+	`
+
+	var rows *sql.Rows
+	var err error
+
+	rows, err = r.db.Query(statement, domain)
+
+	if err != nil {
+		util.GetLogger().Errorf("cannot get comments: %v", err)
+		return nil, nil, app.ErrorInternal
+	}
+	defer rows.Close()
+
+	commenters := make(map[string]*model.Commenter)
+	commenters["anonymous"] = &model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
+
+	comments := []*model.Comment{}
+	for rows.Next() {
+		comment := model.Comment{}
+		if err = rows.Scan(
+			&comment.Path,
+			&comment.CommentHex,
+			&comment.CommenterHex,
+			&comment.Markdown,
+			&comment.Html,
+			&comment.ParentHex,
+			&comment.Score,
+			&comment.State,
+			&comment.Deleted,
+			&comment.CreationDate); err != nil {
+			return nil, nil, app.ErrorInternal
+		}
+
+		comments = append(comments, &comment)
+
+		if _, ok := commenters[comment.CommenterHex]; !ok {
+			commenters[comment.CommenterHex], err = Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
+			if err != nil {
+				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
+				return nil, nil, app.ErrorInternal
+			}
+		}
+	}
+
+	return comments, commenters, nil
+}
+
+func (r *CommentRepositoryPg) ListUnapprovedComments(domain string) ([]*model.Comment, map[string]*model.Commenter, error) {
+	if domain == "" {
+		return nil, nil, app.ErrorMissingField
+	}
+
+	statement := `
+		SELECT
+			path,
+			commentHex,
+			commenterHex,
+			markdown,
+			html,
+			parentHex,
+			score,
+			state,
+			deleted,
+			creationDate
+		FROM comments
+		WHERE
+		canon(comments.domain) LIKE canon($1) AND deleted = false AND
+			( state = 'unapproved' OR state = 'flagged' );
+	`
+
+	var rows *sql.Rows
+	var err error
+
+	rows, err = r.db.Query(statement, domain)
+
+	if err != nil {
+		util.GetLogger().Errorf("cannot get comments: %v", err)
+		return nil, nil, app.ErrorInternal
+	}
+	defer rows.Close()
+
+	commenters := make(map[string]*model.Commenter)
+	commenters["anonymous"] = &model.Commenter{CommenterHex: "anonymous", Email: "undefined", Name: "Anonymous", Link: "undefined", Photo: "undefined", Provider: "undefined"}
+
+	comments := []*model.Comment{}
+	for rows.Next() {
+		comment := model.Comment{}
+		if err = rows.Scan(
+			&comment.Path,
+			&comment.CommentHex,
+			&comment.CommenterHex,
+			&comment.Markdown,
+			&comment.Html,
+			&comment.ParentHex,
+			&comment.Score,
+			&comment.State,
+			&comment.Deleted,
+			&comment.CreationDate); err != nil {
+			return nil, nil, app.ErrorInternal
+		}
+
+		comments = append(comments, &comment)
+
+		if _, ok := commenters[comment.CommenterHex]; !ok {
+			commenters[comment.CommenterHex], err = Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
+			if err != nil {
+				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
+				return nil, nil, app.ErrorInternal
+			}
+		}
+	}
+
+	return comments, commenters, nil
 }

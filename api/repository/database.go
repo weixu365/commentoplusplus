@@ -21,6 +21,7 @@ type Repositories struct {
 	CommenterRepository       CommenterRepository
 	CommentRepository         CommentRepository
 	LogRepository             LogRepository
+	StatisticsRepository      StatisticsRepository
 }
 
 type DomainRepository interface {

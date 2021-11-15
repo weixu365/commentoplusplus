@@ -1,12 +1,21 @@
-package handler
+package repository
 
 import (
 	"simple-commenting/app"
-	"simple-commenting/repository"
 	"simple-commenting/util"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func commentStatistics(domain string) ([]int64, error) {
+type StatisticsRepository interface {
+	GetCommentStatistics(domain string) ([]int64, error)
+}
+
+type StatisticsRepositoryPg struct {
+	db *sqlx.DB
+}
+
+func (r *StatisticsRepositoryPg) GetCommentStatistics(domain string) ([]int64, error) {
 	statement := `
 		SELECT COUNT(comments.creationDate)
 		FROM (
@@ -18,7 +27,7 @@ func commentStatistics(domain string) ([]int64, error) {
 		GROUP BY gen.date
 		ORDER BY gen.date;
 	`
-	rows, err := repository.Db.Query(statement, domain)
+	rows, err := r.db.Query(statement, domain)
 	if err != nil {
 		util.GetLogger().Errorf("cannot get daily views: %v", err)
 		return []int64{}, app.ErrorInternal

@@ -76,7 +76,7 @@ func DomainStatisticsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commentsLast30Days, err := commentStatistics(domain)
+	commentsLast30Days, err := repository.Repo.StatisticsRepository.GetCommentStatistics(domain)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
