@@ -8,29 +8,6 @@ import (
 	"simple-commenting/util"
 )
 
-func pageUpdate(p model.Page) error {
-	if p.Domain == "" {
-		return app.ErrorMissingField
-	}
-
-	// fields to not update:
-	//   commentCount
-	statement := `
-		INSERT INTO
-		pages  (domain, path, isLocked, stickyCommentHex)
-		VALUES ($1,     $2,   $3,       $4              )
-		ON CONFLICT (domain, path) DO
-			UPDATE SET isLocked = $3, stickyCommentHex = $4;
-	`
-	_, err := repository.Db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
-	if err != nil {
-		util.GetLogger().Errorf("error setting page attributes: %v", err)
-		return app.ErrorInternal
-	}
-
-	return nil
-}
-
 func PageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		CommenterToken *string     `json:"commenterToken"`
@@ -67,7 +44,7 @@ func PageUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	(*x.Attributes).Domain = *x.Domain
 	(*x.Attributes).Path = *x.Path
 
-	if err = pageUpdate(*x.Attributes); err != nil {
+	if err = repository.Repo.PageRepository.UpdatePage(x.Attributes); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}

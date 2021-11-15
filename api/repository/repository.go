@@ -21,6 +21,8 @@ func NewPostgresqlRepositories(dataSourceName string) (*Repositories, error) {
 		CommentRepository:         &CommentRepositoryPg{db: db},
 		CommenterRepository:       &CommenterRepositoryPg{db: db},
 		LogRepository:             &LogRepositoryPg{db: db},
+		OwnerRepository:           &OwnerRepositoryPg{db: db},
+		ResetRepository:           &ResetRepositoryPg{db: db},
 		StatisticsRepository:      &StatisticsRepositoryPg{db: db},
 	}, nil
 }

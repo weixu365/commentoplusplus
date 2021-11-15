@@ -56,9 +56,9 @@ func (suite *CommentNewTestSuite) TestCommentNewUpvoted() {
 
 func (suite *CommentNewTestSuite) TestCommentNewThreadLocked() {
 	repository.Repo.PageRepository.CreatePage("example.com", "/path.html")
-	p, _ := pageGet("example.com", "/path.html")
-	p.IsLocked = true
-	pageUpdate(p)
+	page, _ := repository.Repo.PageRepository.GetPageByPath("example.com", "/path.html")
+	page.IsLocked = true
+	repository.Repo.PageRepository.UpdatePage(page)
 
 	_, err := commentNew("temp-commenter-hex", "example.com", "/path.html", "root", "**foo**", "approved", time.Now().UTC())
 	suite.Require().Error(err, "expected error not found creating a new comment on a locked thread")

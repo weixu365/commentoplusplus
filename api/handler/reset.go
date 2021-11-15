@@ -14,16 +14,8 @@ func reset(resetHex string, password string) (string, error) {
 		return "", app.ErrorMissingField
 	}
 
-	statement := `
-		SELECT hex, entity
-		FROM resetHexes
-		WHERE resetHex = $1;
-	`
-	row := repository.Db.QueryRow(statement, resetHex)
-
-	var hex string
-	var entity string
-	if err := row.Scan(&hex, &entity); err != nil {
+	hex, err := repository.Repo.ResetRepository.GetResetHex(resetHex)
+	if err != nil {
 		// TODO: is this the only error?
 		return "", app.ErrorNoSuchResetToken
 	}
@@ -34,34 +26,23 @@ func reset(resetHex string, password string) (string, error) {
 		return "", app.ErrorInternal
 	}
 
-	if entity == "owner" {
-		statement = `
-			UPDATE owners SET passwordHash = $1, confirmedEmail=true
-			WHERE ownerHex = $2;
-		`
+	if hex.Entity == "owner" {
+		err = repository.Repo.OwnerRepository.UpdatePassword(string(passwordHash), hex.Hex)
 	} else {
-		statement = `
-			UPDATE commenters SET passwordHash = $1
-			WHERE commenterHex = $2;
-		`
+		err = repository.Repo.CommenterRepository.UpdateCommenterPassword(string(passwordHash), hex.Hex)
 	}
 
-	_, err = repository.Db.Exec(statement, string(passwordHash), hex)
 	if err != nil {
-		util.GetLogger().Errorf("cannot change %s's password: %v\n", entity, err)
+		util.GetLogger().Errorf("cannot change %s's password: %v\n", hex.Entity, err)
 		return "", app.ErrorInternal
 	}
 
-	statement = `
-		DELETE FROM resetHexes
-		WHERE resetHex = $1;
-	`
-	_, err = repository.Db.Exec(statement, resetHex)
+	err = repository.Repo.ResetRepository.DeleteResetHex(resetHex)
 	if err != nil {
 		util.GetLogger().Warningf("cannot remove resetHex: %v\n", err)
 	}
 
-	return entity, nil
+	return hex.Entity, nil
 }
 
 func ResetHandler(w http.ResponseWriter, r *http.Request) {

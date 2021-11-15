@@ -34,6 +34,44 @@ func (r *PageRepositoryPg) CreatePage(domainName string, path string) error {
 	return nil
 }
 
+func (r *PageRepositoryPg) UpdatePage(p *model.Page) error {
+	if p.Domain == "" {
+		return app.ErrorMissingField
+	}
+
+	// fields to not update:
+	//   commentCount
+	statement := `
+		INSERT INTO
+		pages  (domain, path, isLocked, stickyCommentHex)
+		VALUES ($1,     $2,   $3,       $4              )
+		ON CONFLICT (domain, path) DO
+			UPDATE SET isLocked = $3, stickyCommentHex = $4;
+	`
+	_, err := r.db.Exec(statement, p.Domain, p.Path, p.IsLocked, p.StickyCommentHex)
+	if err != nil {
+		util.GetLogger().Errorf("error setting page attributes: %v", err)
+		return app.ErrorInternal
+	}
+
+	return nil
+}
+
+func (r *PageRepositoryPg) UpdatePageTitle(domain, path, title string) error {
+	statement := `
+		UPDATE pages
+		SET title = $3
+		WHERE canon($1) LIKE canon(domain) AND path = $2;
+	`
+	_, err ：= r.db.Exec(statement, domain, path, title)
+	if err != nil {
+		util.GetLogger().Errorf("cannot update pages table with title: %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (r *PageRepositoryPg) GetPageByPath(domainName string, path string) (*model.Page, error) {
 	// path can be empty
 	if domainName == "" {

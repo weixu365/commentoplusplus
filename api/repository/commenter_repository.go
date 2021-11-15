@@ -14,6 +14,7 @@ type CommenterRepository interface {
 	CreateCommenter(email string, name string, link string, photo string, provider string, password string) (string, error)
 	DeleteCommenter(commenterHex string) error
 	UpdateCommenter(commenter *model.Commenter) error
+	UpdateCommenterPassword(passwordHash, commenterHex string) error
 	GetActiveCommenterByEmail(email string) (*model.CommenterPassword, error)
 	GetCommenterByEmail(provider string, email string) (*model.Commenter, error)
 	GetCommenterByHex(commenterHex string) (*model.Commenter, error)
@@ -37,6 +38,21 @@ func (r *CommenterRepositoryPg) UpdateCommenter(commenter *model.Commenter) erro
 	`
 
 	_, err := r.db.Exec(statement, commenter)
+	if err != nil {
+		util.GetLogger().Errorf("cannot update commenter: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *CommenterRepositoryPg) UpdateCommenterPassword(passwordHash, commenterHex string) error {
+	statement := `
+			UPDATE commenters SET passwordHash = $1
+			WHERE commenterHex = $2;
+		`
+
+	_, err := r.db.Exec(statement, passwordHash, commenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update commenter: %v", err)
 		return err

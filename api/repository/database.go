@@ -21,6 +21,8 @@ type Repositories struct {
 	CommenterRepository       CommenterRepository
 	CommentRepository         CommentRepository
 	LogRepository             LogRepository
+	OwnerRepository           OwnerRepository
+	ResetRepository           ResetRepository
 	StatisticsRepository      StatisticsRepository
 }
 
@@ -42,5 +44,7 @@ type EmailRepository interface {
 
 type PageRepository interface {
 	CreatePage(domainName string, path string) error
+	UpdatePage(p *model.Page) error
+	UpdatePageTitle(domain, path, title string) error
 	GetPageByPath(domainName string, path string) (*model.Page, error)
 }

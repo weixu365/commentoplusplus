@@ -24,12 +24,7 @@ func pageTitleUpdate(domain string, path string) (string, error) {
 		title = domain
 	}
 
-	statement := `
-		UPDATE pages
-		SET title = $3
-		WHERE canon($1) LIKE canon(domain) AND path = $2;
-	`
-	_, err = repository.Db.Exec(statement, domain, path, title)
+	err = repository.Repo.PageRepository.UpdatePageTitle(domain, path, title)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update pages table with title: %v", err)
 		return "", err
