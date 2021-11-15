@@ -63,7 +63,8 @@ func (r *PageRepositoryPg) UpdatePageTitle(domain, path, title string) error {
 		SET title = $3
 		WHERE canon($1) LIKE canon(domain) AND path = $2;
 	`
-	_, err ：= r.db.Exec(statement, domain, path, title)
+
+	_, err := r.db.Exec(statement, domain, path, title)
 	if err != nil {
 		util.GetLogger().Errorf("cannot update pages table with title: %v", err)
 		return err
