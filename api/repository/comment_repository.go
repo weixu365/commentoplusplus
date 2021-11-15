@@ -11,13 +11,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// commentList -> ListComments
-// commentGetByCommentHex -> GetByCommentHex
-// commentNew -> CreateComment
-// commentApprove -> ApproveComment
-// commentDelete -> DeleteComment
-// commentVote -> VoteComment
-
 type CommentRepository interface {
 	CreateComment(comment *model.Comment) (*model.Comment, error)
 	UpdateComment(commentHex string, markdown string, html string) error
@@ -27,6 +20,7 @@ type CommentRepository interface {
 	VoteComment(commenterHex string, commentHex string, direction int, url string) error
 	DeleteComment(commentHex string, deleterHex string, domain string, path string) error
 	ListComments(commenterHex string, domain string, path string, includeUnapproved bool) ([]*model.Comment, map[string]*model.Commenter, error)
+	GetCommentsCount(domain string, paths []string) (map[string]int, error)
 }
 
 type CommentRepositoryPg struct {
@@ -43,7 +37,12 @@ func (r *CommentRepositoryPg) CreateComment(comment *model.Comment) (*model.Comm
 	_, err := r.db.NamedExec(statement, comment)
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert comment: %v", err)
-		return nil, app.ErrorInternal
+		return nil, err
+	}
+
+	err = r.UpdateCommentCount(comment.Domain, comment.Path)
+	if err != nil {
+		return nil, err
 	}
 
 	return comment, nil
@@ -69,6 +68,81 @@ func (r *CommentRepositoryPg) UpdateComment(commentHex, markdown, html string) e
 	return nil
 }
 
+func (r *CommentRepositoryPg) UpdateCommentCount(domainName string, path string) error {
+	if domainName == "" {
+		return app.ErrorMissingField
+	}
+
+	statement := `
+		UPDATE pages
+		set commentCount = (
+			select count(*) from comments 
+		)
+		WHERE canon($1) LIKE canon(domain) AND path = $2
+	`
+
+	_, err := r.db.Exec(statement, domainName, path)
+	if err != nil {
+		util.GetLogger().Errorf("Failed to update cannot update comments count: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (r *CommentRepositoryPg) GetCommentsCount(domainName string, paths []string) (map[string]int, error) {
+	commentCounts := map[string]int{}
+
+	if domainName == "" {
+		return nil, app.ErrorMissingField
+	}
+
+	if len(paths) == 0 {
+		return nil, app.ErrorEmptyPaths
+	}
+
+	statement := `
+		SELECT path, commentCount
+		FROM pages
+		WHERE canon(:domain) LIKE canon(domain) AND path in (:paths);
+	`
+	query, args, err := sqlx.Named(statement, map[string]interface{}{
+		"domain": domainName,
+		"paths":  paths,
+	})
+	if err != nil {
+		util.GetLogger().Errorf("Failed to create named query when get count of comments: %v", err)
+		return nil, err
+	}
+
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		util.GetLogger().Errorf("Failed to bind parameters to variables when get count of comments: %v", err)
+		return nil, err
+	}
+
+	query = r.db.Rebind(query)
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		util.GetLogger().Errorf("cannot get comments: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var path string
+		var commentCount int
+		if err = rows.Scan(&path, &commentCount); err != nil {
+			util.GetLogger().Errorf("cannot scan path and commentCount: %v", err)
+			return nil, err
+		}
+
+		commentCounts[path] = commentCount
+	}
+
+	return commentCounts, nil
+}
+
 func (r *CommentRepositoryPg) GetByCommentHex(commentHex string) (*model.Comment, error) {
 	if commentHex == "" {
 		return nil, app.ErrorMissingField
@@ -81,7 +155,7 @@ func (r *CommentRepositoryPg) GetByCommentHex(commentHex string) (*model.Comment
 		WHERE comments.commentHex = $1;
 	`
 
-	if err := r.db.Get(&comment, statement, commentHex); err != nil {
+	if err := r.db.Unsafe().Get(&comment, statement, commentHex); err != nil {
 		// TODO: is this the only error?
 		return nil, app.ErrorNoSuchComment
 	}
@@ -125,7 +199,7 @@ func (r *CommentRepositoryPg) ApproveComment(commentHex string, url string) erro
 	_, err := r.db.Exec(statement, commentHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot approve comment: %v", err)
-		return app.ErrorInternal
+		return err
 	}
 
 	return nil
@@ -146,7 +220,7 @@ func (r *CommentRepositoryPg) VoteComment(commenterHex string, commentHex string
 	var authorHex string
 	if err := row.Scan(&authorHex); err != nil {
 		util.GetLogger().Errorf("error selecting authorHex for vote")
-		return app.ErrorInternal
+		return err
 	}
 
 	if authorHex == commenterHex {
@@ -163,7 +237,7 @@ func (r *CommentRepositoryPg) VoteComment(commenterHex string, commentHex string
 	_, err := r.db.Exec(statement, commentHex, commenterHex, direction, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("error inserting/updating votes: %v", err)
-		return app.ErrorInternal
+		return err
 	}
 
 	return nil
@@ -252,7 +326,7 @@ func (r *CommentRepositoryPg) ListComments(commenterHex string, domain string, p
 
 	if err != nil {
 		util.GetLogger().Errorf("cannot get comments: %v", err)
-		return nil, nil, app.ErrorInternal
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -272,7 +346,7 @@ func (r *CommentRepositoryPg) ListComments(commenterHex string, domain string, p
 			&comment.State,
 			&comment.Deleted,
 			&comment.CreationDate); err != nil {
-			return nil, nil, app.ErrorInternal
+			return nil, nil, err
 		}
 
 		if commenterHex != "anonymous" {
@@ -303,7 +377,7 @@ func (r *CommentRepositoryPg) ListComments(commenterHex string, domain string, p
 			commenters[comment.CommenterHex], err = Repo.CommenterRepository.GetCommenterByHex(comment.CommenterHex)
 			if err != nil {
 				util.GetLogger().Errorf("cannot retrieve commenter: %v", err)
-				return nil, nil, app.ErrorInternal
+				return nil, nil, err
 			}
 		}
 	}

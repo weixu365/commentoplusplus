@@ -52,7 +52,9 @@ func commentNew(commenterHex string, domainName string, path string, parentHex s
 		State:        state,
 	}
 
-	repository.Repo.CommentRepository.CreateComment(&comment)
+	if _, err = repository.Repo.CommentRepository.CreateComment(&comment); err != nil {
+		return "", err
+	}
 
 	notification.NotificationHub.Broadcast <- []byte(domainName + path)
 
