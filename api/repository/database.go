@@ -36,6 +36,8 @@ type DomainModeratorRepository interface {
 
 type EmailRepository interface {
 	CreateEmail(emailAddress string) error
+	GetEmail(emailAddress string) (*model.Email, error)
+	GetByUnsubscribeSecretHex(unsubscribeSecretHex string) (*model.Email, error)
 }
 
 type PageRepository interface {

@@ -42,13 +42,13 @@ func emailNotificationModerator(d *model.Domain, path string, title string, comm
 			continue
 		}
 
-		e, err := emailGet(m.Email)
+		email, err := repository.Repo.EmailRepository.GetEmail(m.Email)
 		if err != nil {
 			// No such email.
 			continue
 		}
 
-		if !e.SendModeratorNotifications {
+		if !email.SendModeratorNotifications {
 			continue
 		}
 
@@ -65,7 +65,7 @@ func emailNotificationModerator(d *model.Domain, path string, title string, comm
 			continue
 		}
 
-		if err := notification.SmtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, e.UnsubscribeSecretHex); err != nil {
+		if err := notification.SmtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, email.UnsubscribeSecretHex); err != nil {
 			util.GetLogger().Errorf("error sending email to %s: %v", m.Email, err)
 			continue
 		}
@@ -125,17 +125,17 @@ func emailNotificationReply(d *model.Domain, path string, title string, commente
 		commenterName = commenter.Name
 	}
 
-	epc, err := emailGet(parentCommenter.Email)
+	parentCommenterEmail, err := repository.Repo.EmailRepository.GetEmail(parentCommenter.Email)
 	if err != nil {
 		// No such email.
 		return
 	}
 
-	if !epc.SendReplyNotifications {
+	if !parentCommenterEmail.SendReplyNotifications {
 		return
 	}
 
-	notification.SmtpEmailNotification(parentCommenter.Email, parentCommenter.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, epc.UnsubscribeSecretHex)
+	notification.SmtpEmailNotification(parentCommenter.Email, parentCommenter.Name, "reply", d.Domain, path, commentHex, commenterName, title, html, parentCommenterEmail.UnsubscribeSecretHex)
 }
 
 func emailNotificationNew(d *model.Domain, path string, commenterHex string, commentHex string, html string, parentHex string, state string) {

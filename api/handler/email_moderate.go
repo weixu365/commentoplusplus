@@ -38,7 +38,7 @@ func EmailModerateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e, err := emailGetByUnsubscribeSecretHex(unsubscribeSecretHex)
+	e, err := repository.Repo.EmailRepository.GetByUnsubscribeSecretHex(unsubscribeSecretHex)
 	if err != nil {
 		fmt.Fprintf(w, "error: %v", err.Error())
 		return

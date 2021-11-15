@@ -2,29 +2,8 @@ package handler
 
 import (
 	"net/http"
-	"simple-commenting/app"
 	"simple-commenting/repository"
-	"simple-commenting/util"
 )
-
-func commenterDelete(commenterHex string) error {
-	if commenterHex == "" {
-		return app.ErrorMissingField
-	}
-
-	statement := `
-		UPDATE commenters
-		SET deleted=true
-		WHERE commenterHex = $1;
-	`
-	_, err := repository.Db.Exec(statement, commenterHex)
-	if err != nil {
-		util.GetLogger().Errorf("cannot delete commenter: %v", err)
-		return app.ErrorInternal
-	}
-
-	return nil
-}
 
 func CommenterDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
@@ -43,7 +22,7 @@ func CommenterDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = commenterDelete(commenter.CommenterHex); err != nil {
+	if err = repository.Repo.CommenterRepository.DeleteCommenter(commenter.CommenterHex); err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}

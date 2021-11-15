@@ -5,46 +5,22 @@ import (
 	"simple-commenting/app"
 	"simple-commenting/repository"
 	"simple-commenting/util"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func commenterLogin(email string, password string) (string, error) {
-	if email == "" || password == "" {
-		return "", app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT commenterHex, passwordHash
-		FROM commenters
-		WHERE email = $1 AND provider = 'commento' AND deleted=false;
-	`
-	row := repository.Db.QueryRow(statement, email)
-
-	var commenterHex string
-	var passwordHash string
-	if err := row.Scan(&commenterHex, &passwordHash); err != nil {
+	commenter, err := repository.Repo.CommenterRepository.GetActiveCommenterByEmail(email)
+	if err != nil {
 		return "", app.ErrorInvalidEmailPassword
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(commenter.PasswordHash), []byte(password)); err != nil {
 		// TODO: is this the only possible error?
 		return "", app.ErrorInvalidEmailPassword
 	}
 
-	commenterToken, err := util.RandomHex(32)
-	if err != nil {
-		util.GetLogger().Errorf("cannot create commenterToken: %v", err)
-		return "", app.ErrorInternal
-	}
-
-	statement = `
-		INSERT INTO
-		commenterSessions (commenterToken, commenterHex, creationDate)
-		VALUES            ($1,             $2,           $3          );
-	`
-	_, err = repository.Db.Exec(statement, commenterToken, commenterHex, time.Now().UTC())
+	commenterToken, err := repository.Repo.CommenterRepository.CreateCommenterSessionToken(commenter.CommenterHex)
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert commenterToken token: %v\n", err)
 		return "", app.ErrorInternal
@@ -78,11 +54,11 @@ func CommenterLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e, err := emailGet(commenter.Email)
+	email, err := repository.Repo.EmailRepository.GetEmail(commenter.Email)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return
 	}
 
-	bodyMarshal(w, response{"success": true, "commenterToken": commenterToken, "commenter": commenter, "email": e})
+	bodyMarshal(w, response{"success": true, "commenterToken": commenterToken, "commenter": commenter, "email": email})
 }

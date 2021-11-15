@@ -12,14 +12,14 @@ import (
 )
 
 func CommenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := repository.Repo.CommenterRepository.GetCommenterByHex(r.FormValue("commenterHex"))
+	commenter, err := repository.Repo.CommenterRepository.GetCommenterByHex(r.FormValue("commenterHex"))
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
 
-	url := c.Photo
-	if c.Provider == "google" {
+	url := commenter.Photo
+	if commenter.Provider == "google" {
 		if strings.HasSuffix(url, "photo.jpg") {
 			url += "?sz=38"
 		} else if strings.Contains(url, "=") {
@@ -27,9 +27,9 @@ func CommenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			url += "=s38"
 		}
-	} else if c.Provider == "github" {
+	} else if commenter.Provider == "github" {
 		url += "&s=38"
-	} else if c.Provider == "gitlab" {
+	} else if commenter.Provider == "gitlab" {
 		url += "?width=38"
 	}
 
@@ -40,7 +40,7 @@ func CommenterPhotoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	if c.Provider != "commento" { // Custom URL avatars need to be resized.
+	if commenter.Provider != "commento" { // Custom URL avatars need to be resized.
 		io.Copy(w, resp.Body)
 		return
 	}

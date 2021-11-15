@@ -2,6 +2,7 @@ package repository
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/util"
 	"time"
 
@@ -15,7 +16,7 @@ type EmailRepositoryPg struct {
 func (r *EmailRepositoryPg) CreateEmail(emailAddress string) error {
 	unsubscribeSecretHex, err := util.RandomHex(32)
 	if err != nil {
-		return app.ErrorInternal
+		return err
 	}
 	statement := `
 		INSERT INTO
@@ -26,8 +27,40 @@ func (r *EmailRepositoryPg) CreateEmail(emailAddress string) error {
 	_, err = r.db.Exec(statement, emailAddress, unsubscribeSecretHex, time.Now().UTC())
 	if err != nil {
 		util.GetLogger().Errorf("cannot insert email into emails: %v", err)
-		return app.ErrorInternal
+		return err
 	}
 
 	return nil
+}
+
+func (r *EmailRepositoryPg) GetEmail(emailAddress string) (*model.Email, error) {
+	email := model.Email{}
+	statement := `
+		SELECT *
+		FROM emails
+		WHERE email = $1;
+	`
+
+	if err := r.db.Get(&email, statement, emailAddress); err != nil {
+		// TODO: is this the only error?
+		return nil, app.ErrorNoSuchEmail
+	}
+
+	return &email, nil
+}
+
+func (r *EmailRepositoryPg) GetByUnsubscribeSecretHex(unsubscribeSecretHex string) (*model.Email, error) {
+	email := model.Email{}
+	statement := `
+		SELECT *
+		FROM emails
+		WHERE unsubscribeSecretHex = $1;
+	`
+
+	if err := r.db.Get(&email, statement, unsubscribeSecretHex); err != nil {
+		// TODO: is this the only error?
+		return nil, app.ErrorNoSuchUnsubscribeSecretHex
+	}
+
+	return &email, nil
 }
