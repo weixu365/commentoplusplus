@@ -52,20 +52,14 @@ func emailNotificationModerator(d *model.Domain, path string, title string, comm
 			continue
 		}
 
-		statement := `
-			SELECT name
-			FROM commenters
-			WHERE email = $1;
-		`
-		row := repository.Db.QueryRow(statement, m.Email)
-		var name string
-		if err := row.Scan(&name); err != nil {
+		commenter, err := repository.Repo.CommenterRepository.GetCommenterByEmail1(m.Email)
+		if err != nil {
 			// The moderator has probably not created a commenter account.
 			// We should only send emails to people who signed up, so skip.
 			continue
 		}
 
-		if err := notification.SmtpEmailNotification(m.Email, name, kind, d.Domain, path, commentHex, commenterName, title, html, email.UnsubscribeSecretHex); err != nil {
+		if err := notification.SmtpEmailNotification(m.Email, commenter.Name, kind, d.Domain, path, commentHex, commenterName, title, html, email.UnsubscribeSecretHex); err != nil {
 			util.GetLogger().Errorf("error sending email to %s: %v", m.Email, err)
 			continue
 		}

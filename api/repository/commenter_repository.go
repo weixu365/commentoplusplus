@@ -17,6 +17,7 @@ type CommenterRepository interface {
 	UpdateCommenterPassword(passwordHash, commenterHex string) error
 	GetActiveCommenterByEmail(email string) (*model.CommenterPassword, error)
 	GetCommenterByEmail(provider string, email string) (*model.Commenter, error)
+	GetCommenterByEmail1(email string) (*model.Commenter, error)
 	GetCommenterByHex(commenterHex string) (*model.Commenter, error)
 	GetCommenterByToken(commenterToken string) (*model.Commenter, error)
 
@@ -270,6 +271,24 @@ func (r *CommenterRepositoryPg) GetCommenterByEmail(provider string, email strin
 		commenter.Name = "[deleted]"
 		commenter.Link = "undefined"
 		commenter.Photo = "undefined"
+	}
+
+	return &commenter, nil
+}
+
+func (r *CommenterRepositoryPg) GetCommenterByEmail1(email string) (*model.Commenter, error) {
+	commenter := model.Commenter{}
+	statement := `
+		SELECT name
+		FROM commenters
+		WHERE email = $1;
+	`
+	err := r.db.Get(&commenter, statement, email)
+
+	if err != nil {
+		// The moderator has probably not created a commenter account.
+		// We should only send emails to people who signed up, so skip.
+		return nil, err
 	}
 
 	return &commenter, nil
