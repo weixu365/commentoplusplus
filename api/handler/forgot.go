@@ -54,22 +54,9 @@ func forgot(email string, entity string) error {
 		name = c.Name
 	}
 
-	resetHex, err := util.RandomHex(32)
+	resetHex, err := repository.Repo.ResetRepository.CreateResetHex(hex, entity)
 	if err != nil {
 		return err
-	}
-
-	var statement string
-
-	statement = `
-		INSERT INTO
-		resetHexes (resetHex, hex, entity, sendDate)
-		VALUES     ($1,       $2,  $3,     $4      );
-	`
-	_, err = repository.Db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
-	if err != nil {
-		util.GetLogger().Errorf("cannot insert resetHex: %v", err)
-		return app.ErrorInternal
 	}
 
 	err = notification.SmtpResetHex(email, name, resetHex)

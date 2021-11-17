@@ -7,7 +7,6 @@ import (
 	"simple-commenting/repository"
 	"simple-commenting/util"
 	"strings"
-	"time"
 )
 
 func domainNew(ownerHex string, name string, domain string) error {
@@ -26,36 +25,7 @@ func domainNew(ownerHex string, name string, domain string) error {
 		}
 	}
 
-	// test if domain already exists
-	statement := `
-		SELECT COUNT(*) FROM
-		domains WHERE
-		canon(regexp_replace($1, '[%]', '')) LIKE canon(domain) OR canon(domain) LIKE canon($1);
-	`
-	row := repository.Db.QueryRow(statement, domain)
-	var err error
-	var count int
-
-	if err = row.Scan(&count); err != nil {
-		return app.ErrorInvalidDomain
-	}
-
-	if count > 0 {
-		return app.ErrorDomainAlreadyExists
-	}
-
-	statement = `
-		INSERT INTO
-		domains (ownerHex, name, domain, creationDate)
-		VALUES  ($1,       $2,   $3,     $4          );
-	`
-	_, err = repository.Db.Exec(statement, ownerHex, name, domain, time.Now().UTC())
-	if err != nil {
-		// TODO: This should not happen given the above check, so this is likely not the error. Be more informative?
-		return app.ErrorDomainAlreadyExists
-	}
-
-	return nil
+	return repository.Repo.DomainRepository.CreateDomain(ownerHex, name, domain)
 }
 
 func DomainNewHandler(w http.ResponseWriter, r *http.Request) {

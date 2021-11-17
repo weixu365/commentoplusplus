@@ -27,7 +27,10 @@ type Repositories struct {
 }
 
 type DomainRepository interface {
+	CreateDomain(ownerHex string, name string, domain string) error
+	UpdateDomain(d *model.Domain) error
 	GetDomainByName(domainName string) (*model.Domain, error)
+	ListDomain(ownerHex string) ([]*model.Domain, error)
 }
 
 type DomainModeratorRepository interface {
@@ -38,6 +41,7 @@ type DomainModeratorRepository interface {
 
 type EmailRepository interface {
 	CreateEmail(emailAddress string) error
+	UpdateEmail(e *model.Email) error
 	GetEmail(emailAddress string) (*model.Email, error)
 	GetByUnsubscribeSecretHex(unsubscribeSecretHex string) (*model.Email, error)
 }

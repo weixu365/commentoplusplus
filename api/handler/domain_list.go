@@ -8,42 +8,6 @@ import (
 	"simple-commenting/util"
 )
 
-func domainList(ownerHex string) ([]model.Domain, error) {
-	if ownerHex == "" {
-		return []model.Domain{}, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT ` + domainsRowColumns + `
-		FROM domains
-		WHERE ownerHex=$1;
-	`
-	rows, err := repository.Db.Query(statement, ownerHex)
-	if err != nil {
-		util.GetLogger().Errorf("cannot query domains: %v", err)
-		return nil, app.ErrorInternal
-	}
-	defer rows.Close()
-
-	domains := []model.Domain{}
-	for rows.Next() {
-		var d model.Domain
-		if err = domainsRowScan(rows, &d); err != nil {
-			util.GetLogger().Errorf("cannot Scan domain: %v", err)
-			return nil, app.ErrorInternal
-		}
-
-		d.Moderators, err = repository.Repo.DomainModeratorRepository.GetModeratorsForDomain(d.Domain)
-		if err != nil {
-			return []model.Domain{}, err
-		}
-
-		domains = append(domains, d)
-	}
-
-	return domains, rows.Err()
-}
-
 func DomainListHandler(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		OwnerToken *string `json:"ownerToken"`
@@ -61,7 +25,7 @@ func DomainListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domains, err := domainList(o.OwnerHex)
+	domains, err := repository.Repo.DomainRepository.ListDomain(o.OwnerHex)
 	if err != nil {
 		bodyMarshal(w, response{"success": false, "message": err.Error()})
 		return

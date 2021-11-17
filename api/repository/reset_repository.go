@@ -3,6 +3,8 @@ package repository
 import (
 	"simple-commenting/app"
 	"simple-commenting/model"
+	"simple-commenting/util"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -10,6 +12,7 @@ import (
 type ResetRepository interface {
 	GetResetHex(resetHex string) (*model.ResetHex, error)
 	DeleteResetHex(resetHex string) error
+	CreateResetHex(hex, entity string) (string, error)
 }
 
 type ResetRepositoryPg struct {
@@ -52,4 +55,24 @@ func (r *ResetRepositoryPg) DeleteResetHex(resetHex string) error {
 	}
 
 	return nil
+}
+
+func (r *ResetRepositoryPg) CreateResetHex(hex, entity string) (string, error) {
+	resetHex, err := util.RandomHex(32)
+	if err != nil {
+		return "", err
+	}
+
+	statement := `
+		INSERT INTO
+		resetHexes (resetHex, hex, entity, sendDate)
+		VALUES     ($1,       $2,  $3,     $4      );
+	`
+	_, err = r.db.Exec(statement, resetHex, hex, entity, time.Now().UTC())
+	if err != nil {
+		util.GetLogger().Errorf("cannot insert resetHex: %v", err)
+		return "", err
+	}
+
+	return resetHex, nil
 }

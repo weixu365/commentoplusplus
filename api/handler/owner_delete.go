@@ -8,7 +8,7 @@ import (
 )
 
 func ownerDelete(ownerHex string, deleteDomains bool) error {
-	domains, err := domainList(ownerHex)
+	domains, err := repository.Repo.DomainRepository.ListDomain(ownerHex)
 	if err != nil {
 		return err
 	}

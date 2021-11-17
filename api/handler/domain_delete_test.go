@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/test"
 	"testing"
 )
@@ -16,7 +17,7 @@ func TestDomainDeleteBasics(t *testing.T) {
 		return
 	}
 
-	d, _ := domainList("temp-owner-hex")
+	d, _ := repository.Repo.DomainRepository.ListDomain("temp-owner-hex")
 
 	if len(d) != 1 {
 		t.Errorf("expected number of domains to be 1 got %d", len(d))

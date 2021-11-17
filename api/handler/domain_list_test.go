@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"simple-commenting/repository"
 	"simple-commenting/test"
 	"testing"
 )
@@ -11,7 +12,7 @@ func TestDomainListBasics(t *testing.T) {
 	domainNew("temp-owner-hex", "Example", "example.com")
 	domainNew("temp-owner-hex", "Example", "example2.com")
 
-	d, err := domainList("temp-owner-hex")
+	d, err := repository.Repo.DomainRepository.ListDomain("temp-owner-hex")
 	if err != nil {
 		t.Errorf("unexpected error listing domains: %v", err)
 		return

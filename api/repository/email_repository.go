@@ -64,3 +64,18 @@ func (r *EmailRepositoryPg) GetByUnsubscribeSecretHex(unsubscribeSecretHex strin
 
 	return &email, nil
 }
+
+func (r *EmailRepositoryPg) UpdateEmail(e *model.Email) error {
+	statement := `
+		UPDATE emails
+		SET sendReplyNotifications = $3, sendModeratorNotifications = $4
+		WHERE email = $1 AND unsubscribeSecretHex = $2;
+	`
+	_, err := r.db.Exec(statement, e.Email, e.UnsubscribeSecretHex, e.SendReplyNotifications, e.SendModeratorNotifications)
+	if err != nil {
+		util.GetLogger().Errorf("error updating email: %v", err)
+		return err
+	}
+
+	return nil
+}
