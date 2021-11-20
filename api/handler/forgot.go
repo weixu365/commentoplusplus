@@ -25,7 +25,7 @@ func forgot(email string, entity string) error {
 	var hex string
 	var name string
 	if entity == "owner" {
-		o, err := ownerGetByEmail(email)
+		owner, err := repository.Repo.OwnerRepository.GetByEmail(email)
 		if err != nil {
 			if err == app.ErrorNoSuchEmail {
 				// TODO: use a more random time instead.
@@ -36,8 +36,8 @@ func forgot(email string, entity string) error {
 				return app.ErrorInternal
 			}
 		}
-		hex = o.OwnerHex
-		name = o.Name
+		hex = owner.OwnerHex
+		name = owner.Name
 	} else {
 		c, err := repository.Repo.CommenterRepository.GetCommenterByEmail("commento", email)
 		if err != nil {

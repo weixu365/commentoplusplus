@@ -2,6 +2,7 @@ package handler
 
 import (
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/repository"
 	"simple-commenting/util"
 )
@@ -14,7 +15,7 @@ var ownersRowColumns string = `
 	owners.joinDate
 `
 
-func ownersRowScan(s repository.SqlScanner, o *owner) error {
+func ownersRowScan(s repository.SqlScanner, o *model.Owner) error {
 	return s.Scan(
 		&o.OwnerHex,
 		&o.Email,
@@ -24,30 +25,9 @@ func ownersRowScan(s repository.SqlScanner, o *owner) error {
 	)
 }
 
-func ownerGetByEmail(email string) (owner, error) {
-	if email == "" {
-		return owner{}, app.ErrorMissingField
-	}
-
-	statement := `
-		SELECT ` + ownersRowColumns + `
-		FROM owners
-		WHERE email=$1;
-	`
-	row := repository.Db.QueryRow(statement, email)
-
-	var o owner
-	if err := ownersRowScan(row, &o); err != nil {
-		// TODO: Make sure this is actually no such email.
-		return owner{}, app.ErrorNoSuchEmail
-	}
-
-	return o, nil
-}
-
-func ownerGetByOwnerToken(ownerToken string) (owner, error) {
+func ownerGetByOwnerToken(ownerToken string) (model.Owner, error) {
 	if ownerToken == "" {
-		return owner{}, app.ErrorMissingField
+		return model.Owner{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -60,18 +40,18 @@ func ownerGetByOwnerToken(ownerToken string) (owner, error) {
 	`
 	row := repository.Db.QueryRow(statement, ownerToken)
 
-	var o owner
+	var o model.Owner
 	if err := ownersRowScan(row, &o); err != nil {
 		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
-		return owner{}, app.ErrorInternal
+		return model.Owner{}, app.ErrorInternal
 	}
 
 	return o, nil
 }
 
-func ownerGetByOwnerHex(ownerHex string) (owner, error) {
+func ownerGetByOwnerHex(ownerHex string) (model.Owner, error) {
 	if ownerHex == "" {
-		return owner{}, app.ErrorMissingField
+		return model.Owner{}, app.ErrorMissingField
 	}
 
 	statement := `
@@ -81,10 +61,10 @@ func ownerGetByOwnerHex(ownerHex string) (owner, error) {
 	`
 	row := repository.Db.QueryRow(statement, ownerHex)
 
-	var o owner
+	var o model.Owner
 	if err := ownersRowScan(row, &o); err != nil {
 		util.GetLogger().Errorf("cannot scan owner: %v\n", err)
-		return owner{}, app.ErrorInternal
+		return model.Owner{}, app.ErrorInternal
 	}
 
 	return o, nil

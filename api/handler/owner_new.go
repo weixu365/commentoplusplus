@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"os"
 	"simple-commenting/app"
+	"simple-commenting/model"
 	"simple-commenting/notification"
 	"simple-commenting/repository"
 	"simple-commenting/util"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,17 +21,11 @@ func ownerNew(email string, name string, password string) (string, error) {
 		return "", app.ErrorNewOwnerForbidden
 	}
 
-	if _, err := ownerGetByEmail(email); err == nil {
+	if _, err := repository.Repo.OwnerRepository.GetByEmail(email); err == nil {
 		return "", app.ErrorEmailAlreadyExists
 	}
 
 	if err := repository.Repo.EmailRepository.CreateEmail(email); err != nil {
-		return "", app.ErrorInternal
-	}
-
-	ownerHex, err := util.RandomHex(32)
-	if err != nil {
-		util.GetLogger().Errorf("cannot generate ownerHex: %v", err)
 		return "", app.ErrorInternal
 	}
 
@@ -41,42 +35,27 @@ func ownerNew(email string, name string, password string) (string, error) {
 		return "", app.ErrorInternal
 	}
 
-	statement := `
-		INSERT INTO
-		owners (ownerHex, email, name, passwordHash, joinDate, confirmedEmail)
-		VALUES ($1,       $2,    $3,   $4,           $5,       $6            );
-	`
-	_, err = repository.Db.Exec(statement, ownerHex, email, name, string(passwordHash), time.Now().UTC(), !notification.SmtpConfigured)
+	owner := model.Owner{
+		Email:          email,
+		Name:           name,
+		PasswordHash:   string(passwordHash),
+		ConfirmedEmail: !notification.SmtpConfigured,
+	}
+
+	createdOwner, err := repository.Repo.OwnerRepository.CreateOwner(&owner)
 	if err != nil {
-		// TODO: Make sure `err` is actually about conflicting UNIQUE, and not some
-		// other error. If it is something else, we should probably return `errorInternal`.
-		return "", app.ErrorEmailAlreadyExists
+		util.GetLogger().Errorf("cannot generate hash from password: %v\n", err)
+		return "", err
 	}
 
 	if notification.SmtpConfigured {
-		confirmHex, err := util.RandomHex(32)
-		if err != nil {
-			util.GetLogger().Errorf("cannot generate confirmHex: %v", err)
-			return "", app.ErrorInternal
-		}
-
-		statement = `
-			INSERT INTO
-			ownerConfirmHexes (confirmHex, ownerHex, sendDate)
-			VALUES            ($1,         $2,       $3      );
-		`
-		_, err = repository.Db.Exec(statement, confirmHex, ownerHex, time.Now().UTC())
-		if err != nil {
-			util.GetLogger().Errorf("cannot insert confirmHex: %v\n", err)
-			return "", app.ErrorInternal
-		}
-
+		confirmHex, err := repository.Repo.OwnerRepository.CreateOwnerConfirmHex(createdOwner.OwnerHex)
 		if err = notification.SmtpOwnerConfirmHex(email, name, confirmHex); err != nil {
 			return "", err
 		}
 	}
 
-	return ownerHex, nil
+	return createdOwner.OwnerHex, nil
 }
 
 func OwnerNewHandler(w http.ResponseWriter, r *http.Request) {
